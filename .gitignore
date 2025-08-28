@@ -1,0 +1,24 @@
+# Node modules
+node_modules/
+
+# Compiled JavaScript and Source Maps
+/dist/
+/build/
+
+# Logs and Temporary Files
+logs/
+*.log
+npm-debug.log*
+.npm/
+.eslintcache
+.node_repl_history
+
+# Environment Variables
+.env
+.env.*
+
+# IDE-specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
