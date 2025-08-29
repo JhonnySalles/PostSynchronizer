@@ -2,7 +2,179 @@
   "root": "D:\\Projetos\\PostSynchronizer",
   "reactNativePath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native",
   "reactNativeVersion": "0.75",
-  "dependencies": {},
+  "dependencies": {
+    "react-native-safe-area-context": {
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-safe-area-context",
+      "name": "react-native-safe-area-context",
+      "platforms": {
+        "ios": {
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-safe-area-context\\react-native-safe-area-context.podspec",
+          "version": "5.6.1",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-safe-area-context\\android",
+          "packageImportPath": "import com.th3rdwave.safeareacontext.SafeAreaContextPackage;",
+          "packageInstance": "new SafeAreaContextPackage()",
+          "buildTypes": [],
+          "libraryName": "safeareacontext",
+          "componentDescriptors": [
+            "RNCSafeAreaProviderComponentDescriptor",
+            "RNCSafeAreaViewComponentDescriptor"
+          ],
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": null
+      }
+    },
+    "react-native-screens": {
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens",
+      "name": "react-native-screens",
+      "platforms": {
+        "ios": {
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens\\RNScreens.podspec",
+          "version": "4.15.4",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens\\android",
+          "packageImportPath": "import com.swmansion.rnscreens.RNScreensPackage;",
+          "packageInstance": "new RNScreensPackage()",
+          "buildTypes": [],
+          "libraryName": "rnscreens",
+          "componentDescriptors": [
+            "RNSFullWindowOverlayComponentDescriptor",
+            "RNSScreenContainerComponentDescriptor",
+            "RNSScreenNavigationContainerComponentDescriptor",
+            "RNSScreenStackHeaderConfigComponentDescriptor",
+            "RNSScreenStackHeaderSubviewComponentDescriptor",
+            "RNSScreenStackComponentDescriptor",
+            "RNSSearchBarComponentDescriptor",
+            "RNSScreenComponentDescriptor",
+            "RNSScreenFooterComponentDescriptor",
+            "RNSScreenContentWrapperComponentDescriptor",
+            "RNSModalScreenComponentDescriptor",
+            "RNSBottomTabsComponentDescriptor"
+          ],
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": {
+          "folder": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens",
+          "projects": [
+            {
+              "projectFile": "RNScreens\\RNScreens.vcxproj",
+              "projectName": "RNScreens",
+              "projectLang": "cpp",
+              "projectGuid": "{d638f49e-29d2-4699-ac52-facd82fa7138}",
+              "directDependency": true,
+              "cppHeaders": [
+                "winrt/RNScreens.h"
+              ],
+              "cppPackageProviders": [
+                "RNScreens::ReactPackageProvider"
+              ],
+              "csNamespaces": [
+                "RNScreens"
+              ],
+              "csPackageProviders": [
+                "RNScreens.ReactPackageProvider"
+              ]
+            }
+          ],
+          "solutionFile": null,
+          "nugetPackages": [],
+          "sourceDir": "windows"
+        }
+      }
+    },
+    "react-native-sqlite-storage": {
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage",
+      "name": "react-native-sqlite-storage",
+      "platforms": {
+        "ios": {
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage\\react-native-sqlite-storage.podspec",
+          "version": "6.0.1",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage\\platforms\\android",
+          "packageImportPath": "import org.pgsqlite.SQLitePluginPackage;",
+          "packageInstance": "new SQLitePluginPackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-sqlite-storage/platforms/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": {
+          "folder": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage",
+          "projects": [
+            {
+              "projectFile": "SQLitePlugin\\SQLitePlugin.vcxproj",
+              "directDependency": true,
+              "projectName": "SQLitePlugin",
+              "projectLang": "cpp",
+              "projectGuid": "{a09b9a47-e2b9-4294-9746-ac55213fc642}",
+              "cppHeaders": [
+                "winrt/SQLitePlugin.h"
+              ],
+              "cppPackageProviders": [
+                "SQLitePlugin::ReactPackageProvider"
+              ],
+              "csNamespaces": [
+                "SQLitePlugin"
+              ],
+              "csPackageProviders": [
+                "SQLitePlugin.ReactPackageProvider"
+              ]
+            }
+          ],
+          "solutionFile": "SQLitePlugin.sln",
+          "nugetPackages": [],
+          "sourceDir": "platforms\\windows"
+        }
+      }
+    },
+    "react-native-vector-icons": {
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-vector-icons",
+      "name": "react-native-vector-icons",
+      "platforms": {
+        "ios": {
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-vector-icons\\RNVectorIcons.podspec",
+          "version": "10.3.0",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-vector-icons\\android",
+          "packageImportPath": "import com.oblador.vectoricons.VectorIconsPackage;",
+          "packageInstance": "new VectorIconsPackage()",
+          "buildTypes": [],
+          "libraryName": "RNVectorIconsSpec",
+          "componentDescriptors": [],
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": null
+      }
+    }
+  },
   "commands": [
     {
       "name": "autolink-windows",
