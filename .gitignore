@@ -23,3 +23,77 @@ npm-debug.log*
 *.sublime-project
 *.sublime-workspace
 android/app/build/outputs/apk/debug/app-debug.apk
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/android/app/build
+/ios/build
+/ios/Pods/
+/ios/.xcode.env.local
+
+# Expo local state and caches
+.expo/             # runtime state (Metro bundler, dev-client data, tunnels)
+.expo-shared/      # shared project settings (app.json edits, etc.)
+
+# Metro bundler caches/logs
+*.expo             # generic Expo temp files
+*.tunnel           # Expo DevTools tunnels
+*.cache            # Metro cache folder
+*.tmp              # temp files created during bundling
+*.log              # build or Metro logs
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.expo/
+.vscode/
+*.iml
+*.bak
+*.log
+*.swp
+*.swo
+*.orig
+*.pyc
+*.pyo
+*.class
+*.jar
+*.keystore
+*.tgz
+*.zip
+*.rar
+*.7z
+*.dmg
+*.iso
+*.apk
+*.ipa
+*.xccheckout
+*.xcscmblueprint
+*.xcuserstate
+xcuserdata/
+DerivedData/
+build/
+fastlane/report.xml
+fastlane/Preview.html
