@@ -4,6 +4,21 @@ import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigation';
 import { getDBConnection } from './src/database';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
+import * as Sentry from '@sentry/react-native';
+import { SENTRY_DSN } from '@env';
+
+Sentry.init({
+    dsn: SENTRY_DSN,
+
+    sendDefaultPii: true,
+
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1,
+    integrations: [
+        Sentry.mobileReplayIntegration(),
+        Sentry.feedbackIntegration(),
+    ],
+});
 
 const AppContent = () => {
     const { isDark } = useTheme();
@@ -14,7 +29,7 @@ const AppContent = () => {
             <AppNavigator />
         </NavigationContainer>
     );
-}
+};
 
 const App = () => {
     useEffect(() => {
@@ -36,4 +51,4 @@ const App = () => {
     );
 };
 
-export default App;
+export default Sentry.wrap(App);

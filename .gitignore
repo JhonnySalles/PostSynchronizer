@@ -16,6 +16,7 @@ npm-debug.log*
 # Environment Variables
 .env
 .env.*
+!.env.example
 
 # IDE-specific files
 .vscode/
@@ -97,3 +98,5 @@ DerivedData/
 build/
 fastlane/report.xml
 fastlane/Preview.html
+ios/sentry.properties
+android/sentry.properties

@@ -14,7 +14,7 @@ const config = {
     severity: __DEV__ ? 'debug' : 'error',
     transport: fileAsyncTransport,
     transportOptions: {
-        FS: RNFS,
+        FS: RNFS as any,
         filePath: `${RNFS.DocumentDirectoryPath}/app_logs.txt`,
         // Define o tamanho máximo do arquivo de log (ex: 1MB)
         fileMaxSize: 1024 * 1024,
@@ -23,7 +23,7 @@ const config = {
     },
 };
 
-const log = logger.create(config) as {
+const log = logger.createLogger(config) as {
     debug: (...args: any[]) => void;
     info: (...args: any[]) => void;
     warn: (...args: any[]) => void;
@@ -68,8 +68,7 @@ class LoggerService {
      * @param context Informações extras para enviar ao Sentry.
      */
     public error(error: Error, context?: Record<string, any>): void {
-        // Grava no arquivo local
-        log.error(error.message, context ? JSON.stringify(context) : '');
+        log.error(error, context);
 
         if (context)
             Sentry.setContext('Custom Context', context);
