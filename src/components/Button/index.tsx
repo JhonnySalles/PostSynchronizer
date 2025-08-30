@@ -7,6 +7,7 @@ import { getStyles } from './styles';
 interface ButtonProps {
     title: string;
     onPress: () => void;
+    icon?: string;
     variant?: 'primary' | 'secondary' | 'destructive';
     style?: StyleProp<ViewStyle>;
     textStyle?: StyleProp<TextStyle>;
@@ -14,7 +15,7 @@ interface ButtonProps {
     isLoading?: boolean;
 }
 
-const Button = ({ title, onPress, variant = 'primary', style, textStyle, disabled = false, isLoading = false, }: ButtonProps) => {
+const Button = ({ title, onPress, icon, variant = 'primary', style, textStyle, disabled = false, isLoading = false, }: ButtonProps) => {
     const { colors } = useTheme();
     const styles = getStyles(colors);
 
@@ -38,6 +39,7 @@ const Button = ({ title, onPress, variant = 'primary', style, textStyle, disable
             disabled={disabled || isLoading}
             activeOpacity={0.8}
         >
+            {icon && <Icon name={icon} size={22} color={variant === 'primary' || variant === 'destructive' ? '#fff' : colors.primary} />}
             {isLoading ? (
                 <ActivityIndicator color={variant === 'primary' || variant === 'destructive' ? '#fff' : colors.primary} />
             ) : (

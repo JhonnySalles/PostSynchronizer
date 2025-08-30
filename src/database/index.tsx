@@ -8,9 +8,8 @@ const DATABASE_NAME = 'myapp.db';
 let dbInstance: SQLiteDatabase | null = null;
 
 export const getDBConnection = async (): Promise<SQLiteDatabase> => {
-    if (dbInstance) {
+    if (dbInstance)
         return dbInstance;
-    }
 
     try {
         const db = await openDatabase({ name: DATABASE_NAME, location: 'default' });

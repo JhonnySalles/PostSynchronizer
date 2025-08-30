@@ -105,4 +105,65 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
     postButtonText: {
         color: '#fff',
     },
+    tagsInput: {
+        fontSize: 16,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: 8,
+        marginBottom: 15,
+        color: colors.text,
+        backgroundColor: colors.card,
+    },
+    // Container para as sugestões
+    suggestionsContainer: {
+        maxHeight: 120, // Limita a altura da lista de sugestões
+        backgroundColor: colors.card,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: colors.border,
+        // Posição absoluta para flutuar sobre o conteúdo
+        position: 'absolute',
+        left: 15,
+        right: 15,
+        top: 310, // Ajuste este valor conforme necessário para sua UI
+        zIndex: 1, // Garante que fique na frente
+    },
+    suggestionItem: {
+        padding: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border,
+    },
+    suggestionText: {
+        fontSize: 15,
+        color: colors.text,
+    },
+    imageItemContainer: {
+        position: 'relative',
+        marginRight: 10,
+    },
+    editIconOverlay: {
+        position: 'absolute',
+        top: 4,
+        right: 4,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        padding: 6,
+        borderRadius: 15,
+    },
+    adjustAllButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#e9ecef', // Cor sutil do tema
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 15,
+    },
+    adjustAllButtonText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#495057', // Cor sutil do tema
+        marginLeft: 8,
+    },
+
 });
