@@ -2,16 +2,16 @@ import { SQLiteDatabase } from 'react-native-sqlite-storage';
 
 
 const MIGRATIONS = [
-    `CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name VARCHAR(100) NOT NULL,
-      email VARCHAR(100) UNIQUE NOT NULL
-    );`,
     `CREATE TABLE IF NOT EXISTS auth_tokens (
       platform TEXT PRIMARY KEY NOT NULL,
-      username TEXT NOT NULL,
-      token TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      consumer_key TEXT,
+      consumer_secret TEXT,
+      token TEXT,
+      token_secret TEXT,
+      aditional TEXT,
+      active INTEGER NOT NULL DEFAULT 1,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`,
     `CREATE TABLE IF NOT EXISTS posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,7 +20,8 @@ const MIGRATIONS = [
         status TEXT NOT NULL, -- 'draft' ou 'posted'
         tags TEXT;
         platforms TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`,
 ];
 

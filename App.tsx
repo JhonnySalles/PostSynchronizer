@@ -6,6 +6,7 @@ import { getDBConnection } from './src/database';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
 import * as Sentry from '@sentry/react-native';
 import { SENTRY_DSN } from '@env';
+import { refreshAllTokens } from './src/services/api';
 
 Sentry.init({
     dsn: SENTRY_DSN,
@@ -42,6 +43,19 @@ const App = () => {
             }
         };
         initializeDB();
+    }, []);
+
+    useEffect(() => {
+        const performStartupTokenRefresh = async () => {
+            try {
+                await refreshAllTokens();
+            } catch (error) {
+                console.error(error as Error, { message: 'Falha na verificação de token durante a inicialização do app' });
+            }
+        };
+        const timer = setTimeout(performStartupTokenRefresh, 2000);
+
+        return () => clearTimeout(timer);
     }, []);
 
     return (

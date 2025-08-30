@@ -1,42 +1,91 @@
 import { getDBConnection } from '../database';
-import { PlatformType } from '../constants/platforms';
+import { PlatformType, X, TUMBLR, THREADS, UNKNOW } from '../constants/platforms';
+
+export interface Credentials {
+    platform: typeof UNKNOW | typeof X | typeof TUMBLR | typeof THREADS;
+    consumerKey: string;
+    consumerSecret: string;
+    token: string;
+    tokenSecret: string;
+    actived: boolean;
+    aditional: string;
+}
+
+export interface TumblrCredentials extends Credentials {
+    platform: typeof TUMBLR;
+    blogName: string;
+}
+
+export type AnyCredentials = TumblrCredentials | Credentials;
 
 class AuthTokenDao {
     /**
-     * Salva ou atualiza um token de autenticação para uma plataforma específica.
-     * @param platform A plataforma (ex: 'x', 'tumblr').
-     * @param username O nome de usuário associado.
-     * @param token O token de acesso a ser salvo.
+     * @param platform A plataforma.
+     * @param credentials O objeto de credenciais a ser salvo como JSON.
      */
-    public async saveToken(platform: PlatformType, username: string, token: string): Promise<void> {
+    public async saveCredentials(platform: PlatformType, credentials: Record<string, any>): Promise<void> {
         const db = await getDBConnection();
+
         try {
-            await db.executeSql(
-                'INSERT OR REPLACE INTO auth_tokens (platform, username, token) VALUES (?, ?, ?)',
-                [platform, username, token]
-            );
-            console.log(`Token para ${platform} salvo com sucesso [DAO]`);
+            await db.executeSql('BEGIN TRANSACTION;');
+
+            const results = await db.executeSql('SELECT id FROM auth_tokens WHERE platform = ?', [platform]);
+
+            if (results[0].rows.length > 0) {
+                console.log(`Atualizando credenciais para ${platform} [DAO]`);
+                await db.executeSql(
+                    'UPDATE auth_tokens SET consumerKey = ?, consumer_secret = ?, token = ?, token_secret = ?, aditional = ?, actived = ?, updated_at = ? WHERE platform = ?',
+                    [credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.actived ? 1 : 0, new Date().toISOString(), platform]
+                );
+            } else {
+                console.log(`Inserindo novas credenciais para ${platform} [DAO]`);
+                const createdAt = new Date().toISOString();
+                await db.executeSql(
+                    'INSERT INTO auth_tokens (platform, consumer_key, consumer_secret, token, token_secret, aditional, actived, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    [platform, credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.actived ? 1 : 0, createdAt, createdAt]
+                );
+            }
+
+            await db.executeSql('COMMIT;');
+            console.log(`Credenciais para ${platform} salvas com sucesso [DAO]`);
         } catch (error) {
-            console.error(`Erro ao salvar token para ${platform} [DAO]:`, error);
+            await db.executeSql('ROLLBACK;');
+            console.error(`Erro ao salvar credenciais para ${platform} [DAO]:`, error);
             throw error;
         }
     }
 
     /**
-     * Busca o token de acesso para uma plataforma específica.
-     * @param platform A plataforma para a qual buscar o token.
-     * @returns O token de acesso ou null se não for encontrado.
-     */
-    public async getTokenForPlatform(platform: PlatformType): Promise<string | null> {
+    * Busca um objeto de credenciais complexas de uma plataforma.
+    * @param platform A plataforma.
+    * @returns O objeto de credenciais parseado ou null se não encontrado.
+    */
+    public async getCredentialsForPlatform<T>(platform: PlatformType): Promise<T | null> {
         const db = await getDBConnection();
         try {
-            const results = await db.executeSql('SELECT token FROM auth_tokens WHERE platform = ?', [platform]);
-            if (results[0].rows.length > 0)
-                return results[0].rows.item(0).token;
+            let credential: T | null = null
+            const results = await db.executeSql('SELECT platform, consumer_key, consumer_secret, token, token_secret, aditional, actived FROM auth_tokens WHERE platform = ?', [platform]);
+            if (results[0].rows.length > 0) {
+                const dados = results[0].rows.item(0).credentials;
+                if (dados) {
+                    credential = {
+                        platform: dados.platform,
+                        consumerKey: dados.consumer_key,
+                        consumerSecret: dados.consumer_secret,
+                        token: dados.token,
+                        tokenSecret: dados.token_secret,
+                        actived: dados.actived,
+                        aditional: dados.aditional
+                    } as T;
 
-            return null;
+                    if (platform === TUMBLR)
+                        (credential as TumblrCredentials).blogName = dados.aditional;
+                }
+            }
+
+            return credential;
         } catch (error) {
-            console.error(`Erro ao buscar token para ${platform} [DAO]:`, error);
+            console.error(`Erro ao buscar credenciais para ${platform} [DAO]:`, error);
             throw error;
         }
     }
@@ -48,7 +97,7 @@ class AuthTokenDao {
     public async getActivePlatforms(): Promise<PlatformType[]> {
         const db = await getDBConnection();
         try {
-            const results = await db.executeSql('SELECT platform FROM auth_tokens');
+            const results = await db.executeSql('SELECT platform FROM auth_tokens WHERE actived = 1');
             const platforms: PlatformType[] = [];
             results.forEach(result => {
                 for (let i = 0; i < result.rows.length; i++) {

@@ -1,48 +1,82 @@
-import { IApiService, PostData } from './IApiService';
-import AuthTokenDao from '../../dao/AuthTokenDao';
+import { SendTweetV2Params, TwitterApi } from 'twitter-api-v2';
+import { IApiService, PostData, ResultPost } from './IApiService';
+import AuthTokenDao, { Credentials } from '../../dao/AuthTokenDao';
 import { PlatformType, X } from '../../constants/platforms';
 import { clientService } from '../clientService';
+import RNFS from 'react-native-fs';
 
 export class XService implements IApiService {
     private platform = X;
-    private client = clientService[X];
 
-    async login(username: string, password_or_token: string): Promise<boolean> {
-        console.log(`[${this.platform}] Iniciando login para o usuário: ${username}`);
+    constructor() { }
+
+    async test(credentials: Credentials): Promise<boolean> {
+        console.info(`[${this.platform}] Testando credenciais...`);
         try {
-            // 1. Simula a chamada de API para obter um token
-            // Na vida real: const response = await apiClient.post('/auth/x', { username, password_or_token });
-            const fakeToken = `fake-token-${this.platform}-${Date.now()}`;
-            console.log(`[${this.platform}] Token recebido (simulado): ${fakeToken}`);
+            const testClient = new TwitterApi({
+                appKey: credentials.consumerKey,
+                appSecret: credentials.consumerSecret,
+                accessToken: credentials.token,
+                accessSecret: credentials.tokenSecret,
+            });
 
-            await AuthTokenDao.saveToken(this.platform as PlatformType, username, fakeToken);
-
-            console.log(`[${this.platform}] Token salvo no banco de dados.`);
+            const { data: user } = await testClient.v2.me();
+            console.info(`[${this.platform}] Teste bem-sucedido para o usuário: @${user.username}`);
             return true;
         } catch (error) {
-            console.error(`[${this.platform}] Falha no login:`, error);
+            console.error(error as Error, { message: `[${this.platform}] Teste de credenciais falhou` });
             return false;
         }
     }
 
-    async post(data: PostData): Promise<boolean> {
-        console.log(`[${this.platform}] Iniciando postagem...`);
-        try {
-            const token = await AuthTokenDao.getTokenForPlatform(this.platform as PlatformType);
+    async post(data: PostData): Promise<ResultPost> {
+        console.info(`[${this.platform}] Iniciando postagem...`);
 
-            if (!token)
-                throw new Error(`[${this.platform}] Usuário não está logado. Token não encontrado.`);
-            
-            console.log(`[${this.platform}] Usando token para postar.`);
-
-            // 2. Simula a chamada de API para postar o conteúdo
-            // Na vida real: await apiClient.post('/post/x', data, { headers: { Authorization: `Bearer ${token}` } });
-            console.log(`[${this.platform}] Postagem enviada (simulada) com texto: "${data.text}"`);
-
-            return true;
-        } catch (error) {
-            console.error(`[${this.platform}] Falha na postagem:`, error);
-            return false;
+        const credentials = await AuthTokenDao.getCredentialsForPlatform<Credentials>(this.platform as PlatformType);
+        if (!credentials) {
+            const authError = new Error(`Credenciais do X não encontradas. Conecte sua conta nas Configurações.`);
+            console.error(authError);
+            throw authError;
         }
+
+        if (!credentials.actived)
+            return { sucess: false }
+
+        try {
+            const client = new TwitterApi({
+                appKey: credentials.consumerKey,
+                appSecret: credentials.consumerSecret,
+                accessToken: credentials.token,
+                accessSecret: credentials.tokenSecret,
+            });
+
+            const tweetPayload: { text: string; media?: { media_ids: string[] } } = {
+                text: data.text,
+            };
+
+            if (data.images && data.images.length > 0) {
+                console.info(`[${this.platform}] Fazendo upload de mídia...`);
+                const mediaIds: string[] = [];
+
+                for (const imageUri of data.images.slice(0, 4)) {
+                    const mediaId = await client.v1.uploadMedia(imageUri);
+                    mediaIds.push(mediaId);
+                }
+
+                tweetPayload.media = { media_ids: mediaIds };
+                console.info(`[${this.platform}] Mídia enviada. IDs: ${mediaIds.join(',')}`);
+            }
+
+            const { data: createdTweet } = await client.v2.tweet(tweetPayload as SendTweetV2Params);
+            console.info(`[${this.platform}] Postagem bem-sucedida! Tweet ID: ${createdTweet.id}`);
+            return { sucess: true };
+        } catch (error) {
+            console.error(error as Error, { message: `[${this.platform}] Falha na postagem` });
+            return { sucess: false };
+        }
+    }
+
+    public async validateAndRefreshToken(): Promise<void> {
+
     }
 }

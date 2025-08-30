@@ -13,8 +13,9 @@ import { ApiServiceFactory } from '../../services/api';
 import ImageProcessingService from '../../services/ImageService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
-import { PlatformType } from '../../constants/platforms';
+import { PlatformType, THREADS, TUMBLR } from '../../constants/platforms';
 import AuthTokenDao from '../../dao/AuthTokenDao';
+import { PostData } from 'src/services/api/IApiService';
 
 type ConnectionStatus = {
     tumblr: boolean;
@@ -100,10 +101,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         setTagsText(text);
         if (successfulPlatforms.length > 0)
             setSuccessfulPlatforms([]);
-        
+
         if (debounceTimeout.current)
             clearTimeout(debounceTimeout.current);
-        
+
         debounceTimeout.current = setTimeout(() => {
             fetchTagSuggestions(text);
         }, 500);
@@ -130,7 +131,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
     const handleAdjustSingleImage = async (index: number) => {
         const originalUri = selectedImages[index];
-        if (!originalUri || isAdjustingImages) 
+        if (!originalUri || isAdjustingImages)
             return;
 
         setIsAdjustingImages(true);
@@ -144,9 +145,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         setIsAdjustingImages(false);
     };
 
-    
+
     const handleAdjustAllImages = async () => {
-        if (isAdjustingImages) 
+        if (isAdjustingImages)
             return;
 
         Alert.alert(
@@ -179,7 +180,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             Alert.alert('Rascunho Vazio', 'Escreva algo ou adicione uma imagem para salvar.');
             return;
         }
-        
+
         try {
             // 3. Substitua a lógica do banco pela chamada ao DAO
             await PostDao.create({
@@ -223,7 +224,29 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                 return;
             }
 
-            const postPromises = platformsToTry.map(platform => {
+            const originalPostData: PostData = {
+                text: postText,
+                images: selectedImages,
+                tags: tagsText.split(',').map(t => t.trim()).filter(t => t),
+            };
+
+            const needsTumblrFirst = connectedPlatforms.includes(TUMBLR) && connectedPlatforms.includes(THREADS);
+            const successfulPlatforms: PlatformType[] = [];
+
+            if (needsTumblrFirst) {
+                console.info('[Post Flow] Iniciando postagem no Tumblr para obter URLs...');
+                try {
+                    const tumblrService = ApiServiceFactory(TUMBLR);
+                    const resultPost = await tumblrService.post(originalPostData);
+                    if (resultPost.imagesUrl && resultPost.imagesUrl.length > 0)
+                        originalPostData.imagesUrl = resultPost.imagesUrl;
+                    
+                    successfulPlatforms.push(TUMBLR);
+                } catch (error) {
+                }
+            }
+
+            const postPromises = platformsToTry.filter(p => !successfulPlatforms.includes(p as PlatformType)).map(platform => {
                 const service = ApiServiceFactory(platform as PlatformType);
                 return service.post({
                     text: postText,
@@ -239,7 +262,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
             results.forEach((result, index) => {
                 const platform = platformsToTry[index];
-                if (result.status === 'fulfilled' && result.value === true)
+                if (result.status === 'fulfilled' && result.value.sucess === true)
                     newlySuccessful.push(platform as PlatformType);
                 else {
                     failedPlatforms.push(platform as PlatformType);
@@ -252,9 +275,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
             if (failedPlatforms.length === 0) {
                 Alert.alert('Sucesso!', `Postagem enviada para: ${allSuccessful.join(', ')}`);
-
                 await PostDao.create({ content: postText, images: selectedImages, status: 'posted', platforms: allSuccessful.join(', '), tags: tagsText, });
-
                 handleCancel();
             } else
                 Alert.alert(
@@ -374,7 +395,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                         onPress={handleSaveDraft}
                         style={[styles.actionButton, styles.draftButton]}
                     />
-                    
+
                     <Button
                         title={'Postar'}
                         onPress={handlePost}
