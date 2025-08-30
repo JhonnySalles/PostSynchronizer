@@ -1,41 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, Alert, } from 'react-native';
 import { styles } from './styles';
 import LoginCard from '../../components/LoginCard';
-import { ApiServiceFactory } from '../../services/api';
-import { PlatformType } from '../../constants/platforms';
+import AuthTokenDao, { Credentials } from 'src/dao/AuthTokenDao';
+import { ApiServiceFactory } from 'src/services/api';
+import { THREADS, TUMBLR, X } from 'src/constants/platforms';
 
 const SettingsScreen = () => {
-    const handleLogin = async (
-        platform: PlatformType,
-        username: string,
-        password_or_token: string,
-    ) => {
-        Alert.alert(
-            'Conectando...',
-            `Tentando autenticar com ${platform} para o usuário ${username}.`,
-        );
+    const [isTesting, setIsTesting] = useState(false);
 
+    const handleSave = async (credentials: Credentials) => {
+        Alert.alert('Salvando...', 'Gravando credenciais do Tumblr.');
         try {
-            const service = ApiServiceFactory(platform);
-
-            const success = await service.login(username, password_or_token);
-
-            // 4. Trata o resultado
-            if (success)
-                Alert.alert(
-                    'Sucesso!',
-                    `A conta do ${platform} para ${username} foi conectada e salva.`,
-                );
-            else 
-                throw new Error('Ocorreu um erro durante o login.');
-            
+            await AuthTokenDao.saveCredentials('tumblr', credentials);
+            Alert.alert('Sucesso!', 'Credenciais do Tumblr foram salvas no banco de dados.');
         } catch (error) {
-            console.error(`Erro ao conectar com ${platform}:`, error);
-            Alert.alert(
-                'Erro',
-                `Não foi possível conectar a conta do ${platform}. Tente novamente.`,
-            );
+            Alert.alert('Erro', 'Não foi possível salvar as credenciais.');
+            console.error(error as Error, { message: 'Falha ao salvar creds do Tumblr' });
+        }
+    };
+
+    const handleTestCredentials = async (credentials: Credentials) => {
+        setIsTesting(true);
+        try {
+            const tumblrService = ApiServiceFactory('tumblr');
+            const isValid = await tumblrService.test(credentials);
+
+            if (isValid)
+                Alert.alert("Sucesso!", "As credenciais são válidas e a conexão com o Tumblr foi bem-sucedida.");
+            else 
+                Alert.alert("Falha na Conexão", "As credenciais são inválidas. Verifique os dados e tente novamente.");
+        } catch (error) {
+            console.error(error as Error, { message: "Erro ao testar credenciais do Tumblr" });
+            Alert.alert("Erro", "Ocorreu um erro inesperado ao tentar testar as credenciais.");
+        } finally {
+            setIsTesting(false);
         }
     };
 
@@ -45,27 +44,29 @@ const SettingsScreen = () => {
                 <Text style={styles.screenTitle}>Conectar Contas</Text>
 
                 <LoginCard
-                    platformName="Tumblr"
+                    platform={TUMBLR}
                     iconName="logo-tumblr"
                     iconColor="#35465c"
-                    onLogin={(user, pass) => handleLogin('tumblr', user, pass)}
+                    onSave={(credentials: Credentials) => handleSave(credentials)}
+                    onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: '#35465c' }}
                 />
 
                 <LoginCard
-                    platformName="X (Twitter)"
+                    platform={X}
                     iconName="logo-twitter"
                     iconColor="#1DA1F2"
-                    onLogin={(user, pass) => handleLogin('x', user, pass)}
+                    onSave={(credentials: Credentials) => handleSave(credentials)}
+                    onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: '#1DA1F2' }}
                 />
 
                 <LoginCard
-                    platformName="Threads"
-                    // O Ionicons pode não ter um ícone do Threads ainda, usamos um genérico
+                    platform={THREADS}
                     iconName="at-sharp"
                     iconColor="#000000"
-                    onLogin={(user, pass) => handleLogin('threads', user, pass)}
+                    onSave={(credentials: Credentials) => handleSave(credentials)}
+                    onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: '#000000' }}
                 />
             </ScrollView>

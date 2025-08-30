@@ -1,4 +1,4 @@
-import { PlatformType, X, TUMBLR, THREADS } from '../../constants/platforms';
+import { PlatformType, X, TUMBLR, THREADS, UNKNOW } from '../../constants/platforms';
 import { IApiService } from './IApiService';
 import { XService } from './XService';
 import { TumblrService } from './TumblrService';
@@ -12,8 +12,39 @@ export const ApiServiceFactory = (platform: PlatformType): IApiService => {
             return new TumblrService();
         case THREADS:
             return new ThreadsService();
+        case UNKNOW:
+            throw new Error(`Serviço para a plataforma "${platform}" não foi implementado.`);
         default:
             const exhaustiveCheck: never = platform;
             throw new Error(`Serviço para a plataforma "${exhaustiveCheck}" não foi implementado.`);
     }
 };
+
+
+export async function refreshAllTokens(): Promise<void> {
+    console.info('[App Startup] Iniciando verificação de tokens para todos os serviços...');
+
+    const allPlatforms: PlatformType[] = [THREADS, X, TUMBLR];
+
+    const refreshPromises = allPlatforms.map(platform => {
+        try {
+            const service = ApiServiceFactory(platform);
+            return service.validateAndRefreshToken();
+        } catch (error) {
+            console.error(error as Error, { message: `Falha ao criar serviço para a plataforma ${platform}` });
+            return Promise.resolve();
+        }
+    });
+
+    const results = await Promise.allSettled(refreshPromises);
+
+    results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+            console.error(new Error(`Falha na verificação de token para a plataforma: ${allPlatforms[index]}`), {
+                reason: result.reason,
+            });
+        }
+    });
+
+    console.info('[App Startup] Processo de verificação de tokens concluído.');
+}
