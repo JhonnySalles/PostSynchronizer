@@ -1,4 +1,4 @@
-import { SQLExecutionError, SQLiteDatabase } from 'react-native-sqlite-storage';
+import { SQLiteDatabase } from 'react-native-sqlite-storage';
 
 
 const MIGRATIONS = [
@@ -16,9 +16,10 @@ const MIGRATIONS = [
     `CREATE TABLE IF NOT EXISTS posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         content TEXT,
-        images TEXT, -- Armazenaremos como uma string JSON
+        images TEXT,
         status TEXT NOT NULL, -- 'draft' ou 'posted'
-        platforms TEXT, -- 'x,tumblr', etc.
+        tags TEXT;
+        platforms TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`,
 ];
@@ -26,11 +27,7 @@ const MIGRATIONS = [
 
 export const runMigrations = async (db: SQLiteDatabase): Promise<void> => {
     try {
-        await db.executeSql(
-            `CREATE TABLE IF NOT EXISTS db_version (
-        version INTEGER PRIMARY KEY NOT NULL
-      );`,
-        );
+        await db.executeSql(`CREATE TABLE IF NOT EXISTS db_version (version INTEGER PRIMARY KEY NOT NULL);`,);
 
         let currentVersion = 0;
         const versionResult = await db.executeSql('SELECT version FROM db_version LIMIT 1;',);
@@ -55,7 +52,7 @@ export const runMigrations = async (db: SQLiteDatabase): Promise<void> => {
         } else
             console.log('O banco de dados já está atualizado.');
     } catch (error) {
-        const sqlError = error as SQLExecutionError;
+        const sqlError = error as Error;
         console.error('Erro ao executar migrações:', sqlError.message);
         throw error;
     }

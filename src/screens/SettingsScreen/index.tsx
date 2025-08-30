@@ -2,12 +2,12 @@ import React from 'react';
 import { SafeAreaView, ScrollView, Text, Alert, } from 'react-native';
 import { styles } from './styles';
 import LoginCard from '../../components/LoginCard';
-import { getDBConnection } from '../../database';
-import api from '../../services/api'; // Usaremos para simular a chamada
+import { ApiServiceFactory } from '../../services/api';
+import { PlatformType } from '../../constants/platforms';
 
 const SettingsScreen = () => {
     const handleLogin = async (
-        platform: 'tumblr' | 'x' | 'threads',
+        platform: PlatformType,
         username: string,
         password_or_token: string,
     ) => {
@@ -17,33 +17,19 @@ const SettingsScreen = () => {
         );
 
         try {
-            // --- SIMULAÇÃO DE CHAMADA DE API ---
-            // Na vida real, você faria uma chamada para sua API ou usaria um SDK
-            // para autenticar o usuário e obter um token.
-            // Ex: const response = await api.post(`/auth/${platform}`, { username, password });
-            console.log(
-                `Simulando requisição para ${platform} com usuário: ${username}`,
-            );
+            const service = ApiServiceFactory(platform);
 
-            // Vamos criar um token falso para fins de demonstração
-            const fakeToken = `fake-token-${platform}-${Date.now()}`;
-            console.log(`Token falso gerado: ${fakeToken}`);
-            // --- FIM DA SIMULAÇÃO ---
+            const success = await service.login(username, password_or_token);
 
-            // Salvar o token no banco de dados
-            const db = await getDBConnection();
-            await db.executeSql(
-                // INSERT OR REPLACE irá inserir um novo registro ou atualizar um
-                // existente se a chave primária (platform) já existir.
-                'INSERT OR REPLACE INTO auth_tokens (platform, username, token) VALUES (?, ?, ?);',
-                [platform, username, fakeToken],
-            );
-
-            console.log(`Dados para ${platform} salvos no banco de dados.`);
-            Alert.alert(
-                'Sucesso!',
-                `A conta do ${platform} para ${username} foi conectada e salva.`,
-            );
+            // 4. Trata o resultado
+            if (success)
+                Alert.alert(
+                    'Sucesso!',
+                    `A conta do ${platform} para ${username} foi conectada e salva.`,
+                );
+            else 
+                throw new Error('Ocorreu um erro durante o login.');
+            
         } catch (error) {
             console.error(`Erro ao conectar com ${platform}:`, error);
             Alert.alert(

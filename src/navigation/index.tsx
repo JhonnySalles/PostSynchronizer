@@ -13,7 +13,7 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 const AppNavigator = () => {
     return (
         <Tab.Navigator
-            initialRouteName="Home" // Define a tela inicial
+            initialRouteName="Home"
             screenOptions={({ route }) => ({
                 headerShown: true,
                 tabBarActiveTintColor: 'tomato',
@@ -22,13 +22,12 @@ const AppNavigator = () => {
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName = '';
 
-                    if (route.name === 'Home') {
+                    if (route.name === 'Home')
                         iconName = focused ? 'create' : 'create-outline';
-                    } else if (route.name === 'History') { // Lógica do ícone para a nova tela
+                    else if (route.name === 'History')
                         iconName = focused ? 'time' : 'time-outline';
-                    } else if (route.name === 'Settings') {
+                    else if (route.name === 'Settings')
                         iconName = focused ? 'settings' : 'settings-outline';
-                    }
 
                     return <Icon name={iconName} size={size} color={color} />;
                 },
@@ -36,7 +35,7 @@ const AppNavigator = () => {
             <Tab.Screen
                 name="Home"
                 component={HomeScreen}
-                options={{ title: 'Postar' }} // Mudei o título para ser mais descritivo
+                options={{ title: 'Postar' }}
             />
             <Tab.Screen
                 name="History"
