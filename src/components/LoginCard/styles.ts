@@ -61,4 +61,12 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
     },
+    activityIndicatorContainer: {
+        position: 'absolute', 
+        right: 0,      
+        top: 0,       
+        backgroundColor: 'rgba(255,255,255,0.8)',
+        borderRadius: 50,
+        padding: 5,
+    },
 });

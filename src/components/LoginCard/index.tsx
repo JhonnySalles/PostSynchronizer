@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleProp, ViewStyle, TextStyle, Switch, } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, StyleProp, ViewStyle, TextStyle, Switch, ActivityIndicator, } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { styles } from './styles';
 import { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
@@ -23,6 +23,10 @@ interface LoginCardProps {
 const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting = false, isActive = false, onStatusChange }: LoginCardProps) => {
     const [creds, setCreds] = useState<Credentials>(credential);
 
+    useEffect(() => {
+        setCreds(credential);
+    }, [credential]);
+
     const handleInputChange = (field: keyof Credentials, value: string) => {
         setCreds(prev => ({ ...prev, [field]: value }));
     };
@@ -32,7 +36,7 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
             setCreds(prev => ({ ...prev, blogName: value, aditional: value }));
     };
 
-    const areCredsValid = () => Object.values(creds).every(val => val.trim() !== '');
+    const areCredsValid = () => Object.values(creds).find(val => val.trim() !== '');
 
     const handleSavePress = () => {
         if (areCredsValid())
@@ -54,6 +58,12 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
             <View style={styles.header}>
                 <Icon name={iconName} size={30} color={iconColor} />
                 <Text style={[styles.title, { color: iconColor }]}>{creds.platform}</Text>
+
+                {isTesting && (
+                <View style={styles.activityIndicatorContainer}>
+                    <ActivityIndicator size={30} color="#007bff" /> 
+                </View>
+                )}
             </View>
 
             <View style={styles.switchContainer}>
