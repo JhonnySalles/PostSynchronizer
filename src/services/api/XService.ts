@@ -39,7 +39,7 @@ export class XService implements IApiService {
             throw authError;
         }
 
-        if (!credentials.actived)
+        if (!credentials.active)
             return { sucess: false }
 
         try {

@@ -80,7 +80,7 @@ export class TumblrService implements IApiService {
             throw authError;
         }
 
-        if (!credentials.actived)
+        if (!credentials.active)
             return { sucess: false }
 
         const client = tumblr.createClient({

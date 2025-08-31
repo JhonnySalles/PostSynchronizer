@@ -8,6 +8,7 @@ export interface ColorsType {
     border: string;
     success: string;
     error: string;
+    inactive: string;
 }
 
 // Paleta para o modo claro
@@ -20,6 +21,7 @@ const lightColors: ColorsType = {
     border: '#dddddd',
     success: '#28a745',
     error: '#dc3545',
+    inactive: '#808080',
 };
 
 // Paleta para o modo escuro
@@ -32,6 +34,7 @@ const darkColors: ColorsType = {
     border: '#333333',
     success: '#28a745',
     error: '#dc3545',
+    inactive: '#808080',
 };
 
 export const palette = {
