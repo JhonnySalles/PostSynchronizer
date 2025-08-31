@@ -56,10 +56,10 @@ class AuthTokenDao {
     }
 
     /**
-    * Busca um objeto de credenciais complexas de uma plataforma.
-    * @param platform A plataforma.
-    * @returns O objeto de credenciais parseado ou null se não encontrado.
-    */
+     * Busca um objeto de credenciais complexas de uma plataforma.
+     * @param platform A plataforma.
+     * @returns O objeto de credenciais parseado ou null se não encontrado.
+     */
     public async getCredentialsForPlatform<T>(platform: PlatformType): Promise<T | null> {
         const db = await getDBConnection();
         try {
@@ -100,13 +100,28 @@ class AuthTokenDao {
             const results = await db.executeSql('SELECT platform FROM auth_tokens WHERE actived = 1');
             const platforms: PlatformType[] = [];
             results.forEach(result => {
-                for (let i = 0; i < result.rows.length; i++) {
+                for (let i = 0; i < result.rows.length; i++)
                     platforms.push(result.rows.item(i).platform);
-                }
             });
             return platforms;
         } catch (error) {
             console.error('Erro ao buscar plataformas ativas [DAO]:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Atualiza apenas o status 'active' de uma conexão.
+     * @param credentials Credenciais a ser autlizado o status.
+     */
+    public async updateActiveStatus(credentials: Credentials): Promise<void> {
+        const db = await getDBConnection();
+        try {
+            const activeValue = credentials.actived ? 1 : 0;
+            await db.executeSql('UPDATE auth_tokens SET actived = ? WHERE platform = ?', [activeValue, credentials.platform]);
+            console.info(`[DAO] Status da plataforma ${credentials.platform} atualizado para ${credentials.actived}`);
+        } catch (error) {
+            console.error(error as Error, { message: `Erro ao atualizar status para ${credentials.platform} [DAO]` });
             throw error;
         }
     }

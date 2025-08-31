@@ -48,4 +48,17 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
+    switchContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 10,
+        marginTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+    },
+    switchLabel: {
+        fontSize: 16,
+        color: '#333',
+    },
 });

@@ -1,7 +1,6 @@
 module.exports = {
     presets: ['module:metro-react-native-babel-preset'],
     plugins: [
-      // Adicione esta linha
       ['module:react-native-dotenv', {
         moduleName: '@env',
         path: '.env',
@@ -10,5 +9,14 @@ module.exports = {
         safe: false,
         allowUndefined: true,
       }],
+      ['module-resolver', {
+        root: ['./src'],
+        alias: {
+          'src': './src',
+        },
+      }],
+      ['@babel/plugin-proposal-class-properties', { 'loose': true }],
+      ['@babel/plugin-transform-private-methods', { 'loose': true }],
+      ['@babel/plugin-transform-private-property-in-object', { 'loose': true }],
     ],
   };

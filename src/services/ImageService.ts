@@ -1,6 +1,6 @@
 import { Image, Alert } from 'react-native';
 import ImageEditor from '@react-native-community/image-editor';
-import { getPixelColor } from 'react-native-pixel-color';
+//import { getPixelColor } from 'react-native-pixel-color';
 import RNFS from 'react-native-fs';
 
 const BLACK_THRESHOLD = 30; // Tolerância para o "preto" (0-255). Ajuda com JPEGs.
@@ -14,7 +14,10 @@ class ImageProcessingService {
      */
     public async processImage(imageUri: string): Promise<string> {
         try {
-            const { width, height } = await this.getImageSize(imageUri);
+            if (true)
+                return imageUri;
+
+            {/**const { width, height } = await this.getImageSize(imageUri);
             const verticalCenter = Math.floor(height / 2);
 
             let leftBound = 0;
@@ -55,7 +58,7 @@ class ImageProcessingService {
             const newPath = await this.saveImageWithCorrectedName(croppedImageUri, imageUri);
 
             console.log('Imagem corrigida e salva em:', newPath);
-            return newPath;
+            return newPath;*/}
 
         } catch (error) {
             console.error('Erro no processamento automático da imagem:', error);
