@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleProp, ViewStyle, TextStyle, } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleProp, ViewStyle, TextStyle, Switch, } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { styles } from './styles';
 import { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import Button from '../Button';
 import { Alert } from 'react-native';
-import { PlatformType, TUMBLR, UNKNOW } from 'src/constants/platforms';
+import { TUMBLR } from 'src/constants/platforms';
 
 interface LoginCardProps {
-    platform: PlatformType;
+    credential: Credentials;
     iconName: string;
     iconColor: string;
     onSave: (credentials: Credentials) => void;
@@ -16,19 +16,19 @@ interface LoginCardProps {
     isTesting?: boolean;
     buttonStyle?: StyleProp<ViewStyle>;
     buttonTextStyle?: StyleProp<TextStyle>;
+    isActive?: boolean;
+    onStatusChange?: (credentials: Credentials) => void;
 }
 
-const LoginCard = ({ platform, iconName, iconColor, onSave, onTest, isTesting = false }: LoginCardProps) => {
-    const [creds, setCreds] = useState<Credentials>({
-       platform: platform, consumerKey: '', consumerSecret: '', token: '', tokenSecret: '', aditional: '', actived: false,
-    });
+const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting = false, isActive = false, onStatusChange }: LoginCardProps) => {
+    const [creds, setCreds] = useState<Credentials>(credential);
 
     const handleInputChange = (field: keyof Credentials, value: string) => {
         setCreds(prev => ({ ...prev, [field]: value }));
     };
 
     const handleBlogNameChange = (value: string) => {
-        if (creds.platform === TUMBLR) {}
+        if (creds.platform === TUMBLR) { }
             setCreds(prev => ({ ...prev, blogName: value, aditional: value }));
     };
 
@@ -53,7 +53,24 @@ const LoginCard = ({ platform, iconName, iconColor, onSave, onTest, isTesting = 
         <View style={styles.cardContainer}>
             <View style={styles.header}>
                 <Icon name={iconName} size={30} color={iconColor} />
-                <Text style={[styles.title, { color: iconColor }]}>{platform}</Text>
+                <Text style={[styles.title, { color: iconColor }]}>{creds.platform}</Text>
+            </View>
+
+            <View style={styles.switchContainer}>
+                <Text style={styles.switchLabel}>Ativo para postagem</Text>
+                <Switch
+                    trackColor={{ false: '#767577', true: '#81b0ff' }}
+                    thumbColor={isActive ? '#f5dd4b' : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={() => {
+                            const credenciais = { ...credential, actived: !credential.actived };
+                            setCreds(credenciais);
+                            if (onStatusChange)
+                                onStatusChange(credenciais);
+                        }
+                    }
+                    value={isActive}
+                />
             </View>
 
             {creds.platform === TUMBLR && <TextInput style={styles.input} placeholder="Blog Name" value={(creds as TumblrCredentials).blogName} onChangeText={v => handleBlogNameChange(v)} />}

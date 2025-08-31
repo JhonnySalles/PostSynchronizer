@@ -170,7 +170,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
     const handleCancel = () => {
         setPostText('');
-        setTagsText('');
         setSelectedImages([]);
         setSuccessfulPlatforms([]);
     };
@@ -214,9 +213,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
         try {
             setIsPosting(true);
-            const platformsToTry = connectedPlatforms.filter(
-                p => !successfulPlatforms.includes(p as PlatformType)
-            );
+            const platformsToTry = connectedPlatforms.filter(p => !successfulPlatforms.includes(p as PlatformType));
 
             if (platformsToTry.length === 0) {
                 Alert.alert("Tudo Certo!", "Esta postagem já foi enviada para todas as suas contas conectadas.");

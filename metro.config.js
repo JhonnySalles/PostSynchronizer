@@ -1,8 +1,9 @@
-const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 const fs = require('fs');
 const path = require('path');
 const exclusionList = require('metro-config/src/defaults/exclusionList');
+const nodeLibs = require('node-libs-react-native');
 
 const {
   withSentryConfig
@@ -24,6 +25,12 @@ const rnwPath = fs.realpathSync(
 const config = {
   //
   resolver: {
+    extraNodeModules: {
+        ...nodeLibs,
+        ...require('node-libs-react-native'),
+        // Sobrescreve especificamente o 'fs' para apontar para o nosso mock
+        fs: path.resolve(__dirname, 'src/mocks/fs.js'),
+    },
     blockList: exclusionList([
       // This stops "react-native run-windows" from causing the metro server to crash if its already running
       new RegExp(

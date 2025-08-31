@@ -1,0 +1,1 @@
+module.exports = {}; // Um módulo vazio é o suficiente para o bundler não falhar.

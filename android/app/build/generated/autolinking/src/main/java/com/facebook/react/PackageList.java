@@ -10,6 +10,20 @@ import com.facebook.react.shell.MainReactPackage;
 import java.util.Arrays;
 import java.util.ArrayList;
 
+// @react-native-community/image-editor
+import com.reactnativecommunity.imageeditor.ImageEditorPackage;
+// @react-native-picker/picker
+import com.reactnativecommunity.picker.RNCPickerPackage;
+// @sentry/react-native
+import io.sentry.react.RNSentryPackage;
+// react-native-fs
+import com.rnfs.RNFSPackage;
+// react-native-get-random-values
+import org.linusu.RNGetRandomValuesPackage;
+// react-native-image-picker
+import com.imagepicker.ImagePickerPackage;
+// react-native-inappbrowser-reborn
+import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
 // react-native-safe-area-context
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 // react-native-screens
@@ -63,6 +77,13 @@ public class PackageList {
   public ArrayList<ReactPackage> getPackages() {
     return new ArrayList<>(Arrays.<ReactPackage>asList(
       new MainReactPackage(mConfig),
+      new ImageEditorPackage(),
+      new RNCPickerPackage(),
+      new RNSentryPackage(),
+      new RNFSPackage(),
+      new RNGetRandomValuesPackage(),
+      new ImagePickerPackage(),
+      new RNInAppBrowserPackage(),
       new SafeAreaContextPackage(),
       new RNScreensPackage(),
       new SQLitePluginPackage(),
