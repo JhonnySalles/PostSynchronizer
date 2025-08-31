@@ -1,14 +1,25 @@
-import tumblr from 'tumblr.js';
+import tumblr from 'tumblr.rn.js';
 import { IApiService, PostData, ResultPost } from './IApiService';
 import AuthTokenDao, { Credentials, TumblrCredentials } from '../../dao/AuthTokenDao';
 import { PlatformType, TUMBLR } from '../../constants/platforms';
-import { clientService } from '../clientService';
 import RNFS from 'react-native-fs';
 
 export interface TestResult {
     success: boolean;
     blogs?: { name: string; title: string }[];
     error: String | null;
+}
+
+interface TumblrBlog {
+  name: string;
+  title: string;
+}
+
+interface TumblrUserInfoResponse {
+  user: {
+    blogs: TumblrBlog[];
+    name: string;
+  };
 }
 
 export class TumblrService implements IApiService {
@@ -23,14 +34,14 @@ export class TumblrService implements IApiService {
 
         return new Promise((resolve) => {
             try {
-                const testClient = tumblr.createClient({
+                const testClient = new tumblr.createClient({
                     consumer_key: tumblrCreds.consumerKey,
                     consumer_secret: tumblrCreds.consumerSecret,
                     token: tumblrCreds.token,
                     token_secret: tumblrCreds.tokenSecret,
                 });
 
-                testClient.userInfo((err, resp) => {
+                testClient.userInfo((err: Error | null, resp: TumblrUserInfoResponse) => {
                     if (err || !resp?.user?.blogs) {
                         console.warn(`[${this.platform}] Não foi possível obter informações do usuário:`, err?.message);
                         return resolve({ success: false, error: err?.message || "" });
@@ -41,7 +52,7 @@ export class TumblrService implements IApiService {
                         title: blog.title,
                     }));
 
-                    console.info(`[${this.platform}] Informações obtidas com sucesso! Blogs encontrados: ${blogs.length}`);
+                    console.info(`[${this.platform}] Informações obtidas com sucesso! Blogs encontrados: ${blogs.length} -- Blogs: ${blogs.map(b => b.name).join(", ")}`);
                     resolve({ success: true, blogs, error: null });
                 });
             } catch (error) {
@@ -84,7 +95,7 @@ export class TumblrService implements IApiService {
         if (!credentials.active)
             return { sucess: false }
 
-        const client = tumblr.createClient({
+        const client = new tumblr.createClient({
             consumer_key: credentials.consumerKey,
             consumer_secret: credentials.consumerSecret,
             token: credentials.token,

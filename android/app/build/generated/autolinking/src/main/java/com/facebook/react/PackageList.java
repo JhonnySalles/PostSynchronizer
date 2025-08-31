@@ -18,8 +18,6 @@ import com.reactnativecommunity.picker.RNCPickerPackage;
 import io.sentry.react.RNSentryPackage;
 // react-native-fs
 import com.rnfs.RNFSPackage;
-// react-native-get-random-values
-import org.linusu.RNGetRandomValuesPackage;
 // react-native-image-picker
 import com.imagepicker.ImagePickerPackage;
 // react-native-inappbrowser-reborn
@@ -81,7 +79,6 @@ public class PackageList {
       new RNCPickerPackage(),
       new RNSentryPackage(),
       new RNFSPackage(),
-      new RNGetRandomValuesPackage(),
       new ImagePickerPackage(),
       new RNInAppBrowserPackage(),
       new SafeAreaContextPackage(),

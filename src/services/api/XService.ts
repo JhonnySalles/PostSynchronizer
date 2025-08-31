@@ -1,9 +1,7 @@
-import { SendTweetV2Params, TwitterApi } from 'twitter-api-v2';
+//import { SendTweetV2Params, TwitterApi } from 'twitter-api-v2';
 import { IApiService, PostData, ResultPost } from './IApiService';
 import AuthTokenDao, { Credentials } from '../../dao/AuthTokenDao';
 import { PlatformType, X } from '../../constants/platforms';
-import { clientService } from '../clientService';
-import RNFS from 'react-native-fs';
 
 export class XService implements IApiService {
     private platform = X;
@@ -13,7 +11,7 @@ export class XService implements IApiService {
     async test(credentials: Credentials): Promise<boolean> {
         console.info(`[${this.platform}] Testando credenciais...`);
         try {
-            const testClient = new TwitterApi({
+            /*const testClient = new TwitterApi({
                 appKey: credentials.consumerKey,
                 appSecret: credentials.consumerSecret,
                 accessToken: credentials.token,
@@ -21,7 +19,7 @@ export class XService implements IApiService {
             });
 
             const { data: user } = await testClient.v2.me();
-            console.info(`[${this.platform}] Teste bem-sucedido para o usuário: @${user.username}`);
+            console.info(`[${this.platform}] Teste bem-sucedido para o usuário: @${user.username}`);*/
             return true;
         } catch (error) {
             console.error(error as Error, { message: `[${this.platform}] Teste de credenciais falhou` });
@@ -43,7 +41,7 @@ export class XService implements IApiService {
             return { sucess: false }
 
         try {
-            const client = new TwitterApi({
+            /*const client = new TwitterApi({
                 appKey: credentials.consumerKey,
                 appSecret: credentials.consumerSecret,
                 accessToken: credentials.token,
@@ -68,7 +66,7 @@ export class XService implements IApiService {
             }
 
             const { data: createdTweet } = await client.v2.tweet(tweetPayload as SendTweetV2Params);
-            console.info(`[${this.platform}] Postagem bem-sucedida! Tweet ID: ${createdTweet.id}`);
+            console.info(`[${this.platform}] Postagem bem-sucedida! Tweet ID: ${createdTweet.id}`);*/
             return { sucess: true };
         } catch (error) {
             console.error(error as Error, { message: `[${this.platform}] Falha na postagem` });
