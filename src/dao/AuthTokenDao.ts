@@ -23,34 +23,34 @@ class AuthTokenDao {
      * @param platform A plataforma.
      * @param credentials O objeto de credenciais a ser salvo como JSON.
      */
-    public async saveCredentials(platform: PlatformType, credentials: Record<string, any>): Promise<void> {
+    public async saveCredentials(credentials: Record<string, any>): Promise<void> {
         const db = await getDBConnection();
 
         try {
             await db.executeSql('BEGIN TRANSACTION;');
 
-            const results = await db.executeSql('SELECT id FROM auth_tokens WHERE platform = ?', [platform]);
+            const results = await db.executeSql('SELECT platform FROM auth_tokens WHERE platform = ?', [credentials.platform]);
 
             if (results[0].rows.length > 0) {
-                console.log(`Atualizando credenciais para ${platform} [DAO]`);
+                console.log(`Atualizando credenciais para ${credentials.platform} [DAO]`);
                 await db.executeSql(
-                    'UPDATE auth_tokens SET consumerKey = ?, consumer_secret = ?, token = ?, token_secret = ?, aditional = ?, active = ?, updated_at = ? WHERE platform = ?',
-                    [credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.active ? 1 : 0, new Date().toISOString(), platform]
+                    'UPDATE auth_tokens SET consumer_key = ?, consumer_secret = ?, token = ?, token_secret = ?, aditional = ?, active = ?, updated_at = ? WHERE platform = ?',
+                    [credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.active ? 1 : 0, new Date().toISOString(), credentials.platform]
                 );
             } else {
-                console.log(`Inserindo novas credenciais para ${platform} [DAO]`);
+                console.log(`Inserindo novas credenciais para ${credentials.platform} [DAO]`);
                 const createdAt = new Date().toISOString();
                 await db.executeSql(
                     'INSERT INTO auth_tokens (platform, consumer_key, consumer_secret, token, token_secret, aditional, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                    [platform, credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.active ? 1 : 0, createdAt, createdAt]
+                    [credentials.platform, credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.active ? 1 : 0, createdAt, createdAt]
                 );
             }
 
             await db.executeSql('COMMIT;');
-            console.log(`Credenciais para ${platform} salvas com sucesso [DAO]`);
+            console.log(`Credenciais para ${credentials.platform} salvas com sucesso [DAO]`);
         } catch (error) {
             await db.executeSql('ROLLBACK;');
-            console.error(`Erro ao salvar credenciais para ${platform} [DAO]:`, error);
+            console.error(`Erro ao salvar credenciais para ${credentials.platform} [DAO]:`, error);
             throw error;
         }
     }
@@ -66,7 +66,7 @@ class AuthTokenDao {
             let credential: T | null = null
             const results = await db.executeSql('SELECT platform, consumer_key, consumer_secret, token, token_secret, aditional, active FROM auth_tokens WHERE platform = ?', [platform]);
             if (results[0].rows.length > 0) {
-                const dados = results[0].rows.item(0).credentials;
+                const dados = results[0].rows.item(0);
                 if (dados) {
                     credential = {
                         platform: dados.platform,
@@ -86,6 +86,42 @@ class AuthTokenDao {
             return credential;
         } catch (error) {
             console.error(`Erro ao buscar credenciais para ${platform} [DAO]:`, error);
+            throw error;
+        }
+    }
+
+    /**
+     * Retorna todas as credenciais salvas no banco.
+     * @returns Uma lista de credenciais
+     */
+    public async getAllCredentials(): Promise<Credentials[]> {
+        const db = await getDBConnection();
+        try {
+            const results = await db.executeSql( 'SELECT platform, consumer_key, consumer_secret, token, token_secret, aditional, active FROM auth_tokens WHERE platform IS NOT NULL' );
+
+            const allCredentials: Credentials[] = [];
+            results.forEach(result => {
+                for (let i = 0; i < result.rows.length; i++) {
+                    const dados = result.rows.item(i);
+                    const credential = {
+                        platform: dados.platform,
+                        consumerKey: dados.consumer_key,
+                        consumerSecret: dados.consumer_secret,
+                        token: dados.token,
+                        tokenSecret: dados.token_secret,
+                        active: dados.active,
+                        aditional: dados.aditional
+                    }
+
+                    if (dados.platform === TUMBLR)
+                        (credential as TumblrCredentials).blogName = dados.aditional;
+
+                    allCredentials.push(credential);
+                }
+            });
+            return allCredentials;
+        } catch (error) {
+            console.error(error as Error, { message: 'Erro ao buscar todas as credenciais [DAO]' });
             throw error;
         }
     }

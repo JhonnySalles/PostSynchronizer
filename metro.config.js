@@ -30,6 +30,8 @@ const config = {
         ...require('node-libs-react-native'),
         // Sobrescreve especificamente o 'fs' para apontar para o nosso mock
         fs: path.resolve(__dirname, 'src/mocks/fs.js'),
+        // Força o Metro a usar o polyfill correto e completo para 'url'
+        url: path.resolve(__dirname, 'node_modules/react-native-url-polyfill/'),
     },
     blockList: exclusionList([
       // This stops "react-native run-windows" from causing the metro server to crash if its already running

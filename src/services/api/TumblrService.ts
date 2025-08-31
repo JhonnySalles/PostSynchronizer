@@ -17,7 +17,7 @@ export class TumblrService implements IApiService {
     constructor() { }
 
     private async getBlogs(credentials: Credentials): Promise<TestResult> {
-        console.info(`[${this.platform}] Testando credenciais...`);
+        console.info(`[${this.platform}] Obtendo informações de blogs...`);
 
         const tumblrCreds = credentials as TumblrCredentials;
 
@@ -63,6 +63,7 @@ export class TumblrService implements IApiService {
                     console.info(`[${this.platform}] Teste de credenciais bem-sucedido para a plataforma: ${this.platform}`);
                 else
                     console.warn(`[${this.platform}] Teste de credenciais falhou:`, blogs.error);
+                resolve(blogs.success);
             } catch (error) {
                 console.error(error as Error, { message: `[${this.platform}] Erro inesperado durante o teste de credenciais` });
                 resolve(false);
