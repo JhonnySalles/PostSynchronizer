@@ -365,6 +365,60 @@
         },
         "windows": null
       }
+    },
+    "react-native-webview": {
+      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview",
+      "name": "react-native-webview",
+      "platforms": {
+        "ios": {
+          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview\\react-native-webview.podspec",
+          "version": "13.16.0",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview\\android",
+          "packageImportPath": "import com.reactnativecommunity.webview.RNCWebViewPackage;",
+          "packageInstance": "new RNCWebViewPackage()",
+          "buildTypes": [],
+          "libraryName": "RNCWebViewSpec",
+          "componentDescriptors": [
+            "RNCWebViewComponentDescriptor"
+          ],
+          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-webview/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": {
+          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview",
+          "projects": [
+            {
+              "projectFile": "ReactNativeWebView\\ReactNativeWebView.vcxproj",
+              "directDependency": true,
+              "projectName": "ReactNativeWebView",
+              "projectLang": "cpp",
+              "projectGuid": "{00AA3765-C6A0-4713-B3F9-BFE47B9C83F5}",
+              "cppHeaders": [
+                "winrt/ReactNativeWebView.h"
+              ],
+              "cppPackageProviders": [
+                "ReactNativeWebView::ReactPackageProvider"
+              ],
+              "csNamespaces": [
+                "ReactNativeWebView"
+              ],
+              "csPackageProviders": [
+                "ReactNativeWebView.ReactPackageProvider"
+              ]
+            }
+          ],
+          "solutionFile": "ReactNativeWebView.sln",
+          "nugetPackages": [],
+          "sourceDir": "windows"
+        }
+      }
     }
   },
   "commands": [

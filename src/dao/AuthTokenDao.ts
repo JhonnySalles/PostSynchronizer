@@ -14,6 +14,13 @@ export interface Credentials {
 export interface TumblrCredentials extends Credentials {
     platform: typeof TUMBLR;
     blogName: string;
+    blogs: TumblrBlogs[];
+}
+
+export interface TumblrBlogs {
+    name: string;
+    title: string;
+    selected: boolean;
 }
 
 export type AnyCredentials = TumblrCredentials | Credentials;
@@ -23,34 +30,36 @@ class AuthTokenDao {
      * @param platform A plataforma.
      * @param credentials O objeto de credenciais a ser salvo como JSON.
      */
-    public async saveCredentials(credentials: Record<string, any>): Promise<void> {
+    public async saveCredentials(credential: Record<string, any>): Promise<void> {
         const db = await getDBConnection();
 
         try {
             await db.executeSql('BEGIN TRANSACTION;');
 
-            const results = await db.executeSql('SELECT platform FROM auth_tokens WHERE platform = ?', [credentials.platform]);
+            const results = await db.executeSql('SELECT platform FROM auth_tokens WHERE platform = ?', [credential.platform]);
+            if (credential.platform === TUMBLR)
+                credential.aditional = JSON.stringify((credential as TumblrCredentials).blogs);
 
             if (results[0].rows.length > 0) {
-                console.log(`Atualizando credenciais para ${credentials.platform} [DAO]`);
+                console.log(`Atualizando credenciais para ${credential.platform} [DAO]`);
                 await db.executeSql(
                     'UPDATE auth_tokens SET consumer_key = ?, consumer_secret = ?, token = ?, token_secret = ?, aditional = ?, active = ?, updated_at = ? WHERE platform = ?',
-                    [credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.active ? 1 : 0, new Date().toISOString(), credentials.platform]
+                    [credential.consumerKey, credential.consumerSecret, credential.token, credential.tokenSecret, credential.aditional, credential.active ? 1 : 0, new Date().toISOString(), credential.platform]
                 );
             } else {
-                console.log(`Inserindo novas credenciais para ${credentials.platform} [DAO]`);
+                console.log(`Inserindo novas credenciais para ${credential.platform} [DAO]`);
                 const createdAt = new Date().toISOString();
                 await db.executeSql(
                     'INSERT INTO auth_tokens (platform, consumer_key, consumer_secret, token, token_secret, aditional, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                    [credentials.platform, credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.active ? 1 : 0, createdAt, createdAt]
+                    [credential.platform, credential.consumerKey, credential.consumerSecret, credential.token, credential.tokenSecret, credential.aditional, credential.active ? 1 : 0, createdAt, createdAt]
                 );
             }
 
             await db.executeSql('COMMIT;');
-            console.log(`Credenciais para ${credentials.platform} salvas com sucesso [DAO]`);
+            console.log(`Credenciais para ${credential.platform} salvas com sucesso [DAO]`);
         } catch (error) {
             await db.executeSql('ROLLBACK;');
-            console.error(`Erro ao salvar credenciais para ${credentials.platform} [DAO]:`, error);
+            console.error(`Erro ao salvar credenciais para ${credential.platform} [DAO]:`, error);
             throw error;
         }
     }
@@ -78,8 +87,13 @@ class AuthTokenDao {
                         aditional: dados.aditional
                     } as T;
 
-                    if (platform === TUMBLR)
-                        (credential as TumblrCredentials).blogName = dados.aditional;
+                    if (platform === TUMBLR) {
+                        const blogs = JSON.parse(dados.aditional || '[]')
+                        if (blogs && blogs.length > 0) {
+                            (credential as TumblrCredentials).blogName = blogs.find((b : TumblrBlogs) => b.selected)?.name || "";
+                            (credential as TumblrCredentials).blogs = blogs;
+                        }
+                    }
                 }
             }
 
@@ -97,7 +111,7 @@ class AuthTokenDao {
     public async getAllCredentials(): Promise<Credentials[]> {
         const db = await getDBConnection();
         try {
-            const results = await db.executeSql( 'SELECT platform, consumer_key, consumer_secret, token, token_secret, aditional, active FROM auth_tokens WHERE platform IS NOT NULL' );
+            const results = await db.executeSql('SELECT platform, consumer_key, consumer_secret, token, token_secret, aditional, active FROM auth_tokens WHERE platform IS NOT NULL');
 
             const allCredentials: Credentials[] = [];
             results.forEach(result => {
@@ -113,9 +127,13 @@ class AuthTokenDao {
                         aditional: dados.aditional
                     }
 
-                    if (dados.platform === TUMBLR)
-                        (credential as TumblrCredentials).blogName = dados.aditional;
-
+                    if (dados.platform === TUMBLR) {
+                        const blogs = JSON.parse(dados.aditional || '[]')
+                        if (blogs && blogs.length > 0) {
+                            (credential as TumblrCredentials).blogName = blogs.find((b : TumblrBlogs) => b.selected)?.name || "";
+                            (credential as TumblrCredentials).blogs = blogs;
+                        }
+                    }
                     allCredentials.push(credential);
                 }
             });

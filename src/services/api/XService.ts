@@ -1,4 +1,4 @@
-//import { SendTweetV2Params, TwitterApi } from 'twitter-api-v2';
+import twitter from 'react-native-simple-twitter';
 import { IApiService, PostData, ResultPost } from './IApiService';
 import AuthTokenDao, { Credentials } from '../../dao/AuthTokenDao';
 import { PlatformType, X } from '../../constants/platforms';
@@ -11,16 +11,17 @@ export class XService implements IApiService {
     async test(credentials: Credentials): Promise<boolean> {
         console.info(`[${this.platform}] Testando credenciais...`);
         try {
-            /*const testClient = new TwitterApi({
-                appKey: credentials.consumerKey,
-                appSecret: credentials.consumerSecret,
-                accessToken: credentials.token,
-                accessSecret: credentials.tokenSecret,
-            });
+            twitter.setConsumerKey(credentials.consumerKey, credentials.consumerSecret);
+            //twitter.setAccessToken(credentials.token, credentials.tokenSecret);
 
-            const { data: user } = await testClient.v2.me();
-            console.info(`[${this.platform}] Teste bem-sucedido para o usuário: @${user.username}`);*/
-            return true;
+            const response = await twitter.get("users/show.json?screen_name=twitterdev");
+
+            if (response && response.screen_name)
+                console.info(`[${this.platform}] Teste bem-sucedido para o usuário: @${response.screen_name}`);
+            else
+                console.info(`[${this.platform}] Não foi possível autenticar com as credenciais informada.`, response);
+
+            return response && response.screen_name;
         } catch (error) {
             console.error(error as Error, { message: `[${this.platform}] Teste de credenciais falhou` });
             return false;
