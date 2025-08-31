@@ -18,7 +18,7 @@ const MIGRATIONS = [
         content TEXT,
         images TEXT,
         status TEXT NOT NULL, -- 'draft' ou 'posted'
-        tags TEXT;
+        tags TEXT,
         platforms TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -7,7 +7,7 @@ export interface Credentials {
     consumerSecret: string;
     token: string;
     tokenSecret: string;
-    actived: boolean;
+    active: boolean;
     aditional: string;
 }
 
@@ -34,15 +34,15 @@ class AuthTokenDao {
             if (results[0].rows.length > 0) {
                 console.log(`Atualizando credenciais para ${platform} [DAO]`);
                 await db.executeSql(
-                    'UPDATE auth_tokens SET consumerKey = ?, consumer_secret = ?, token = ?, token_secret = ?, aditional = ?, actived = ?, updated_at = ? WHERE platform = ?',
-                    [credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.actived ? 1 : 0, new Date().toISOString(), platform]
+                    'UPDATE auth_tokens SET consumerKey = ?, consumer_secret = ?, token = ?, token_secret = ?, aditional = ?, active = ?, updated_at = ? WHERE platform = ?',
+                    [credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.active ? 1 : 0, new Date().toISOString(), platform]
                 );
             } else {
                 console.log(`Inserindo novas credenciais para ${platform} [DAO]`);
                 const createdAt = new Date().toISOString();
                 await db.executeSql(
-                    'INSERT INTO auth_tokens (platform, consumer_key, consumer_secret, token, token_secret, aditional, actived, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                    [platform, credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.actived ? 1 : 0, createdAt, createdAt]
+                    'INSERT INTO auth_tokens (platform, consumer_key, consumer_secret, token, token_secret, aditional, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    [platform, credentials.consumerKey, credentials.consumerSecret, credentials.token, credentials.tokenSecret, credentials.aditional, credentials.active ? 1 : 0, createdAt, createdAt]
                 );
             }
 
@@ -64,7 +64,7 @@ class AuthTokenDao {
         const db = await getDBConnection();
         try {
             let credential: T | null = null
-            const results = await db.executeSql('SELECT platform, consumer_key, consumer_secret, token, token_secret, aditional, actived FROM auth_tokens WHERE platform = ?', [platform]);
+            const results = await db.executeSql('SELECT platform, consumer_key, consumer_secret, token, token_secret, aditional, active FROM auth_tokens WHERE platform = ?', [platform]);
             if (results[0].rows.length > 0) {
                 const dados = results[0].rows.item(0).credentials;
                 if (dados) {
@@ -74,7 +74,7 @@ class AuthTokenDao {
                         consumerSecret: dados.consumer_secret,
                         token: dados.token,
                         tokenSecret: dados.token_secret,
-                        actived: dados.actived,
+                        active: dados.active,
                         aditional: dados.aditional
                     } as T;
 
@@ -97,7 +97,7 @@ class AuthTokenDao {
     public async getActivePlatforms(): Promise<PlatformType[]> {
         const db = await getDBConnection();
         try {
-            const results = await db.executeSql('SELECT platform FROM auth_tokens WHERE actived = 1');
+            const results = await db.executeSql('SELECT platform FROM auth_tokens WHERE active = 1');
             const platforms: PlatformType[] = [];
             results.forEach(result => {
                 for (let i = 0; i < result.rows.length; i++)
@@ -117,9 +117,9 @@ class AuthTokenDao {
     public async updateActiveStatus(credentials: Credentials): Promise<void> {
         const db = await getDBConnection();
         try {
-            const activeValue = credentials.actived ? 1 : 0;
-            await db.executeSql('UPDATE auth_tokens SET actived = ? WHERE platform = ?', [activeValue, credentials.platform]);
-            console.info(`[DAO] Status da plataforma ${credentials.platform} atualizado para ${credentials.actived}`);
+            const activeValue = credentials.active ? 1 : 0;
+            await db.executeSql('UPDATE auth_tokens SET active = ? WHERE platform = ?', [activeValue, credentials.platform]);
+            console.info(`[DAO] Status da plataforma ${credentials.platform} atualizado para ${credentials.active}`);
         } catch (error) {
             console.error(error as Error, { message: `Erro ao atualizar status para ${credentials.platform} [DAO]` });
             throw error;

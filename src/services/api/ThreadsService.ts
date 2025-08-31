@@ -49,7 +49,7 @@ export class ThreadsService implements IApiService {
 
     async validateAndRefreshToken(): Promise<void> {
         const credentials = await AuthTokenDao.getCredentialsForPlatform<Credentials>(this.platform as PlatformType);
-        if (!credentials?.token || !credentials.aditional) {
+        if (!credentials?.token || !credentials.aditional || !credentials.active) {
             console.debug(`[${this.platform}] Sem credenciais para validar/renovar.`);
             return;
         }
@@ -93,7 +93,7 @@ export class ThreadsService implements IApiService {
                 consumerKey: profile.userId,
                 consumerSecret: "",
                 tokenSecret: "",
-                actived: true,
+                active: true,
                 aditional: expiresAt,
             };
             await AuthTokenDao.saveCredentials(this.platform as PlatformType, credentials);
@@ -138,7 +138,7 @@ export class ThreadsService implements IApiService {
             if (!credentials?.token)
                 throw new Error(`Access Token do Threads não encontrado.`);
 
-            if (!credentials.actived)
+            if (!credentials.active)
                 return { sucess: false }
 
             if (data.images && data.images.length > 0 && (!data.imagesUrl || data.imagesUrl.length === 0))

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleProp, ViewStyle, TextStyle, Switch, } from 'react-native';
+import { View, Text, TextInput, StyleProp, ViewStyle, TextStyle, Switch, } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { styles } from './styles';
 import { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
@@ -63,7 +63,7 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
                     thumbColor={isActive ? '#f5dd4b' : '#f4f3f4'}
                     ios_backgroundColor="#3e3e3e"
                     onValueChange={() => {
-                            const credenciais = { ...credential, actived: !credential.actived };
+                            const credenciais = { ...credential, active: !credential.active };
                             setCreds(credenciais);
                             if (onStatusChange)
                                 onStatusChange(credenciais);
@@ -73,12 +73,12 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
                 />
             </View>
 
-            {creds.platform === TUMBLR && <TextInput style={styles.input} placeholder="Blog Name" value={(creds as TumblrCredentials).blogName} onChangeText={v => handleBlogNameChange(v)} />}
             <TextInput style={styles.input} placeholder="Consumer Key" value={creds.consumerKey} onChangeText={v => handleInputChange('consumerKey', v)} />
             <TextInput style={styles.input} placeholder="Consumer Secret" value={creds.consumerSecret} onChangeText={v => handleInputChange('consumerSecret', v)} />
             <TextInput style={styles.input} placeholder="Token" value={creds.token} onChangeText={v => handleInputChange('token', v)} />
             <TextInput style={styles.input} placeholder="Token Secret" value={creds.tokenSecret} onChangeText={v => handleInputChange('tokenSecret', v)} />
-
+            {creds.platform === TUMBLR && <TextInput style={styles.input} placeholder="Blog Name" value={(creds as TumblrCredentials).blogName} onChangeText={v => handleBlogNameChange(v)} />}
+            
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
                 <Button
                     title={isTesting ? 'Testando...' : 'Testar'}

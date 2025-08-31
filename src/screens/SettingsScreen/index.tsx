@@ -12,7 +12,7 @@ const DEFAULT : Credentials = {
     consumerSecret: '',
     token: '',
     tokenSecret: '',
-    actived: false,
+    active: false,
     aditional: ''
 }
 
@@ -62,7 +62,7 @@ const SettingsScreen = () => {
             Alert.alert("Erro", "Não foi possível atualizar o status da conexão.");
             setConnections(prev =>
                 prev.map(conn =>
-                    conn.platform === credentials.platform ? { ...credentials, actived: !credentials.actived } : conn
+                    conn.platform === credentials.platform ? { ...credentials, active: !credentials.active } : conn
                 )
             );
         }
@@ -80,7 +80,7 @@ const SettingsScreen = () => {
                     onSave={(credentials: Credentials) => handleSave(credentials)}
                     onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: '#35465c' }}
-                    isActive={connections.find(c => c.platform === TUMBLR)?.actived || false}
+                    isActive={connections.find(c => c.platform === TUMBLR)?.active || false}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
                 />
 
@@ -91,7 +91,7 @@ const SettingsScreen = () => {
                     onSave={(credentials: Credentials) => handleSave(credentials)}
                     onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: '#1DA1F2' }}
-                    isActive={connections.find(c => c.platform === X)?.actived || false}
+                    isActive={connections.find(c => c.platform === X)?.active || false}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
                 />
 
@@ -102,7 +102,7 @@ const SettingsScreen = () => {
                     onSave={(credentials: Credentials) => handleSave(credentials)}
                     onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: '#000000' }}
-                    isActive={connections.find(c => c.platform === THREADS)?.actived || false}
+                    isActive={connections.find(c => c.platform === THREADS)?.active || false}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
                 />
             </ScrollView>

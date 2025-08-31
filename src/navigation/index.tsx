@@ -7,18 +7,21 @@ import SettingsScreen from '../screens/SettingsScreen';
 import HistoryScreen from '../screens/HistoryScreen';
 
 import { RootTabParamList } from './types';
+import { useTheme } from 'src/theme/ThemeProvider';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const AppNavigator = () => {
+    const { colors } = useTheme();
+    
     return (
         <Tab.Navigator
             initialRouteName="Home"
             screenOptions={({ route }) => ({
                 headerShown: true,
-                tabBarActiveTintColor: 'tomato',
-                tabBarInactiveTintColor: 'gray',
-                tabBarStyle: { backgroundColor: '#ffffff' },
+                tabBarActiveTintColor: colors.primary,
+                tabBarInactiveTintColor: colors.inactive,
+                tabBarStyle: { backgroundColor: colors.background },
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName = '';
 

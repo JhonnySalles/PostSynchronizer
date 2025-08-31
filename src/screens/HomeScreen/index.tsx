@@ -13,29 +13,36 @@ import { ApiServiceFactory } from '../../services/api';
 import ImageProcessingService from '../../services/ImageService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
-import { PlatformType, THREADS, TUMBLR } from '../../constants/platforms';
+import { PlatformType, THREADS, TUMBLR, UNKNOW, X } from '../../constants/platforms';
 import AuthTokenDao from '../../dao/AuthTokenDao';
 import { PostData } from 'src/services/api/IApiService';
 
-type ConnectionStatus = {
-    tumblr: boolean;
-    x: boolean;
-    threads: boolean;
+type Connections = {
+    platfom: PlatformType;
+    active: boolean;
+    error: boolean;
 };
 
 const SOCIAL_PLATFORMS = [
-    { name: 'tumblr', icon: 'logo-tumblr' },
-    { name: 'x', icon: 'logo-twitter' },
-    { name: 'threads', icon: 'at-sharp' },
+    { name: TUMBLR, icon: 'logo-tumblr' },
+    { name: X, icon: 'logo-twitter' },
+    { name: THREADS, icon: 'at-sharp' },
 ] as const;
 
 type HomeScreenProps = BottomTabScreenProps<RootTabParamList, 'Home'>;
+
+
+const DEFAULT = {
+    platfom: UNKNOW,
+    active: false,
+    error: false
+}
 
 const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     const { colors } = useTheme();
     const styles = getStyles(colors);
 
-    const [connections, setConnections] = useState<ConnectionStatus>({ tumblr: false, x: false, threads: false, });
+    const [connections, setConnections] = useState<Connections[]>([{ ...DEFAULT, platfom: TUMBLR }, { ...DEFAULT, platfom: X }, { ...DEFAULT, platfom: THREADS },]);
     const [postText, setPostText] = useState('');
     const [tagsText, setTagsText] = useState('');
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
@@ -64,13 +71,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             const fetchConnections = async () => {
                 try {
                     const activePlatforms = await AuthTokenDao.getActivePlatforms();
-                    const newConnectionStatus = { tumblr: false, x: false, threads: false, };
-
-                    activePlatforms.forEach(platform => {
-                        if (platform in newConnectionStatus)
-                            newConnectionStatus[platform as keyof ConnectionStatus] = true;
-                    });
-
+                    const newConnectionStatus = connections.map(cnn => ({ ...cnn, active: cnn.platfom in activePlatforms, error: false }))
                     setConnections(newConnectionStatus);
                 } catch (error) {
                     console.error('Erro ao buscar conexões:', error);
@@ -96,7 +97,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         }
     };
 
-    // Listener para o input de tags com debounce
     const handleTagsChange = (text: string) => {
         setTagsText(text);
         if (successfulPlatforms.length > 0)
@@ -181,7 +181,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         }
 
         try {
-            // 3. Substitua a lógica do banco pela chamada ao DAO
             await PostDao.create({
                 content: postText,
                 images: selectedImages,
@@ -237,7 +236,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     const resultPost = await tumblrService.post(originalPostData);
                     if (resultPost.imagesUrl && resultPost.imagesUrl.length > 0)
                         originalPostData.imagesUrl = resultPost.imagesUrl;
-                    
+
                     successfulPlatforms.push(TUMBLR);
                 } catch (error) {
                 }
@@ -301,6 +300,19 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         </View>
     );
 
+    const getIconColor = (platform: PlatformType): string => {
+        const connection = connections.find(c => c.platfom === platform);
+        if (!connection)
+            return colors.inactive;
+
+        if (connection.error)
+            return colors.error;
+        else if (connection.active)
+            return colors.success;
+        else 
+            return colors.inactive;
+    };
+
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -311,7 +323,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                             <Icon
                                 name={platform.icon}
                                 size={30}
-                                color={connections[platform.name] ? '#28a745' : '#dc3545'} // Verde se conectado, vermelho se não
+                                color={getIconColor(platform.name)}
                             />
                             <Text style={styles.statusText}>{platform.name}</Text>
                         </View>
@@ -323,7 +335,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     placeholder="O que você está pensando?"
                     multiline
                     value={postText}
-                    onChangeText={setPostText}
+                    onChangeText={handleTextChange}
                 />
 
                 <TextInput
