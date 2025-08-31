@@ -29,7 +29,7 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
 
     useEffect(() => {
         setCreds(credential);
-        if (credential.platform === TUMBLR)
+        if (credential.platform === TUMBLR && (creds as TumblrCredentials).blogs && (creds as TumblrCredentials).blogs.length > 0)
             setBlogItems((creds as TumblrCredentials).blogs.map<{ label: string; value: string }>(b => ({ label: b.title, value: b.name })));
         else
             setBlogItems([]);

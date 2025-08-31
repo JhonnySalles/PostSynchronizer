@@ -309,7 +309,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             return colors.error;
         else if (connection.active)
             return colors.success;
-        else 
+        else
             return colors.inactive;
     };
 
