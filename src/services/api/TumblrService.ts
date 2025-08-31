@@ -1,6 +1,6 @@
 import tumblr from 'tumblr.rn.js';
 import { IApiService, PostData, ResultPost } from './IApiService';
-import AuthTokenDao, { Credentials, TumblrCredentials } from '../../dao/AuthTokenDao';
+import AuthTokenDao, { Credentials, TumblrBlogs, TumblrCredentials } from '../../dao/AuthTokenDao';
 import { PlatformType, TUMBLR } from '../../constants/platforms';
 import RNFS from 'react-native-fs';
 
@@ -41,17 +41,16 @@ export class TumblrService implements IApiService {
                     token_secret: tumblrCreds.tokenSecret,
                 });
 
-                testClient.userInfo((err: Error | null, resp: TumblrUserInfoResponse) => {
+                testClient.userInfo(async (err: Error | null, resp: TumblrUserInfoResponse) => {
                     if (err || !resp?.user?.blogs) {
                         console.warn(`[${this.platform}] Não foi possível obter informações do usuário:`, err?.message);
                         return resolve({ success: false, error: err?.message || "" });
                     }
-
-                    const blogs = resp.user.blogs.map((blog: { name: any; title: any; }) => ({
-                        name: blog.name,
-                        title: blog.title,
-                    }));
-
+                    const blogName = (credentials as TumblrCredentials).blogName;
+                    const blogs = resp.user.blogs.map<TumblrBlogs>((blog: { name: any; title: any; }) => ({ name: blog.name, title: blog.title, selected: blog.name === blogName }));
+                    (credentials as TumblrCredentials).blogs = blogs;
+                    (credentials as TumblrCredentials).blogName = blogs.find(b => b.selected)?.name || ''
+                    await AuthTokenDao.saveCredentials(credentials);
                     console.info(`[${this.platform}] Informações obtidas com sucesso! Blogs encontrados: ${blogs.length} -- Blogs: ${blogs.map(b => b.name).join(", ")}`);
                     resolve({ success: true, blogs, error: null });
                 });
@@ -102,8 +101,6 @@ export class TumblrService implements IApiService {
             token_secret: credentials.tokenSecret,
         });
 
-        const blogName = credentials.blogName || credentials.aditional;
-
         return new Promise(async (resolve, reject) => {
             try {
                 let postOptions: any = {};
@@ -113,7 +110,7 @@ export class TumblrService implements IApiService {
                 } else
                     postOptions = { type: 'text', body: data.text, tags: data.tags?.join(',') };
 
-                client.createPost(blogName, postOptions, (err, resp) => {
+                client.createPost(credentials.blogName, postOptions, (err, resp) => {
                     if (err) {
                         console.error(err, { message: `[${this.platform}] Falha na postagem API` });
                         return reject({ sucess: false });

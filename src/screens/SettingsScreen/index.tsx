@@ -4,7 +4,7 @@ import { styles } from './styles';
 import LoginCard from '../../components/LoginCard';
 import { ApiServiceFactory } from 'src/services/api';
 import { THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
-import AuthTokenDao, { Credentials } from 'src/dao/AuthTokenDao';
+import AuthTokenDao, { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import { useFocusEffect } from '@react-navigation/native';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 
@@ -41,7 +41,6 @@ const SettingsScreen = () => {
     );
 
     const handleSave = async (credentials: Credentials) => {
-        Alert.alert('Salvando...', 'Gravando credenciais.');
         try {
             await AuthTokenDao.saveCredentials(credentials);
             Alert.alert('Sucesso!', 'Credenciais foram salvas no banco de dados.');
@@ -57,9 +56,14 @@ const SettingsScreen = () => {
             const service = ApiServiceFactory(credentials.platform);
             const isValid = await service.test(credentials);
 
-            if (isValid)
+            if (isValid) {
                 Alert.alert("Sucesso!", `As credenciais são válidas e a conexão com o ${credentials.platform} foi bem-sucedida.`);
-            else
+
+                if (credentials.platform === TUMBLR) {
+                    const salvado = await AuthTokenDao.getCredentialsForPlatform<TumblrCredentials>(credentials.platform)
+                    setConnections(connections.map(c => c.platform === TUMBLR ? {...c, blogs: salvado?.blogs, blogName: salvado?.blogName } : c))
+                }
+            } else
                 Alert.alert("Falha na Conexão", "As credenciais são inválidas. Verifique os dados e tente novamente.");
         } catch (error) {
             console.error(error as Error, { message: "Erro ao testar credenciais" });
