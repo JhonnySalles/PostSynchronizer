@@ -1,0 +1,20 @@
+diff --git a/node_modules/tumblr.js/lib/tumblr.js b/node_modules/tumblr.js/lib/tumblr.js
+index 49b3f1a..4a3e8cd 100644
+--- a/node_modules/tumblr.js/lib/tumblr.js
++++ b/node_modules/tumblr.js/lib/tumblr.js
+@@ -6,11 +6,11 @@
+  */
+ 
+ const FormData = require('form-data');
+-const http = require('node:http');
+-const https = require('node:https');
+-const { URL } = require('node:url');
++const http = require('http');
++const https = require('https');
++const { URL } = require('url');
+ const oauth = require('oauth');
+-const { ReadStream } = require('node:fs');
++const { ReadStream } = require('fs');
+ 
+ const API_BASE_URL = 'https://api.tumblr.com'; // deliberately no trailing slash
+ 
