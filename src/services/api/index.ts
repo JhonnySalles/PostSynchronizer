@@ -1,8 +1,9 @@
-import { PlatformType, X, TUMBLR, THREADS, UNKNOW } from '../../constants/platforms';
+import { PlatformType, X, TUMBLR, THREADS, UNKNOW, BLUESKY } from '../../constants/platforms';
 import { IApiService } from './IApiService';
 import { XService } from './XService';
 import { TumblrService } from './TumblrService';
 import { ThreadsService } from './ThreadsService';
+import { BlueskyService } from './BlueskyService';
 
 export const ApiServiceFactory = (platform: PlatformType): IApiService => {
     switch (platform) {
@@ -12,6 +13,8 @@ export const ApiServiceFactory = (platform: PlatformType): IApiService => {
             return new TumblrService();
         case THREADS:
             return new ThreadsService();
+        case BLUESKY:
+            return new BlueskyService();
         case UNKNOW:
             throw new Error(`Serviço para a plataforma "${platform}" não foi implementado.`);
         default:

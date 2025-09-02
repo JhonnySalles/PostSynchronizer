@@ -131,6 +131,6 @@ export class TumblrService implements IApiService {
     }
 
     public async validateAndRefreshToken(): Promise<void> {
-
+        return Promise.resolve();
     }
 }

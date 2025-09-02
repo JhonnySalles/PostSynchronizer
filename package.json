@@ -13,6 +13,7 @@
     "windows": "react-native run-windows"
   },
   "dependencies": {
+    "@atproto/api": "^0.16.7",
     "@react-native-community/image-editor": "^4.3.0",
     "@react-native-picker/picker": "^2.11.1",
     "@react-navigation/bottom-tabs": "^7.4.6",
@@ -23,6 +24,7 @@
     "react-native": "0.75.5",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-fs": "^2.20.0",
+    "react-native-image-crop-picker": "^0.51.0",
     "react-native-image-editor": "^0.0.1",
     "react-native-image-picker": "^8.2.1",
     "react-native-inappbrowser-reborn": "^3.7.0",

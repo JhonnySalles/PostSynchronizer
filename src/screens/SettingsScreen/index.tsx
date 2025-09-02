@@ -3,7 +3,7 @@ import { SafeAreaView, ScrollView, Text, Alert, } from 'react-native';
 import { styles } from './styles';
 import LoginCard from '../../components/LoginCard';
 import { ApiServiceFactory } from 'src/services/api';
-import { THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
+import { BLUESKY, THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
 import AuthTokenDao, { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import { useFocusEffect } from '@react-navigation/native';
 import LoadingIndicator from 'src/components/LoadingIndicator';
@@ -106,7 +106,6 @@ const SettingsScreen = () => {
                     onSave={(credentials: Credentials) => handleSave(credentials)}
                     onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: '#35465c' }}
-                    isActive={connections.find(c => c.platform === TUMBLR)?.active || false}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
                     isTesting={isTesting === TUMBLR}
                 />
@@ -118,7 +117,6 @@ const SettingsScreen = () => {
                     onSave={(credentials: Credentials) => handleSave(credentials)}
                     onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: '#1DA1F2' }}
-                    isActive={connections.find(c => c.platform === X)?.active || false}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
                     isTesting={isTesting === X}
                 />
@@ -130,7 +128,17 @@ const SettingsScreen = () => {
                     onSave={(credentials: Credentials) => handleSave(credentials)}
                     onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: '#000000' }}
-                    isActive={connections.find(c => c.platform === THREADS)?.active || false}
+                    onStatusChange={(credentials) => handleStatusChange(credentials)}
+                    isTesting={isTesting === THREADS}
+                />
+
+                <LoginCard
+                    credential={connections.find(c => c.platform === BLUESKY) || { ...DEFAULT, platform: BLUESKY }}
+                    iconName="chatbubbles-outline"
+                    iconColor="#0288dbff"
+                    onSave={(credentials: Credentials) => handleSave(credentials)}
+                    onTest={handleTestCredentials}
+                    buttonStyle={{ backgroundColor: '#0288dbff' }}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
                     isTesting={isTesting === THREADS}
                 />

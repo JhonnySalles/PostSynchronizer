@@ -8,6 +8,7 @@ export type RootTabParamList = {
 };
 
 export interface PostDraftData {
+    id: number;
     content: string;
     tags: string;
     images: string[];

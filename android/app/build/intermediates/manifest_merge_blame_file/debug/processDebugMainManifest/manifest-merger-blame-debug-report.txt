@@ -9,274 +9,337 @@
 9        android:targetSdkVersion="34" />
 10
 11    <uses-permission android:name="android.permission.INTERNET" />
-11-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:3:5-67
-11-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:3:22-64
-12
-13    <queries>
-13-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:7:5-17:15
-14        <intent>
-14-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:9-10:18
-15            <action android:name="org.chromium.intent.action.PAY" />
-15-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:13-69
-15-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:21-66
-16        </intent>
-17        <intent>
-17-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:9-13:18
-18            <action android:name="org.chromium.intent.action.IS_READY_TO_PAY" />
-18-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-81
-18-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:21-78
-19        </intent>
-20        <intent>
-20-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:14:9-16:18
-21            <action android:name="org.chromium.intent.action.UPDATE_PAYMENT_DETAILS" />
-21-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:13-88
-21-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:21-85
-22        </intent>
-23        <intent>
-23-->[:react-native-inappbrowser-reborn] D:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:10:9-12:18
-24            <action android:name="android.support.customtabs.action.CustomTabsService" />
-24-->[:react-native-inappbrowser-reborn] D:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:13-90
-24-->[:react-native-inappbrowser-reborn] D:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:21-87
-25        </intent>
-26    </queries>
-27
-28    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-28-->[:sentry_react-native] D:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:5-79
-28-->[:sentry_react-native] D:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:22-76
-29    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-29-->[:react-native-fs] D:\Projetos\PostSynchronizer\node_modules\react-native-fs\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:7:5-81
-29-->[:react-native-fs] D:\Projetos\PostSynchronizer\node_modules\react-native-fs\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:7:22-78
-30    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-31    <!--
-32    This manifest file is used only by Gradle to configure debug-only capabilities
-33    for React Native Apps.
-34    -->
-35    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-35-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonn\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:5-78
-35-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonn\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:22-75
-36
-37    <permission
-37-->[androidx.core:core:1.13.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
-38        android:name="com.postsynchronizer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-38-->[androidx.core:core:1.13.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
-39        android:protectionLevel="signature" />
-39-->[androidx.core:core:1.13.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
-40
-41    <uses-permission android:name="com.postsynchronizer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-41-->[androidx.core:core:1.13.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
-41-->[androidx.core:core:1.13.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+11-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:3:5-67
+11-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:3:22-64
+12    <uses-permission android:name="android.permission.CAMERA" />
+12-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:4:5-65
+12-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:4:22-62
+13    <uses-permission
+13-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:5:5-80
+14        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+14-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:5:22-78
+15        android:maxSdkVersion="29" />
+15-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:9-35
+16    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+16-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:6:5-79
+16-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:6:22-77
+17
+18    <queries>
+18-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:7:5-17:15
+19        <intent>
+19-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:9-10:18
+20            <action android:name="org.chromium.intent.action.PAY" />
+20-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:13-69
+20-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:21-66
+21        </intent>
+22        <intent>
+22-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:9-13:18
+23            <action android:name="org.chromium.intent.action.IS_READY_TO_PAY" />
+23-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-81
+23-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:21-78
+24        </intent>
+25        <intent>
+25-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:14:9-16:18
+26            <action android:name="org.chromium.intent.action.UPDATE_PAYMENT_DETAILS" />
+26-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:13-88
+26-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:21-85
+27        </intent>
+28        <intent>
+28-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:9-10:18
+29            <action android:name="android.media.action.IMAGE_CAPTURE" />
+29-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:13-73
+29-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:21-70
+30        </intent>
+31        <intent>
+31-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:10:9-12:18
+32            <action android:name="android.support.customtabs.action.CustomTabsService" />
+32-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:13-90
+32-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:21-87
+33        </intent>
+34    </queries>
+35
+36    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+36-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:5-79
+36-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:22-76
+37    <!--
+38    This manifest file is used only by Gradle to configure debug-only capabilities
+39    for React Native Apps.
+40    -->
+41    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+41-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:5-78
+41-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:22-75
 42
-43    <application
-43-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:5:5-31:19
-44        android:name="com.postsynchronizer.MainApplication"
-44-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:6:7-38
-45        android:allowBackup="false"
-45-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:10:7-34
-46        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-46-->[androidx.core:core:1.13.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
-47        android:debuggable="true"
-48        android:extractNativeLibs="false"
-49        android:icon="@mipmap/ic_launcher"
-49-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:8:7-41
-50        android:label="@string/app_name"
-50-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:7:7-39
-51        android:roundIcon="@mipmap/ic_launcher_round"
-51-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:9:7-52
-52        android:supportsRtl="true"
-52-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:12:7-33
-53        android:theme="@style/AppTheme"
-53-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:11:7-38
-54        android:usesCleartextTraffic="true" >
-54-->D:\Projetos\PostSynchronizer\android\app\src\debug\AndroidManifest.xml:6:9-44
-55        <activity
-55-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:13:7-30:18
-56            android:name="com.postsynchronizer.MainActivity"
-56-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:14:9-37
-57            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-57-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:16:9-118
-58            android:exported="true"
-58-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:19:9-32
-59            android:label="@string/app_name"
-59-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:15:9-41
-60            android:launchMode="singleTask"
-60-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:17:9-40
-61            android:windowSoftInputMode="adjustResize" >
-61-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:18:9-51
-62            <intent-filter>
-62-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:20:9-23:25
-63                <action android:name="android.intent.action.MAIN" />
-63-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:21:13-65
-63-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:21:21-62
-64
-65                <category android:name="android.intent.category.LAUNCHER" />
-65-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:22:13-73
-65-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:22:23-70
-66            </intent-filter>
-67            <intent-filter>
-67-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:24:9-29:25
-68                <action android:name="android.intent.action.VIEW" />
-68-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:25:13-65
-68-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:25:21-62
-69
-70                <category android:name="android.intent.category.DEFAULT" />
-70-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:26:13-72
-70-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:26:23-69
-71                <category android:name="android.intent.category.BROWSABLE" />
-71-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:27:13-74
-71-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:27:23-71
-72
-73                <data android:scheme="postsync" />
-73-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:28:13-47
-73-->D:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:28:19-44
-74            </intent-filter>
-75        </activity>
-76
-77        <provider
-77-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:20:9-28:20
-78            android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
-78-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:21:13-83
-79            android:authorities="com.postsynchronizer.fileprovider"
-79-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:22:13-64
-80            android:exported="false"
-80-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:23:13-37
-81            android:grantUriPermissions="true" >
-81-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:24:13-47
-82            <meta-data
-82-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
-83                android:name="android.support.FILE_PROVIDER_PATHS"
-83-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
-84                android:resource="@xml/file_provider_paths" />
-84-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
-85        </provider>
-86
-87        <meta-data
-87-->[:sentry_react-native] D:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:9-13:37
-88            android:name="io.sentry.auto-init"
-88-->[:sentry_react-native] D:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-47
-89            android:value="false" />
-89-->[:sentry_react-native] D:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:13:13-34
-90
-91        <provider
-91-->[:react-native-image-picker] D:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:9-16:20
-92            android:name="com.imagepicker.ImagePickerProvider"
-92-->[:react-native-image-picker] D:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:13-63
-93            android:authorities="com.postsynchronizer.imagepickerprovider"
-93-->[:react-native-image-picker] D:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:10:13-71
-94            android:exported="false"
-94-->[:react-native-image-picker] D:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:13-37
-95            android:grantUriPermissions="true" >
-95-->[:react-native-image-picker] D:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-47
-96            <meta-data
-96-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
-97                android:name="android.support.FILE_PROVIDER_PATHS"
-97-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
-98                android:resource="@xml/imagepicker_provider_paths" />
-98-->[:react-native-webview] D:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
-99        </provider>
-100
-101        <activity
-101-->[:react-native-inappbrowser-reborn] D:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:16:9-19:20
-102            android:name="com.proyecto26.inappbrowser.ChromeTabsManagerActivity"
-102-->[:react-native-inappbrowser-reborn] D:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:17:13-81
-103            android:exported="false" >
-103-->[:react-native-inappbrowser-reborn] D:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:13-37
-104        </activity>
-105        <activity
-105-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonn\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:19:9-21:40
-106            android:name="com.facebook.react.devsupport.DevSettingsActivity"
-106-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonn\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:20:13-77
-107            android:exported="false" /> <!-- 'android:authorities' must be unique in the device, across all apps -->
-107-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonn\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:21:13-37
-108        <provider
-108-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonn\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:12:9-15:40
-109            android:name="io.sentry.android.core.SentryInitProvider"
-109-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonn\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:13:13-69
-110            android:authorities="com.postsynchronizer.SentryInitProvider"
-110-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonn\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:14:13-70
-111            android:exported="false" />
-111-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonn\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:15:13-37
-112        <provider
-112-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonn\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:16:9-20:39
-113            android:name="io.sentry.android.core.SentryPerformanceProvider"
-113-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonn\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:17:13-76
-114            android:authorities="com.postsynchronizer.SentryPerformanceProvider"
-114-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonn\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:18:13-77
-115            android:exported="false"
-115-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonn\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:19:13-37
-116            android:initOrder="200" />
-116-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonn\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:20:13-36
-117        <provider
-117-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonn\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
-118            android:name="androidx.startup.InitializationProvider"
-118-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonn\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
-119            android:authorities="com.postsynchronizer.androidx-startup"
-119-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonn\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
-120            android:exported="false" >
-120-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonn\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
-121            <meta-data
-121-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonn\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
-122                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-122-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonn\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
-123                android:value="androidx.startup" />
-123-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonn\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
-124            <meta-data
-124-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonn\.gradle\caches\8.8\transforms\9637e0a0d91690bfcb8b849176c5cce0\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
-125                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-125-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonn\.gradle\caches\8.8\transforms\9637e0a0d91690bfcb8b849176c5cce0\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
-126                android:value="androidx.startup" />
-126-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonn\.gradle\caches\8.8\transforms\9637e0a0d91690bfcb8b849176c5cce0\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
-127            <meta-data
-127-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:29:13-31:52
-128                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-128-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:30:17-85
-129                android:value="androidx.startup" />
-129-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:31:17-49
-130        </provider>
-131
-132        <receiver
-132-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:34:9-52:20
-133            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-133-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:35:13-76
-134            android:directBootAware="false"
-134-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:36:13-44
-135            android:enabled="true"
-135-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:37:13-35
-136            android:exported="true"
-136-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:38:13-36
-137            android:permission="android.permission.DUMP" >
-137-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:39:13-57
-138            <intent-filter>
-138-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:40:13-42:29
-139                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-139-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:17-91
-139-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:25-88
-140            </intent-filter>
-141            <intent-filter>
-141-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:43:13-45:29
-142                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-142-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:17-85
-142-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:25-82
-143            </intent-filter>
-144            <intent-filter>
-144-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:46:13-48:29
-145                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-145-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:17-88
-145-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:25-85
-146            </intent-filter>
-147            <intent-filter>
-147-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:49:13-51:29
-148                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-148-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:17-95
-148-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonn\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:25-92
-149            </intent-filter>
-150        </receiver>
-151
-152        <meta-data
-152-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonn\.gradle\caches\8.8\transforms\9cd3ff9286b527118c99c83c826e649e\transformed\soloader-0.11.0\AndroidManifest.xml:12:9-14:37
-153            android:name="com.facebook.soloader.enabled"
-153-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonn\.gradle\caches\8.8\transforms\9cd3ff9286b527118c99c83c826e649e\transformed\soloader-0.11.0\AndroidManifest.xml:13:13-57
-154            android:value="false" />
-154-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonn\.gradle\caches\8.8\transforms\9cd3ff9286b527118c99c83c826e649e\transformed\soloader-0.11.0\AndroidManifest.xml:14:13-34
-155    </application>
-156
-157</manifest>
+43    <permission
+43-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+44        android:name="com.postsynchronizer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+44-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+45        android:protectionLevel="signature" />
+45-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+46
+47    <uses-permission android:name="com.postsynchronizer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+47-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+47-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+48
+49    <application
+49-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:8:5-34:19
+50        android:name="com.postsynchronizer.MainApplication"
+50-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:9:7-38
+51        android:allowBackup="false"
+51-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:13:7-34
+52        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+52-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+53        android:debuggable="true"
+54        android:extractNativeLibs="false"
+55        android:icon="@mipmap/ic_launcher"
+55-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:11:7-41
+56        android:label="@string/app_name"
+56-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:10:7-39
+57        android:roundIcon="@mipmap/ic_launcher_round"
+57-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:12:7-52
+58        android:supportsRtl="true"
+58-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:15:7-33
+59        android:theme="@style/AppTheme"
+59-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:14:7-38
+60        android:usesCleartextTraffic="true" >
+60-->F:\Projetos\PostSynchronizer\android\app\src\debug\AndroidManifest.xml:6:9-44
+61        <activity
+61-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:16:7-33:18
+62            android:name="com.postsynchronizer.MainActivity"
+62-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:17:9-37
+63            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+63-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:19:9-118
+64            android:exported="true"
+64-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:22:9-32
+65            android:label="@string/app_name"
+65-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:18:9-41
+66            android:launchMode="singleTask"
+66-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:20:9-40
+67            android:windowSoftInputMode="adjustResize" >
+67-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:21:9-51
+68            <intent-filter>
+68-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:23:9-26:25
+69                <action android:name="android.intent.action.MAIN" />
+69-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:24:13-65
+69-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:24:21-62
+70
+71                <category android:name="android.intent.category.LAUNCHER" />
+71-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:25:13-73
+71-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:25:23-70
+72            </intent-filter>
+73            <intent-filter>
+73-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:27:9-32:25
+74                <action android:name="android.intent.action.VIEW" />
+74-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:28:13-65
+74-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:28:21-62
+75
+76                <category android:name="android.intent.category.DEFAULT" />
+76-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:29:13-72
+76-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:29:23-69
+77                <category android:name="android.intent.category.BROWSABLE" />
+77-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:30:13-74
+77-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:30:23-71
+78
+79                <data android:scheme="postsync" />
+79-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:31:13-47
+79-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:31:19-44
+80            </intent-filter>
+81        </activity>
+82
+83        <provider
+83-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:20:9-28:20
+84            android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
+84-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:21:13-83
+85            android:authorities="com.postsynchronizer.fileprovider"
+85-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:22:13-64
+86            android:exported="false"
+86-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:23:13-37
+87            android:grantUriPermissions="true" >
+87-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:24:13-47
+88            <meta-data
+88-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
+89                android:name="android.support.FILE_PROVIDER_PATHS"
+89-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
+90                android:resource="@xml/file_provider_paths" />
+90-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
+91        </provider>
+92
+93        <meta-data
+93-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:9-13:37
+94            android:name="io.sentry.auto-init"
+94-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-47
+95            android:value="false" />
+95-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:13:13-34
+96
+97        <provider
+97-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:9-26:20
+98            android:name="com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider"
+98-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:19:13-94
+99            android:authorities="com.postsynchronizer.provider"
+99-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:20:13-60
+100            android:exported="false"
+100-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:21:13-37
+101            android:grantUriPermissions="true" >
+101-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:22:13-47
+102            <meta-data
+102-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
+103                android:name="android.support.FILE_PROVIDER_PATHS"
+103-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
+104                android:resource="@xml/ivpusic_imagepicker_provider_paths" />
+104-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
+105        </provider>
+106
+107        <activity
+107-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:28:9-31:72
+108            android:name="com.yalantis.ucrop.UCropActivity"
+108-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:29:13-60
+109            android:exported="false"
+109-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:30:13-37
+110            android:theme="@style/Theme.AppCompat.Light.NoActionBar" /> <!-- Prompt Google Play services to install the backported photo picker module -->
+110-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:31:13-69
+111        <service
+111-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:34:9-45:19
+112            android:name="com.google.android.gms.metadata.ModuleDependencies"
+112-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:35:13-78
+113            android:enabled="false"
+113-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:36:13-36
+114            android:exported="false" >
+114-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:37:13-37
+115            <intent-filter>
+115-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:38:13-40:29
+116                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+116-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:39:17-94
+116-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:39:25-91
+117            </intent-filter>
+118
+119            <meta-data
+119-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:42:13-44:36
+120                android:name="photopicker_activity:0:required"
+120-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:43:17-63
+121                android:value="" />
+121-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:44:17-33
+122        </service>
+123
+124        <provider
+124-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:9-16:20
+125            android:name="com.imagepicker.ImagePickerProvider"
+125-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:13-63
+126            android:authorities="com.postsynchronizer.imagepickerprovider"
+126-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:10:13-71
+127            android:exported="false"
+127-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:13-37
+128            android:grantUriPermissions="true" >
+128-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-47
+129            <meta-data
+129-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
+130                android:name="android.support.FILE_PROVIDER_PATHS"
+130-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
+131                android:resource="@xml/imagepicker_provider_paths" />
+131-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
+132        </provider>
+133
+134        <activity
+134-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:16:9-19:20
+135            android:name="com.proyecto26.inappbrowser.ChromeTabsManagerActivity"
+135-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:17:13-81
+136            android:exported="false" >
+136-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:13-37
+137        </activity>
+138        <activity
+138-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:19:9-21:40
+139            android:name="com.facebook.react.devsupport.DevSettingsActivity"
+139-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:20:13-77
+140            android:exported="false" /> <!-- 'android:authorities' must be unique in the device, across all apps -->
+140-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:21:13-37
+141        <provider
+141-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:12:9-15:40
+142            android:name="io.sentry.android.core.SentryInitProvider"
+142-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:13:13-69
+143            android:authorities="com.postsynchronizer.SentryInitProvider"
+143-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:14:13-70
+144            android:exported="false" />
+144-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:15:13-37
+145        <provider
+145-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:16:9-20:39
+146            android:name="io.sentry.android.core.SentryPerformanceProvider"
+146-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:17:13-76
+147            android:authorities="com.postsynchronizer.SentryPerformanceProvider"
+147-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:18:13-77
+148            android:exported="false"
+148-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:19:13-37
+149            android:initOrder="200" />
+149-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:20:13-36
+150        <provider
+150-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+151            android:name="androidx.startup.InitializationProvider"
+151-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+152            android:authorities="com.postsynchronizer.androidx-startup"
+152-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+153            android:exported="false" >
+153-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+154            <meta-data
+154-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+155                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+155-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+156                android:value="androidx.startup" />
+156-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+157            <meta-data
+157-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9637e0a0d91690bfcb8b849176c5cce0\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
+158                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+158-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9637e0a0d91690bfcb8b849176c5cce0\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
+159                android:value="androidx.startup" />
+159-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9637e0a0d91690bfcb8b849176c5cce0\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
+160            <meta-data
+160-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:29:13-31:52
+161                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+161-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:30:17-85
+162                android:value="androidx.startup" />
+162-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:31:17-49
+163        </provider>
+164
+165        <receiver
+165-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:34:9-52:20
+166            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+166-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:35:13-76
+167            android:directBootAware="false"
+167-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:36:13-44
+168            android:enabled="true"
+168-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:37:13-35
+169            android:exported="true"
+169-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:38:13-36
+170            android:permission="android.permission.DUMP" >
+170-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:39:13-57
+171            <intent-filter>
+171-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:40:13-42:29
+172                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+172-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:17-91
+172-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:25-88
+173            </intent-filter>
+174            <intent-filter>
+174-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:43:13-45:29
+175                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+175-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:17-85
+175-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:25-82
+176            </intent-filter>
+177            <intent-filter>
+177-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:46:13-48:29
+178                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+178-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:17-88
+178-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:25-85
+179            </intent-filter>
+180            <intent-filter>
+180-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:49:13-51:29
+181                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+181-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:17-95
+181-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:25-92
+182            </intent-filter>
+183        </receiver>
+184
+185        <meta-data
+185-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9cd3ff9286b527118c99c83c826e649e\transformed\soloader-0.11.0\AndroidManifest.xml:12:9-14:37
+186            android:name="com.facebook.soloader.enabled"
+186-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9cd3ff9286b527118c99c83c826e649e\transformed\soloader-0.11.0\AndroidManifest.xml:13:13-57
+187            android:value="false" />
+187-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9cd3ff9286b527118c99c83c826e649e\transformed\soloader-0.11.0\AndroidManifest.xml:14:13-34
+188    </application>
+189
+190</manifest>

@@ -18,6 +18,8 @@ import com.reactnativecommunity.picker.RNCPickerPackage;
 import io.sentry.react.RNSentryPackage;
 // react-native-fs
 import com.rnfs.RNFSPackage;
+// react-native-image-crop-picker
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 // react-native-image-picker
 import com.imagepicker.ImagePickerPackage;
 // react-native-inappbrowser-reborn
@@ -81,6 +83,7 @@ public class PackageList {
       new RNCPickerPackage(),
       new RNSentryPackage(),
       new RNFSPackage(),
+      new PickerPackage(),
       new ImagePickerPackage(),
       new RNInAppBrowserPackage(),
       new SafeAreaContextPackage(),

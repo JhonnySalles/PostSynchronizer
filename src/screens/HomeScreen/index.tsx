@@ -3,6 +3,7 @@ import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Alert, FlatList,
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 
 import { getStyles } from './styles';
 import { useTheme } from '../../theme/ThemeProvider';
@@ -13,7 +14,7 @@ import { ApiServiceFactory } from '../../services/api';
 import ImageProcessingService from '../../services/ImageService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
-import { PlatformType, THREADS, TUMBLR, UNKNOW, X } from '../../constants/platforms';
+import { BLUESKY, PlatformType, THREADS, TUMBLR, UNKNOW, X } from '../../constants/platforms';
 import AuthTokenDao from '../../dao/AuthTokenDao';
 import { PostData } from 'src/services/api/IApiService';
 
@@ -24,13 +25,13 @@ type Connections = {
 };
 
 const SOCIAL_PLATFORMS = [
-    { name: TUMBLR, icon: 'logo-tumblr' },
-    { name: X, icon: 'logo-twitter' },
-    { name: THREADS, icon: 'at-sharp' },
+    { name: TUMBLR, icon: 'logo-tumblr', limits: 4096 },
+    { name: X, icon: 'logo-twitter', limits: 280 },
+    { name: THREADS, icon: 'at-sharp', limits: 500 },
+    { name: BLUESKY, icon: 'chatbubbles-outline', limits: 300 },
 ] as const;
 
 type HomeScreenProps = BottomTabScreenProps<RootTabParamList, 'Home'>;
-
 
 const DEFAULT = {
     platfom: UNKNOW,
@@ -43,10 +44,13 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     const styles = getStyles(colors);
 
     const [connections, setConnections] = useState<Connections[]>([{ ...DEFAULT, platfom: TUMBLR }, { ...DEFAULT, platfom: X }, { ...DEFAULT, platfom: THREADS },]);
+    const [activePlatforms, setActivePlatforms] = useState<PlatformType[]>([]);
     const [postText, setPostText] = useState('');
     const [tagsText, setTagsText] = useState('');
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
+    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
 
+    const [editingPostId, setEditingPostId] = useState<number | null>(null);
     const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
     const [isPosting, setIsPosting] = useState(false);
     const [isAdjustingImages, setIsAdjustingImages] = useState(false);
@@ -56,8 +60,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
     useEffect(() => {
         if (route.params?.postToEdit) {
-            const { content, tags, images } = route.params.postToEdit;
+            const { id, content, tags, images } = route.params.postToEdit;
 
+            setEditingPostId(id);
             setPostText(content);
             setTagsText(tags);
             setSelectedImages(images);
@@ -73,6 +78,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     const activePlatforms = await AuthTokenDao.getActivePlatforms();
                     const newConnectionStatus = connections.map(cnn => ({ ...cnn, active: cnn.platfom in activePlatforms, error: false }))
                     setConnections(newConnectionStatus);
+                    setActivePlatforms(activePlatforms);
                 } catch (error) {
                     console.error('Erro ao buscar conexões:', error);
                 }
@@ -168,7 +174,60 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         );
     };
 
+    const handleSelectImages = async () => {
+        try {
+            const images = await ImagePicker.openPicker({
+                multiple: true,
+                mediaType: 'photo',
+                cropping: true,
+                compressImageMaxWidth: 1000,
+                compressImageMaxHeight: 1000,
+                compressImageQuality: 0.8,
+                forceJpg: true,
+            });
+
+            const newImages = images.map(img => img.path);
+            setSelectedImages(prev => [...prev, ...newImages].slice(0, 4));
+        } catch (e) {
+            console.log('Erro ao selecionar ou recortar imagem:', e);
+        }
+    };
+
+    const handleImageClick = (uri: string) => {
+        setImageToCrop(uri);
+    };
+
+    const handleCropExistingImage = async () => {
+        if (!imageToCrop)
+            return;
+
+        try {
+            const croppedImage = await ImagePicker.openCropper({
+                path: imageToCrop,
+                mediaType: 'photo',
+                cropping: true,
+                compressImageMaxWidth: 1000,
+                compressImageMaxHeight: 1000,
+                compressImageQuality: 0.8,
+                forceJpg: true,
+            });
+
+            setSelectedImages(prevImages => prevImages.map(img => (img === imageToCrop ? croppedImage.path : img)));
+            setImageToCrop(null);
+        } catch (e) {
+            console.log('Erro ao recortar imagem existente:', e);
+            setImageToCrop(null);
+        }
+    };
+
+    const handleRemoveImage = (uriToRemove: string) => {
+        setSelectedImages(prev => prev.filter(uri => uri !== uriToRemove));
+        if (imageToCrop === uriToRemove)
+            setImageToCrop(null);
+    };
+
     const handleCancel = () => {
+        setEditingPostId(null);
         setPostText('');
         setSelectedImages([]);
         setSuccessfulPlatforms([]);
@@ -181,14 +240,20 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         }
 
         try {
-            await PostDao.create({
+            const draftData = {
                 content: postText,
                 images: selectedImages,
-                status: 'draft',
+                status: 'draft' as const,
                 tags: tagsText,
-            });
+            };
 
-            Alert.alert('Sucesso!', 'Seu rascunho foi salvo.');
+            if (editingPostId) {
+                await PostDao.update(editingPostId, draftData);
+                Alert.alert('Sucesso!', 'Seu rascunho foi atualizado.');
+            } else {
+                await PostDao.create(draftData);
+                Alert.alert('Sucesso!', 'Seu rascunho foi salvo.');
+            }
             handleCancel();
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível salvar o rascunho.');
@@ -270,8 +335,20 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             setSuccessfulPlatforms(allSuccessful);
 
             if (failedPlatforms.length === 0) {
+                const postData = {
+                    content: postText,
+                    images: selectedImages,
+                    status: 'posted' as const,
+                    platforms: successfulPlatforms.join(', '),
+                    tags: tagsText,
+                };
+                
+                if (editingPostId)
+                    await PostDao.update(editingPostId, postData);
+                else 
+                    await PostDao.create(postData);
+                
                 Alert.alert('Sucesso!', `Postagem enviada para: ${allSuccessful.join(', ')}`);
-                await PostDao.create({ content: postText, images: selectedImages, status: 'posted', platforms: allSuccessful.join(', '), tags: tagsText, });
                 handleCancel();
             } else
                 Alert.alert(
@@ -288,7 +365,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     };
 
     const renderImageItem = ({ item, index }: { item: string; index: number }) => (
-        <View style={styles.imageItemContainer}>
+        <TouchableOpacity onPress={() => handleImageClick(item)} style={styles.imageItemContainer}>
             <Image source={{ uri: item }} style={styles.imageItem} />
             <TouchableOpacity
                 style={styles.editIconOverlay}
@@ -297,7 +374,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             >
                 <Icon name="crop-outline" size={18} color="#fff" />
             </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
     );
 
     const getIconColor = (platform: PlatformType): string => {
@@ -318,25 +395,59 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.container}>
                 <View style={styles.statusContainer}>
-                    {SOCIAL_PLATFORMS.map(platform => (
-                        <View key={platform.name} style={styles.statusIconWrapper}>
-                            <Icon
-                                name={platform.icon}
-                                size={30}
-                                color={getIconColor(platform.name)}
-                            />
-                            <Text style={styles.statusText}>{platform.name}</Text>
-                        </View>
-                    ))}
+                    {activePlatforms.map(platform => {
+                        const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === platform);
+                        if (!platformInfo)
+                            return null;
+
+                        return (
+                            <View key={platformInfo.name} style={styles.statusIconWrapper}>
+                                <Icon
+                                    name={platformInfo.icon}
+                                    size={30}
+                                    color={getIconColor(platformInfo.name)}
+                                />
+                                <Text style={styles.statusText}>{platformInfo.name}</Text>
+                            </View>
+                        );
+                    })}
                 </View>
 
                 <TextInput
                     style={styles.textArea}
-                    placeholder="O que você está pensando?"
+                    placeholder="O que você deseja postar?"
                     multiline
                     value={postText}
                     onChangeText={handleTextChange}
                 />
+
+                <View style={styles.countersContainer}>
+                    {activePlatforms.map(platform => {
+                        const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === platform);
+                        if (!platformInfo)
+                            return null;
+
+                        const limit = platformInfo.limits || 0;
+                        const remaining = limit - postText.length;
+
+                        return (
+                            <View
+                                key={platform}
+                                style={[
+                                    styles.counterCard,
+                                    remaining < 0 && styles.counterCardError
+                                ]}
+                            >
+                                <Icon name={platformInfo.icon} size={16} style={styles.counterIcon} />
+                                <Text
+                                    style={styles.counterText}
+                                >
+                                    {remaining}
+                                </Text>
+                            </View>
+                        );
+                    })}
+                </View>
 
                 <TextInput
                     style={styles.tagsInput}
@@ -364,11 +475,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     </View>
                 )}
 
-
                 <Button
                     title={'Anexar Imagens'}
                     onPress={handleImagePicker}
                     style={styles.attachButton}
+                    textStyle={styles.attachButtonText}
+                    icon={'image-outline'}
                 />
 
                 {selectedImages.length > 0 && (
@@ -386,8 +498,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                         <Button
                             title={'Corrigir Bordas de Todas Imagens'}
                             onPress={handleAdjustAllImages}
-                            style={styles.adjustAllButtonText}
-                            icon='scan-outline'
+                            style={styles.adjustButton}
+                            textStyle={styles.adjustButtonText}
+                            icon='crop-outline'
                         />
                     </>
                 )}
@@ -397,18 +510,21 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                         title={'Cancelar'}
                         onPress={handleCancel}
                         style={[styles.actionButton, styles.cancelButton]}
+                        textStyle={styles.cancelButtonText}
                     />
 
                     <Button
                         title={'Rascunho'}
                         onPress={handleSaveDraft}
                         style={[styles.actionButton, styles.draftButton]}
+                        textStyle={styles.draftButtonText}
                     />
 
                     <Button
                         title={'Postar'}
                         onPress={handlePost}
                         style={[styles.actionButton, styles.postButton]}
+                        textStyle={styles.postButtonText}
                     />
                 </View>
             </ScrollView>

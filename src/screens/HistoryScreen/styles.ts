@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
+import { ColorsType } from 'src/theme/colors';
 
-export const styles = StyleSheet.create({
+export const getStyles = (colors: ColorsType) => StyleSheet.create({
     safeArea: {
         flex: 1,
         backgroundColor: '#f5f5f5',
@@ -36,6 +37,10 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 10,
     },
+    headerRight: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     statusBadge: {
         paddingHorizontal: 10,
         paddingVertical: 4,
@@ -55,6 +60,7 @@ export const styles = StyleSheet.create({
     dateText: {
         fontSize: 12,
         color: '#888',
+        marginRight: 10,
     },
     contentText: {
         fontSize: 15,
@@ -77,5 +83,9 @@ export const styles = StyleSheet.create({
         fontSize: 12,
         fontStyle: 'italic',
         color: '#666',
+    },
+    deleteButton: {
+        right: 10,
+        padding: 5,
     },
 });

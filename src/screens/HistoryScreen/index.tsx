@@ -1,15 +1,22 @@
 import React, { useState, useCallback } from 'react';
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { styles } from './styles';
+
+import { getStyles } from './styles';
+import { useTheme } from '../../theme/ThemeProvider';
+
 import PostDao, { Post as PostHistoryItem } from '../../dao/PostDao';
 import { PostDraftData, RootTabParamList } from '../../navigation/types';
-import LoadingIndicator from '../../components/LoadingIndicator'; 
+import LoadingIndicator from '../../components/LoadingIndicator';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 type HistoryScreenNavigationProp = BottomTabNavigationProp<RootTabParamList, 'History'>;
 
 const HistoryScreen = () => {
+    const { colors } = useTheme();
+    const styles = getStyles(colors);
+
     const [history, setHistory] = useState<PostHistoryItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -35,11 +42,34 @@ const HistoryScreen = () => {
 
     const handleItemPress = (item: PostHistoryItem) => {
         const postToEdit: PostDraftData = {
+            id: item.id,
             content: item.content || '',
             tags: item.tags || '',
             images: item.images || [],
         };
         navigation.navigate('Home', { postToEdit });
+    };
+
+    const handleDeletePress = (postId: number) => {
+        Alert.alert(
+            "Confirmar Exclusão",
+            "Você tem certeza que deseja deletar este item do histórico? Esta ação não pode ser desfeita.",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Deletar",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            await PostDao.delete(postId);
+                            setHistory(prevHistory => prevHistory.filter(post => post.id !== postId));
+                        } catch (error) {
+                            Alert.alert("Erro", "Não foi possível deletar o item.");
+                        }
+                    },
+                },
+            ]
+        );
     };
 
     const renderItem = ({ item }: { item: PostHistoryItem }) => (
@@ -52,9 +82,14 @@ const HistoryScreen = () => {
                     ]}>
                         <Text style={styles.statusText}>{item.status === 'posted' ? 'Postado' : 'Rascunho'}</Text>
                     </View>
-                    <Text style={styles.dateText}>
-                        {new Date(item.created_at).toLocaleString('pt-BR')}
-                    </Text>
+                    <View style={styles.headerRight}>
+                        <Text style={styles.dateText}>
+                            {new Date(item.created_at).toLocaleString('pt-BR')}
+                        </Text>
+                        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeletePress(item.id)}>
+                            <Icon name="trash-outline" size={24} color={colors.delete} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {item.content ? <Text style={styles.contentText}>{item.content}</Text> : null}
@@ -84,7 +119,7 @@ const HistoryScreen = () => {
     return (
         <SafeAreaView style={styles.safeArea}>
             <LoadingIndicator visible={isLoading} text="Carregando histórico..." />
-            
+
             {history.length === 0 ? (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>Nenhuma postagem ou rascunho encontrado.</Text>

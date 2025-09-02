@@ -22,11 +22,11 @@ Sentry.init({
 });
 
 const AppContent = () => {
-    const { isDark } = useTheme();
+    const { colors, isDark } = useTheme();
 
     return (
         <NavigationContainer>
-            <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+            <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={colors.background} />
             <AppNavigator />
         </NavigationContainer>
     );

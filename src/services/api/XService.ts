@@ -76,6 +76,6 @@ export class XService implements IApiService {
     }
 
     public async validateAndRefreshToken(): Promise<void> {
-
+        return Promise.resolve();
     }
 }

@@ -141,4 +141,10 @@
     <string gender="unknown" name="summary_description">Samenvatting</string>
     <string gender="unknown" name="tablist_description">Lijst met tabbladen</string>
     <string gender="unknown" name="toolbar_description">Werkbalk</string>
+    <string name="ucrop_crop">Bijsnijden</string>
+    <string name="ucrop_label_edit_photo">Foto bewerken</string>
+    <string name="ucrop_label_original">Origineel</string>
+    <string name="ucrop_menu_crop">Bijsnijden</string>
+    <string name="ucrop_rotate">Draaien</string>
+    <string name="ucrop_scale">Schalen</string>
 </resources>
