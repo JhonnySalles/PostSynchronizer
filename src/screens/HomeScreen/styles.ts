@@ -38,16 +38,14 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         fontSize: 16,
         textAlignVertical: 'top',
         padding: 10,
-        borderWidth: 1,
-        borderColor: colors.border,
         borderRadius: 8,
         marginBottom: 15,
         color: colors.text,
-        backgroundColor: colors.card,
+        backgroundColor: colors.background,
     },
     // Carrossel de Imagens
     attachButton: {
-        backgroundColor: '#eef',
+        backgroundColor: colors.primary,
         padding: 15,
         borderRadius: 8,
         alignItems: 'center',
@@ -56,15 +54,16 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
     attachButtonText: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#007BFF',
+        color: colors.textPrimary,
     },
     carouselContainer: {
         height: 120,
-        marginBottom: 15,
+        marginBottom: 5,
+        marginTop: 15
     },
     imageItem: {
-        width: 100,
-        height: 100,
+        width: 150,
+        height: 150,
         borderRadius: 8,
         marginRight: 10,
     },
@@ -74,7 +73,7 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         justifyContent: 'space-between',
         paddingTop: 10,
         borderTopWidth: 1,
-        borderTopColor: '#eee',
+        borderTopColor: colors.border
     },
     actionButton: {
         flex: 1,
@@ -88,32 +87,31 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         fontWeight: 'bold',
     },
     cancelButton: {
-        backgroundColor: '#f0f0f0',
+        backgroundColor: colors.cancel,
     },
     cancelButtonText: {
-        color: '#555',
+        color: colors.textPrimary,
     },
     draftButton: {
-        backgroundColor: '#ffc107',
+        backgroundColor: colors.tertiary,
     },
     draftButtonText: {
-        color: '#fff',
+        color: colors.textPrimary,
     },
     postButton: {
-        backgroundColor: '#28a745',
+        backgroundColor: colors.secondary,
     },
     postButtonText: {
-        color: '#fff',
+        color: colors.textPrimary,
     },
     tagsInput: {
         fontSize: 16,
         padding: 10,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: 8,
         marginBottom: 15,
         color: colors.text,
-        backgroundColor: colors.card,
+        backgroundColor: colors.background,
+        borderTopWidth: 1,
+        borderTopColor: colors.border,
     },
     // Container para as sugestões
     suggestionsContainer: {
@@ -144,26 +142,57 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
     },
     editIconOverlay: {
         position: 'absolute',
-        top: 4,
+        top: 2,
         right: 4,
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
         padding: 6,
         borderRadius: 15,
     },
-    adjustAllButton: {
+    adjustButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#e9ecef', // Cor sutil do tema
+        backgroundColor: colors.primary,
         padding: 12,
         borderRadius: 8,
         marginBottom: 15,
+        marginStart: 50,
+        marginEnd: 50,
     },
-    adjustAllButtonText: {
+    adjustButtonText: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#495057', // Cor sutil do tema
+        color: colors.textPrimary,
         marginLeft: 8,
     },
+    countersContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginBottom: 15,
+        flexWrap: 'wrap',
+    },
+    counterCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.primary,
+        borderRadius: 20,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        marginLeft: 8,
+        marginTop: 5,
+    },
+    counterCardError: {
+        backgroundColor: colors.error,
+    },
+    counterText: {
+        marginLeft: 5,
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#FFFFFF',
+    },
+    counterIcon: {
+        color: '#FFFFFF',
+    }
 
 });

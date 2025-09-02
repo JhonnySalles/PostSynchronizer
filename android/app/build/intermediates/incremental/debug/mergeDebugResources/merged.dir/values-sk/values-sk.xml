@@ -146,4 +146,7 @@
     <string gender="unknown" name="tablist_description">Zoznam kariet</string>
     <string gender="unknown" name="timer_description">Časovač</string>
     <string gender="unknown" name="toolbar_description">Panel s nástrojmi</string>
+    <string name="ucrop_label_edit_photo">Upraviť fotografiu</string>
+    <string name="ucrop_label_original">Pôvodná</string>
+    <string name="ucrop_menu_crop">Orezať</string>
 </resources>

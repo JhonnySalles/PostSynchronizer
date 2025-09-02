@@ -1,8 +1,8 @@
 import { getDBConnection } from '../database';
-import { PlatformType, X, TUMBLR, THREADS, UNKNOW } from '../constants/platforms';
+import { PlatformType, X, TUMBLR, THREADS, UNKNOW, BLUESKY } from '../constants/platforms';
 
 export interface Credentials {
-    platform: typeof UNKNOW | typeof X | typeof TUMBLR | typeof THREADS;
+    platform: typeof UNKNOW | typeof X | typeof TUMBLR | typeof THREADS | typeof BLUESKY;
     consumerKey: string;
     consumerSecret: string;
     token: string;
@@ -123,7 +123,7 @@ class AuthTokenDao {
                         consumerSecret: dados.consumer_secret,
                         token: dados.token,
                         tokenSecret: dados.token_secret,
-                        active: dados.active,
+                        active: dados.active === 1 ? true : false,
                         aditional: dados.aditional
                     }
 

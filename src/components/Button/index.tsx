@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleProp, ViewStyle, TextStyle, ActivityIndicator, } from 'react-native';
 import { useTheme } from '../../theme/ThemeProvider';
 import { getStyles } from './styles';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 interface ButtonProps {
@@ -39,7 +40,7 @@ const Button = ({ title, onPress, icon, variant = 'primary', style, textStyle, d
             disabled={disabled || isLoading}
             activeOpacity={0.8}
         >
-            {icon && <Icon name={icon} size={22} color={variant === 'primary' || variant === 'destructive' ? '#fff' : colors.primary} />}
+            {icon && <Icon name={icon} size={22} color={variant === 'primary' || variant === 'destructive' ? '#fff' : colors.primary} style={{marginEnd: 10}} />}
             {isLoading ? (
                 <ActivityIndicator color={variant === 'primary' || variant === 'destructive' ? '#fff' : colors.primary} />
             ) : (

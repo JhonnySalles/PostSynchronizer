@@ -57,5 +57,16 @@
             </array>
         </dict>
     </array>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Nosso aplicativo precisa de acesso à sua galeria para que você possa selecionar e postar imagens.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Nosso aplicativo precisa de acesso à sua câmera para que você possa tirar fotos para postar.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Nosso aplicativo precisa de acesso ao microfone para gravar áudio em vídeos (se aplicável).</string>
+    <key>UIAppFonts</key>
+    <array>
+        <string>Ionicons.ttf</string>
+        <string>MaterialCommunityIcons.ttf</string>
+    </array>
 </dict>
 </plist>

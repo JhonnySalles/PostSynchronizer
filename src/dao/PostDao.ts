@@ -13,6 +13,7 @@ export interface Post {
 // Omit<> é um utilitário do TypeScript para criar um tipo omitindo certas chaves.
 // Usado para o método 'create', já que 'id' e 'created_at' são gerados pelo banco.
 type PostCreateData = Omit<Post, 'id' | 'created_at'>;
+type PostDataPayload = Partial<Omit<Post, 'id' | 'created_at'>>;
 
 class PostDao {
     /**
@@ -79,7 +80,7 @@ class PostDao {
     public async getTagSuggestions(query: string): Promise<string[]> {
         if (!query.trim())
             return [];
-        
+
         const db = await getDBConnection();
         try {
             const results = await db.executeSql(
@@ -99,6 +100,50 @@ class PostDao {
             return Array.from(uniqueTags);
         } catch (error) {
             console.error("Erro ao buscar sugestões de tags [DAO]:", error);
+            throw error;
+        }
+    }
+
+    /**
+   * Atualiza um post existente no banco de dados com base no seu ID.
+   * @param {number} postId - O ID do post a ser atualizado.
+   * @param {PostDataPayload} postData - Os novos dados do post.
+   */
+    public async update(postId: number, postData: PostDataPayload): Promise<void> {
+        const {
+            content = '',
+            images = [],
+            status = 'draft',
+            platforms = '',
+            tags = '',
+        } = postData;
+
+        const imagesJson = JSON.stringify(images);
+        const db = await getDBConnection();
+
+        try {
+            await db.executeSql(
+                'UPDATE posts SET content = ?, images = ?, status = ?, platforms = ?, tags = ? WHERE id = ?',
+                [content, imagesJson, status, platforms, tags, postId]
+            );
+            console.info(`Post ID ${postId} atualizado com sucesso [DAO]`);
+        } catch (error) {
+            console.error(error as Error, { message: `Erro ao atualizar post ID ${postId} [DAO]` });
+            throw error;
+        }
+    }
+
+    /**
+     * Deleta um post do banco de dados com base no seu ID.
+     * @param {number} postId - O ID do post a ser deletado.
+     */
+    public async delete(postId: number): Promise<void> {
+        const db = await getDBConnection();
+        try {
+            await db.executeSql('DELETE FROM posts WHERE id = ?', [postId]);
+            console.info(`Post ID ${postId} deletado com sucesso [DAO]`);
+        } catch (error) {
+            console.error(error as Error, { message: `Erro ao deletar post ID ${postId} [DAO]` });
             throw error;
         }
     }

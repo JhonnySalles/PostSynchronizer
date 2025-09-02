@@ -5,7 +5,7 @@ import { styles } from './styles';
 import { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import Button from '../Button';
 import { Alert } from 'react-native';
-import { TUMBLR, X } from 'src/constants/platforms';
+import { BLUESKY, THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
 import { useTwitter } from 'react-native-simple-twitter';
 import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -18,11 +18,10 @@ interface LoginCardProps {
     isTesting?: boolean;
     buttonStyle?: StyleProp<ViewStyle>;
     buttonTextStyle?: StyleProp<TextStyle>;
-    isActive?: boolean;
     onStatusChange?: (credentials: Credentials) => void;
 }
 
-const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting = false, isActive = false, onStatusChange }: LoginCardProps) => {
+const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting = false, onStatusChange }: LoginCardProps) => {
     const [creds, setCreds] = useState<Credentials>(credential);
     const [isProcessing, setIsProcessing] = useState(false);
     const [blogItems, setBlogItems] = useState<{ label: string; value: string }[]>([]);
@@ -39,13 +38,24 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
         setCreds(prev => ({ ...prev, [field]: value }));
     };
 
-    const areCredsValid = () => Object.values(creds).find(val => val.trim() !== '');
+    const areCredsValid = (): boolean => {
+        if (!creds) 
+            return false;
+
+        const keys = Object.keys(creds);
+        const keysToValidate = keys.filter(key => key !== 'platform' && key !== 'active');
+
+        return keysToValidate.some(key => {
+            const value = (creds as any)[key];
+            return typeof value === 'string' && value.trim() !== '';
+        });
+    };
 
     const handleSavePress = () => {
         if (areCredsValid()) {
             let credenciais = creds
             if (credential.platform === TUMBLR)
-                credenciais = {...credenciais, blogs: (creds as TumblrCredentials).blogs.map(b => ({...b, selected: b.name === (creds as TumblrCredentials).blogName})) } as TumblrCredentials 
+                credenciais = { ...credenciais, blogs: (creds as TumblrCredentials).blogs.map(b => ({ ...b, selected: b.name === (creds as TumblrCredentials).blogName })) } as TumblrCredentials
             onSave(credenciais);
         } else
             Alert.alert("Campos Vazios", "Por favor, preencha uma credencial ao menos para salvar.");
@@ -86,6 +96,43 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
         }
     };
 
+    let placeholderConsumer;
+    let placeholderConsumerSecret;
+    let placeholderToken;
+    let placeholderTokenSecret;
+
+    switch (creds.platform) {
+        case X:
+            placeholderConsumer = "Consumer Key";
+            placeholderConsumerSecret = "Consumer Secret";
+            placeholderToken = undefined;
+            placeholderTokenSecret = undefined;
+            break;
+        case TUMBLR:
+            placeholderConsumer = "Consumer Key";
+            placeholderConsumerSecret = "Consumer Secret";
+            placeholderToken = "Token";
+            placeholderTokenSecret = "Token Secret";
+            break;
+        case THREADS:
+            placeholderConsumer = "Client ID";
+            placeholderConsumerSecret = "Client Secret";
+            placeholderToken = undefined;
+            placeholderTokenSecret = undefined;
+            break;
+        case BLUESKY:
+            placeholderConsumer = "Identifier";
+            placeholderConsumerSecret = "Password";
+            placeholderToken = undefined;
+            placeholderTokenSecret = undefined;
+            break;
+        default:
+            placeholderConsumer = "Consumer Key";
+            placeholderConsumerSecret = "Consumer Secret";
+            placeholderToken = "Token";
+            placeholderTokenSecret = "Token Secret";
+    }
+
     return (
         <View style={styles.cardContainer}>
             <View style={styles.header}>
@@ -103,7 +150,7 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
                 <Text style={styles.switchLabel}>Ativo para postagem</Text>
                 <Switch
                     trackColor={{ false: '#767577', true: '#81b0ff' }}
-                    thumbColor={isActive ? '#f5dd4b' : '#f4f3f4'}
+                    thumbColor={creds.active ? '#f5dd4b' : '#f4f3f4'}
                     ios_backgroundColor="#3e3e3e"
                     onValueChange={() => {
                         const credenciais = { ...credential, active: !credential.active };
@@ -112,16 +159,18 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
                             onStatusChange(credenciais);
                     }
                     }
-                    value={isActive}
+                    value={creds.active}
+                    disabled={!areCredsValid()}
                 />
             </View>
 
             {creds.platform === X && <TWModal />}
 
-            <TextInput style={styles.input} placeholder="Consumer Key" value={creds.consumerKey} onChangeText={v => handleInputChange('consumerKey', v)} />
-            <TextInput style={styles.input} placeholder="Consumer Secret" value={creds.consumerSecret} onChangeText={v => handleInputChange('consumerSecret', v)} />
-            <TextInput style={styles.input} placeholder="Token" value={creds.token} onChangeText={v => handleInputChange('token', v)} editable={creds.platform != X} />
-            <TextInput style={styles.input} placeholder="Token Secret" value={creds.tokenSecret} onChangeText={v => handleInputChange('tokenSecret', v)} editable={creds.platform != X} />
+            {placeholderConsumer && <TextInput style={styles.input} placeholder={placeholderConsumer} value={creds.consumerKey} onChangeText={v => handleInputChange('consumerKey', v)} />}
+            {placeholderConsumerSecret && <TextInput style={styles.input} placeholder={placeholderConsumerSecret} value={creds.consumerSecret} onChangeText={v => handleInputChange('consumerSecret', v)} />}
+            {placeholderToken && <TextInput style={styles.input} placeholder={placeholderToken} value={creds.token} onChangeText={v => handleInputChange('token', v)} editable={creds.platform != X} />}
+            {placeholderTokenSecret && <TextInput style={styles.input} placeholder={placeholderTokenSecret} value={creds.tokenSecret} onChangeText={v => handleInputChange('tokenSecret', v)} editable={creds.platform != X} />}
+                
             {creds.platform === TUMBLR &&
                 <DropDownPicker
                     open={isProcessing}
