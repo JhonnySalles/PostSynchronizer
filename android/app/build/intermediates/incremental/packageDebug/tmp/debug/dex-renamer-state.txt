@@ -1,10 +1,10 @@
-#Tue Sep 02 21:26:00 BRT 2025
-base.0=D\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
-base.1=D\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
-base.2=D\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
-base.3=D\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\14\\classes.dex
-base.4=D\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
-base.5=D\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
+#Wed Sep 03 16:15:13 BRT 2025
+base.0=F\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+base.1=F\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
+base.2=F\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.3=F\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\14\\classes.dex
+base.4=F\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
+base.5=F\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.2=0/classes.dex

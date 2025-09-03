@@ -10,12 +10,16 @@ import com.facebook.react.shell.MainReactPackage;
 import java.util.Arrays;
 import java.util.ArrayList;
 
+// @react-native-async-storage/async-storage
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 // @react-native-community/image-editor
 import com.reactnativecommunity.imageeditor.ImageEditorPackage;
 // @react-native-picker/picker
 import com.reactnativecommunity.picker.RNCPickerPackage;
 // @sentry/react-native
 import io.sentry.react.RNSentryPackage;
+// @shopify/react-native-skia
+import com.shopify.reactnative.skia.RNSkiaPackage;
 // react-native-fs
 import com.rnfs.RNFSPackage;
 // react-native-image-crop-picker
@@ -79,9 +83,11 @@ public class PackageList {
   public ArrayList<ReactPackage> getPackages() {
     return new ArrayList<>(Arrays.<ReactPackage>asList(
       new MainReactPackage(mConfig),
+      new AsyncStoragePackage(),
       new ImageEditorPackage(),
       new RNCPickerPackage(),
       new RNSentryPackage(),
+      new RNSkiaPackage(),
       new RNFSPackage(),
       new PickerPackage(),
       new ImagePickerPackage(),

@@ -24,7 +24,7 @@ export const getStyles = (colors: ColorsType) =>
             backgroundColor: colors.primary,
         },
         primaryText: {
-            color: '#ffffff',
+            color: colors.textPrimary,
         },
         secondaryContainer: {
             backgroundColor: colors.card,
@@ -38,9 +38,9 @@ export const getStyles = (colors: ColorsType) =>
             backgroundColor: colors.error,
         },
         destructiveText: {
-            color: '#ffffff',
+            color: colors.textPrimary,
         },
-
+        
         // --- Estado Desabilitado ---
         disabledContainer: {
             opacity: 0.5,

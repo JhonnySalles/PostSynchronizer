@@ -41,12 +41,14 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     const [activePlatforms, setActivePlatforms] = useState<PlatformType[]>([]);
     const [postText, setPostText] = useState('');
     const [tagsText, setTagsText] = useState('');
+
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
+    const [isAdjustingImages, setIsAdjustingImages] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     const [editingPostId, setEditingPostId] = useState<number | null>(null);
     const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
     const [isPosting, setIsPosting] = useState(false);
-    const [isAdjustingImages, setIsAdjustingImages] = useState(false);
     const [successfulPlatforms, setSuccessfulPlatforms] = useState<PlatformType[]>([]);
 
     const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -131,6 +133,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     };
 
     const handleAdjustSingleImage = async (index: number) => {
+        if (isAdjustingImages)
+            return;
+
         const originalUri = selectedImages[index];
         if (!originalUri || isAdjustingImages)
             return;
@@ -160,9 +165,15 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     text: "Continuar",
                     onPress: async () => {
                         setIsAdjustingImages(true);
-                        const newImageUris = await ImageProcessingService.processImageList(selectedImages);
-                        setSelectedImages(newImageUris);
-                        setIsAdjustingImages(false);
+                        try {
+                            setProgress(0);
+                            const newImageUris = await ImageProcessingService.processImageList(selectedImages, (p) => setProgress(p));
+                            setSelectedImages(newImageUris);
+                        } catch (e: Error | any) {
+                            Alert.alert("Erro", "Ocorreu uma falha durante o processamento das imagens.");
+                        } finally {
+                            setIsAdjustingImages(false);
+                        }
                     },
                 },
             ]
@@ -191,6 +202,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     };
 
     const handleRemoveImage = (index: number) => {
+        if (isAdjustingImages)
+            return;
+
         const originalUri = selectedImages[index];
         if (!originalUri || isAdjustingImages)
             return;
@@ -355,6 +369,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             <TouchableOpacity
                 style={styles.removeIconOverlay}
                 onPress={() => handleRemoveImage(index)}
+                disabled={isAdjustingImages}
             >
                 <Icon name="close-circle" size={24} color="red" />
             </TouchableOpacity>
@@ -400,6 +415,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                 <TextInput
                     style={styles.textArea}
                     placeholder="O que você deseja postar?"
+                    placeholderTextColor={colors.textSecondary}
                     multiline
                     value={postText}
                     onChangeText={handleTextChange}
@@ -479,11 +495,17 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                             />
                         </View>
 
+                        {isAdjustingImages && (
+                            <View style={styles.progressContainer}>
+                                <View style={[styles.progressBar, { width: `${progress * 100}%` }]} />
+                            </View>
+                        )}
                         <Button
                             title={'Corrigir Bordas de Todas Imagens'}
                             onPress={handleAdjustAllImages}
                             style={styles.adjustButton}
                             textStyle={styles.adjustButtonText}
+                            disabled={isAdjustingImages}
                             icon='crop-outline'
                         />
                     </>
