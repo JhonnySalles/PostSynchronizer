@@ -79,6 +79,15 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#eee',
     },
+    footerIconsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 8,
+    },
+    footerIcon: {
+        marginHorizontal: 8,
+    },
     platformsText: {
         fontSize: 12,
         fontStyle: 'italic',

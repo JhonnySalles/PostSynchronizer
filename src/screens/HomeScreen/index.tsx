@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Alert, FlatList, Image, ScrollView, Keyboard, } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { launchImageLibrary } from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 
 import { getStyles } from './styles';
@@ -14,29 +13,22 @@ import { ApiServiceFactory } from '../../services/api';
 import ImageProcessingService from '../../services/ImageService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
-import { BLUESKY, PlatformType, THREADS, TUMBLR, UNKNOW, X } from '../../constants/platforms';
+import { BLUESKY, PlatformType, SOCIAL_PLATFORMS, THREADS, TUMBLR, UNKNOW, X } from '../../constants/platforms';
 import AuthTokenDao from '../../dao/AuthTokenDao';
 import { PostData } from 'src/services/api/IApiService';
 import { requestGalleryPermission } from 'src/utils/permissions';
 import Logger from 'src/services/LoggerService';
 
 type Connections = {
-    platfom: PlatformType;
+    platform: PlatformType;
     active: boolean;
     error: boolean;
 };
 
-const SOCIAL_PLATFORMS = [
-    { name: TUMBLR, icon: 'logo-tumblr', limits: 4096 },
-    { name: X, icon: 'logo-twitter', limits: 280 },
-    { name: THREADS, icon: 'at-sharp', limits: 500 },
-    { name: BLUESKY, icon: 'chatbubbles-outline', limits: 300 },
-] as const;
-
 type HomeScreenProps = BottomTabScreenProps<RootTabParamList, 'Home'>;
 
 const DEFAULT = {
-    platfom: UNKNOW,
+    platform: UNKNOW,
     active: false,
     error: false
 }
@@ -45,12 +37,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     const { colors } = useTheme();
     const styles = getStyles(colors);
 
-    const [connections, setConnections] = useState<Connections[]>([{ ...DEFAULT, platfom: TUMBLR }, { ...DEFAULT, platfom: X }, { ...DEFAULT, platfom: THREADS },]);
+    const [connections, setConnections] = useState<Connections[]>([{ ...DEFAULT, platform: TUMBLR }, { ...DEFAULT, platform: X }, { ...DEFAULT, platform: THREADS },]);
     const [activePlatforms, setActivePlatforms] = useState<PlatformType[]>([]);
     const [postText, setPostText] = useState('');
     const [tagsText, setTagsText] = useState('');
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
-    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
 
     const [editingPostId, setEditingPostId] = useState<number | null>(null);
     const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
@@ -78,11 +69,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             const fetchConnections = async () => {
                 try {
                     const activePlatforms = await AuthTokenDao.getActivePlatforms();
-                    const newConnectionStatus = connections.map(cnn => ({ ...cnn, active: cnn.platfom in activePlatforms, error: false }))
+                    const newConnectionStatus = connections.map(cnn => ({ ...cnn, active: cnn.platform in activePlatforms, error: false }))
                     setConnections(newConnectionStatus);
                     setActivePlatforms(activePlatforms);
                 } catch (e: Error | any) {
-                    Logger.error(e, {message: 'Erro ao buscar conexões:'});
+                    Logger.error(e, { message: 'Erro ao buscar conexões:' });
                 }
             };
 
@@ -101,7 +92,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             const suggestions = await PostDao.getTagSuggestions(query);
             setTagSuggestions(suggestions);
         } catch (e: Error | any) {
-            Logger.error(e, {message: 'Falha ao buscar sugestões de tags na tela.'});
+            Logger.error(e, { message: 'Falha ao buscar sugestões de tags na tela.' });
         }
     };
 
@@ -124,17 +115,19 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         Keyboard.dismiss();
     };
 
-    const handleImagePicker = () => {
-        launchImageLibrary({ mediaType: 'photo', selectionLimit: 0 }, response => {
-            if (response.didCancel)
-                Logger.debug('Usuário cancelou a seleção de imagem');
-            else if (response.errorCode)
-                Alert.alert('Erro', `Erro ao selecionar imagem: ${response.errorMessage}`);
-            else if (response.assets) {
-                const uris = response.assets.map(asset => asset.uri || '').filter(uri => uri);
-                setSelectedImages(prevImages => [...prevImages, ...uris]);
-            }
+    const handleImagePicker = async () => {
+        const hasPermission = await requestGalleryPermission();
+        if (!hasPermission) {
+            Alert.alert("Permissão Negada", "Você precisa conceder permissão para acessar a galeria de imagens.");
+            return;
+        }
+
+        const images = await ImagePicker.openPicker({
+            multiple: true,
+            mediaType: 'photo',
         });
+        const imagePaths = images.map(img => img.path);
+        setSelectedImages(prev => [...prev, ...imagePaths]);
     };
 
     const handleAdjustSingleImage = async (index: number) => {
@@ -176,42 +169,13 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         );
     };
 
-    const handleSelectImages = async () => {
-        const hasPermission = await requestGalleryPermission();
-        if (!hasPermission) {
-            Alert.alert("Permissão Negada", "Você precisa conceder permissão para acessar a galeria de imagens.");
-            return;
-        }
-
-        try {
-            const images = await ImagePicker.openPicker({
-                multiple: true,
-                mediaType: 'photo',
-                cropping: true,
-                compressImageMaxWidth: 1000,
-                compressImageMaxHeight: 1000,
-                compressImageQuality: 0.8,
-                forceJpg: true,
-            });
-
-            const newImages = images.map(img => img.path);
-            setSelectedImages(prev => [...prev, ...newImages].slice(0, 4));
-        } catch (e: Error | any) {
-            Logger.error(e, {message: 'Erro ao selecionar ou recortar imagem:'});
-        }
-    };
-
-    const handleImageClick = (uri: string) => {
-        setImageToCrop(uri);
-    };
-
-    const handleCropExistingImage = async () => {
-        if (!imageToCrop)
+    const handleImageClick = async (uri: string) => {
+        if (!uri)
             return;
 
         try {
             const croppedImage = await ImagePicker.openCropper({
-                path: imageToCrop,
+                path: uri,
                 mediaType: 'photo',
                 cropping: true,
                 compressImageMaxWidth: 1000,
@@ -220,18 +184,18 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                 forceJpg: true,
             });
 
-            setSelectedImages(prevImages => prevImages.map(img => (img === imageToCrop ? croppedImage.path : img)));
-            setImageToCrop(null);
+            setSelectedImages(prevImages => prevImages.map(img => (img === uri ? croppedImage.path : img)));
         } catch (e: Error | any) {
-            Logger.error(e, {message: 'Erro ao recortar imagem existente:'});
-            setImageToCrop(null);
+            Logger.error(e, { message: 'Erro ao recortar imagem existente:' });
         }
     };
 
-    const handleRemoveImage = (uriToRemove: string) => {
-        setSelectedImages(prev => prev.filter(uri => uri !== uriToRemove));
-        if (imageToCrop === uriToRemove)
-            setImageToCrop(null);
+    const handleRemoveImage = (index: number) => {
+        const originalUri = selectedImages[index];
+        if (!originalUri || isAdjustingImages)
+            return;
+
+        setSelectedImages(prev => prev.filter(uri => uri !== originalUri));
     };
 
     const handleCancel = () => {
@@ -264,15 +228,15 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             }
             handleCancel();
         } catch (e: Error | any) {
-            Logger.error(e, {message: 'Não foi possível salvar o rascunho.'});
+            Logger.error(e, { message: 'Não foi possível salvar o rascunho.' });
             Alert.alert('Erro', 'Não foi possível salvar o rascunho.');
         }
     };
 
     const handlePost = async () => {
-        const connectedPlatforms = Object.entries(connections)
-            .filter(([, isConnected]) => isConnected)
-            .map(([platform]) => platform);
+        const connectedPlatforms = connections
+            .filter(conn => conn.active)
+            .map(conn => conn.platform);
 
         if (connectedPlatforms.length === 0) {
             Alert.alert('Nenhuma Conta Conectada', 'Vá para as Configurações para conectar suas contas primeiro.');
@@ -286,7 +250,22 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
         try {
             setIsPosting(true);
-            const platformsToTry = connectedPlatforms.filter(p => !successfulPlatforms.includes(p as PlatformType));
+            const platformsToTry = activePlatforms.filter(p => !connectedPlatforms.includes(p as PlatformType));
+
+            let idPost = editingPostId;
+            const postData = {
+                content: postText,
+                images: selectedImages,
+                status: 'posted' as const,
+                platformsSend: platformsToTry.join(', '),
+                platformsSuccess: "",
+                tags: tagsText,
+            };
+
+            if (editingPostId)
+                await PostDao.update(editingPostId, postData);
+            else
+                idPost = await PostDao.create(postData);
 
             if (platformsToTry.length === 0) {
                 Alert.alert("Tudo Certo!", "Esta postagem já foi enviada para todas as suas contas conectadas.");
@@ -313,7 +292,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
                     successfulPlatforms.push(TUMBLR);
                 } catch (e: Error | any) {
-                    Logger.error(e, {message: 'Erro ao postar:'});
+                    Logger.error(e, { message: 'Erro ao postar:' });
                 }
             }
 
@@ -345,19 +324,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             setSuccessfulPlatforms(allSuccessful);
 
             if (failedPlatforms.length === 0) {
-                const postData = {
-                    content: postText,
-                    images: selectedImages,
-                    status: 'posted' as const,
-                    platforms: successfulPlatforms.join(', '),
-                    tags: tagsText,
-                };
-
-                if (editingPostId)
-                    await PostDao.update(editingPostId, postData);
-                else
-                    await PostDao.create(postData);
-
+                postData.platformsSuccess = successfulPlatforms.join(', '),
+                    await PostDao.update(idPost!, postData);
                 Alert.alert('Sucesso!', `Postagem enviada para: ${allSuccessful.join(', ')}`);
                 handleCancel();
             } else
@@ -367,7 +335,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                 );
 
         } catch (e: Error | any) {
-            Logger.error(e, {message: 'Erro ao postar:'});
+            Logger.error(e, { message: 'Erro ao postar:' });
             Alert.alert('Erro', 'Ocorreu um erro ao processar sua postagem.');
         } finally {
             setIsPosting(false);
@@ -384,11 +352,17 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             >
                 <Icon name="crop-outline" size={18} color="#fff" />
             </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.removeIconOverlay}
+                onPress={() => handleRemoveImage(index)}
+            >
+                <Icon name="close-circle" size={24} color="red" />
+            </TouchableOpacity>
         </TouchableOpacity>
     );
 
     const getIconColor = (platform: PlatformType): string => {
-        const connection = connections.find(c => c.platfom === platform);
+        const connection = connections.find(c => c.platform === platform);
         if (!connection)
             return colors.inactive;
 

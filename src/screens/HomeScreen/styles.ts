@@ -57,13 +57,13 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         color: colors.textPrimary,
     },
     carouselContainer: {
-        height: 120,
+        height: 200,
         marginBottom: 5,
         marginTop: 15
     },
     imageItem: {
-        width: 150,
-        height: 150,
+        width: 200,
+        height: 200,
         borderRadius: 8,
         marginRight: 10,
     },
@@ -72,6 +72,7 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingTop: 10,
+        marginBottom: 35,
         borderTopWidth: 1,
         borderTopColor: colors.border
     },
@@ -143,6 +144,14 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
     editIconOverlay: {
         position: 'absolute',
         top: 2,
+        left: -4,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        padding: 6,
+        borderRadius: 15,
+    },
+    removeIconOverlay: {
+        position: 'absolute',
+        top: 2,
         right: 4,
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
         padding: 6,
@@ -153,11 +162,11 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: colors.primary,
-        padding: 12,
+        padding: 10,
         borderRadius: 8,
         marginBottom: 15,
-        marginStart: 50,
-        marginEnd: 50,
+        marginStart: 40,
+        marginEnd: 40,
     },
     adjustButtonText: {
         fontSize: 16,

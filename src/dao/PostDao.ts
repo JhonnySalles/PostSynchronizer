@@ -6,15 +6,17 @@ export interface Post {
     content: string | null;
     images: string[];
     status: 'draft' | 'posted';
-    platforms: string | null;
+    platformsSend: string | null;
+    platformsSuccess: string | null;
     created_at: string;
+    updated_at: string;
     tags: string | null;
 }
 
 // Omit<> é um utilitário do TypeScript para criar um tipo omitindo certas chaves.
 // Usado para o método 'create', já que 'id' e 'created_at' são gerados pelo banco.
-type PostCreateData = Omit<Post, 'id' | 'created_at'>;
-type PostDataPayload = Partial<Omit<Post, 'id' | 'created_at'>>;
+type PostCreateData = Omit<Post, 'id' | 'created_at' | 'updated_at'>;
+type PostDataPayload = Partial<Omit<Post, 'id' | 'created_at' | 'updated_at'>>;
 
 class PostDao {
     /**
@@ -25,7 +27,7 @@ class PostDao {
         const db = await getDBConnection();
         try {
             const results = await db.executeSql(
-                'SELECT id, content, images, status, platforms, created_at, tags FROM posts ORDER BY created_at DESC'
+                'SELECT id, content, images, status, platforms_send, platforms_success, created_at, tags FROM posts ORDER BY created_at DESC'
             );
 
             const posts: Post[] = [];
@@ -35,40 +37,14 @@ class PostDao {
                     posts.push({
                         ...row,
                         images: JSON.parse(row.images || '[]'),
+                        platformsSend: row.platforms_send, 
+                        platformsSuccess: row.platforms_success,
                     });
                 }
             });
             return posts;
         } catch (error) {
             Logger.error(error as Error, { message: 'Erro ao buscar todos os posts [DAO]:' });
-            throw error;
-        }
-    }
-
-    /**
-     * Insere um novo post ou rascunho no banco de dados.
-     * @param {PostCreateData} postData - Os dados do post a serem criados.
-     */
-    public async create(postData: Partial<PostCreateData>): Promise<void> {
-        const {
-            content = '',
-            images = [],
-            status = 'draft',
-            platforms = '',
-            tags = '',
-        } = postData;
-
-        const imagesJson = JSON.stringify(images);
-        const db = await getDBConnection();
-
-        try {
-            await db.executeSql(
-                'INSERT INTO posts (content, images, status, platforms, tags) VALUES (?, ?, ?, ?, ?)',
-                [content, imagesJson, status, platforms, tags]
-            );
-            Logger.info('Post criado com sucesso [DAO]');
-        } catch (error) {
-            Logger.error(error as Error, { message: 'Erro ao criar post [DAO]:' });
             throw error;
         }
     }
@@ -106,6 +82,40 @@ class PostDao {
     }
 
     /**
+     * Insere um novo post ou rascunho no banco de dados.
+     * @param {PostCreateData} postData - Os dados do post a serem criados.
+     */
+    public async create(postData: Partial<PostCreateData>): Promise<number> {
+        const {
+            content = '',
+            images = [],
+            status = 'draft',
+            platformsSend: platforms_send = '', 
+            platformsSuccess: platforms_success = '',
+            tags = '',
+        } = postData;
+
+        const imagesJson = JSON.stringify(images);
+        const db = await getDBConnection();
+
+        try {
+            const [result] = await db.executeSql(
+                'INSERT INTO posts (content, images, status, platforms_send, platforms_success, tags) VALUES (?, ?, ?, ?, ?, ?)',
+                [content, imagesJson, status, platforms_send, platforms_success, tags]
+            );
+            const insertId = result.insertId;
+            if (insertId === undefined || insertId < 0)
+                throw new Error("Falha ao obter o ID do post inserido.");
+
+            Logger.info('Post criado com sucesso [DAO]');
+            return insertId;
+        } catch (error) {
+            Logger.error(error as Error, { message: 'Erro ao criar post [DAO]:' });
+            throw error;
+        }
+    }
+
+    /**
    * Atualiza um post existente no banco de dados com base no seu ID.
    * @param {number} postId - O ID do post a ser atualizado.
    * @param {PostDataPayload} postData - Os novos dados do post.
@@ -115,7 +125,8 @@ class PostDao {
             content = '',
             images = [],
             status = 'draft',
-            platforms = '',
+            platformsSend: platforms_send = '', 
+            platformsSuccess: platforms_success = '',
             tags = '',
         } = postData;
 
@@ -124,8 +135,8 @@ class PostDao {
 
         try {
             await db.executeSql(
-                'UPDATE posts SET content = ?, images = ?, status = ?, platforms = ?, tags = ? WHERE id = ?',
-                [content, imagesJson, status, platforms, tags, postId]
+                'UPDATE posts SET content = ?, images = ?, status = ?, platforms_send = ?, platforms_success = ?, tags = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+                [content, imagesJson, status, platforms_send, platforms_success, tags, postId]
             );
             Logger.info(`Post ID ${postId} atualizado com sucesso [DAO]`);
         } catch (error) {

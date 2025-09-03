@@ -68,6 +68,7 @@ class LoggerService {
      */
     public error(error: Error, context?: Record<string, any>): void {
         log.error(error, context);
+        console.log(error)
 
         if (context)
             Sentry.setContext('Custom Context', context);

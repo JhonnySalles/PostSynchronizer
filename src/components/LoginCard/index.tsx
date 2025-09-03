@@ -25,6 +25,7 @@ interface LoginCardProps {
 const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting = false, onStatusChange }: LoginCardProps) => {
     const [creds, setCreds] = useState<Credentials>(credential);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isOpening, setIsOpening] = useState(false);
     const [blogItems, setBlogItems] = useState<{ label: string; value: string }[]>([]);
 
     useEffect(() => {
@@ -55,7 +56,7 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
     const handleSavePress = () => {
         if (areCredsValid()) {
             let credenciais = creds
-            if (credential.platform === TUMBLR)
+            if (credential.platform === TUMBLR && (creds as TumblrCredentials).blogs)
                 credenciais = { ...credenciais, blogs: (creds as TumblrCredentials).blogs.map(b => ({ ...b, selected: b.name === (creds as TumblrCredentials).blogName })) } as TumblrCredentials
             onSave(credenciais);
         } else
@@ -174,10 +175,10 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
                 
             {creds.platform === TUMBLR &&
                 <DropDownPicker
-                    open={isProcessing}
+                    open={isOpening}
                     value={(creds as TumblrCredentials).blogName}
                     items={blogItems}
-                    setOpen={setIsProcessing}
+                    setOpen={setIsOpening}
                     setValue={(callback) => {
                         setCreds(prev => ({ ...prev, blogName: callback((prev as TumblrCredentials).blogName) }));
                     }}
