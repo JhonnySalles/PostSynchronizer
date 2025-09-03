@@ -1,26 +1,26 @@
 {
-  "root": "F:\\Projetos\\PostSynchronizer",
-  "reactNativePath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native",
+  "root": "D:\\Projetos\\PostSynchronizer",
+  "reactNativePath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native",
   "reactNativeVersion": "0.75",
   "dependencies": {
     "@react-native-community/image-editor": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\image-editor",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\image-editor",
       "name": "@react-native-community/image-editor",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\image-editor\\react-native-image-editor.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\image-editor\\react-native-image-editor.podspec",
           "version": "4.3.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\image-editor\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\image-editor\\android",
           "packageImportPath": "import com.reactnativecommunity.imageeditor.ImageEditorPackage;",
           "packageInstance": "new ImageEditorPackage()",
           "buildTypes": [],
           "libraryName": "RNCImageEditorSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/@react-native-community/image-editor/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/@react-native-community/image-editor/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -30,17 +30,17 @@
       }
     },
     "@react-native-picker/picker": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-picker\\picker",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-picker\\picker",
       "name": "@react-native-picker/picker",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-picker\\picker\\RNCPicker.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-picker\\picker\\RNCPicker.podspec",
           "version": "2.11.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-picker\\picker\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-picker\\picker\\android",
           "packageImportPath": "import com.reactnativecommunity.picker.RNCPickerPackage;",
           "packageInstance": "new RNCPickerPackage()",
           "buildTypes": [],
@@ -49,14 +49,14 @@
             "RNCAndroidDialogPickerComponentDescriptor",
             "RNCAndroidDropdownPickerComponentDescriptor"
           ],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/@react-native-picker/picker/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/@react-native-picker/picker/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
           "isPureCxxDependency": false
         },
         "windows": {
-          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-picker\\picker",
+          "folder": "D:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-picker\\picker",
           "projects": [
             {
               "projectFile": "ReactNativePicker\\ReactNativePicker.vcxproj",
@@ -85,17 +85,17 @@
       }
     },
     "@sentry/react-native": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\@sentry\\react-native",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\@sentry\\react-native",
       "name": "@sentry/react-native",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@sentry\\react-native\\RNSentry.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\@sentry\\react-native\\RNSentry.podspec",
           "version": "6.20.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\@sentry\\react-native\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\@sentry\\react-native\\android",
           "packageImportPath": "import io.sentry.react.RNSentryPackage;",
           "packageInstance": "new RNSentryPackage()",
           "buildTypes": [],
@@ -104,7 +104,7 @@
             "RNSentryReplayMaskComponentDescriptor",
             "RNSentryReplayUnmaskComponentDescriptor"
           ],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/@sentry/react-native/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/@sentry/react-native/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -114,29 +114,29 @@
       }
     },
     "react-native-fs": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-fs",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-fs",
       "name": "react-native-fs",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-fs\\RNFS.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-fs\\RNFS.podspec",
           "version": "2.20.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-fs\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-fs\\android",
           "packageImportPath": "import com.rnfs.RNFSPackage;",
           "packageInstance": "new RNFSPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-fs/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-fs/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
           "isPureCxxDependency": false
         },
         "windows": {
-          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-fs",
+          "folder": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-fs",
           "projects": [],
           "solutionFile": "RNFS.sln",
           "nugetPackages": [],
@@ -145,23 +145,23 @@
       }
     },
     "react-native-image-crop-picker": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-crop-picker",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-crop-picker",
       "name": "react-native-image-crop-picker",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-crop-picker\\RNImageCropPicker.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-crop-picker\\RNImageCropPicker.podspec",
           "version": "0.51.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-crop-picker\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-crop-picker\\android",
           "packageImportPath": "import com.reactnative.ivpusic.imagepicker.PickerPackage;",
           "packageInstance": "new PickerPackage()",
           "buildTypes": [],
           "libraryName": "RNCImageCropPickerSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -171,23 +171,23 @@
       }
     },
     "react-native-image-picker": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-picker",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-picker",
       "name": "react-native-image-picker",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-picker\\react-native-image-picker.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-picker\\react-native-image-picker.podspec",
           "version": "8.2.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-picker\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-image-picker\\android",
           "packageImportPath": "import com.imagepicker.ImagePickerPackage;",
           "packageInstance": "new ImagePickerPackage()",
           "buildTypes": [],
           "libraryName": "RNImagePickerSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-image-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-image-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -197,22 +197,22 @@
       }
     },
     "react-native-inappbrowser-reborn": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-inappbrowser-reborn",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-inappbrowser-reborn",
       "name": "react-native-inappbrowser-reborn",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-inappbrowser-reborn\\RNInAppBrowser.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-inappbrowser-reborn\\RNInAppBrowser.podspec",
           "version": "3.7.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-inappbrowser-reborn\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-inappbrowser-reborn\\android",
           "packageImportPath": "import com.proyecto26.inappbrowser.RNInAppBrowserPackage;",
           "packageInstance": "new RNInAppBrowserPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-inappbrowser-reborn/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-inappbrowser-reborn/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -222,17 +222,17 @@
       }
     },
     "react-native-safe-area-context": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-safe-area-context",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-safe-area-context",
       "name": "react-native-safe-area-context",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-safe-area-context\\react-native-safe-area-context.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-safe-area-context\\react-native-safe-area-context.podspec",
           "version": "5.6.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-safe-area-context\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-safe-area-context\\android",
           "packageImportPath": "import com.th3rdwave.safeareacontext.SafeAreaContextPackage;",
           "packageInstance": "new SafeAreaContextPackage()",
           "buildTypes": [],
@@ -241,7 +241,7 @@
             "RNCSafeAreaProviderComponentDescriptor",
             "RNCSafeAreaViewComponentDescriptor"
           ],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -251,17 +251,17 @@
       }
     },
     "react-native-screens": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens",
       "name": "react-native-screens",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens\\RNScreens.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens\\RNScreens.podspec",
           "version": "4.15.4",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens\\android",
           "packageImportPath": "import com.swmansion.rnscreens.RNScreensPackage;",
           "packageInstance": "new RNScreensPackage()",
           "buildTypes": [],
@@ -280,14 +280,14 @@
             "RNSModalScreenComponentDescriptor",
             "RNSBottomTabsComponentDescriptor"
           ],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
           "isPureCxxDependency": false
         },
         "windows": {
-          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens",
+          "folder": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens",
           "projects": [
             {
               "projectFile": "RNScreens\\RNScreens.vcxproj",
@@ -316,29 +316,29 @@
       }
     },
     "react-native-sqlite-storage": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage",
       "name": "react-native-sqlite-storage",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage\\react-native-sqlite-storage.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage\\react-native-sqlite-storage.podspec",
           "version": "6.0.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage\\platforms\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage\\platforms\\android",
           "packageImportPath": "import org.pgsqlite.SQLitePluginPackage;",
           "packageInstance": "new SQLitePluginPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-sqlite-storage/platforms/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-sqlite-storage/platforms/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
           "isPureCxxDependency": false
         },
         "windows": {
-          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage",
+          "folder": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage",
           "projects": [
             {
               "projectFile": "SQLitePlugin\\SQLitePlugin.vcxproj",
@@ -367,23 +367,23 @@
       }
     },
     "react-native-vector-icons": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-vector-icons",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-vector-icons",
       "name": "react-native-vector-icons",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-vector-icons\\RNVectorIcons.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-vector-icons\\RNVectorIcons.podspec",
           "version": "10.3.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-vector-icons\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-vector-icons\\android",
           "packageImportPath": "import com.oblador.vectoricons.VectorIconsPackage;",
           "packageInstance": "new VectorIconsPackage()",
           "buildTypes": [],
           "libraryName": "RNVectorIconsSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -393,17 +393,17 @@
       }
     },
     "react-native-webview": {
-      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview",
+      "root": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview",
       "name": "react-native-webview",
       "platforms": {
         "ios": {
-          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview\\react-native-webview.podspec",
+          "podspecPath": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview\\react-native-webview.podspec",
           "version": "13.16.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview\\android",
+          "sourceDir": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview\\android",
           "packageImportPath": "import com.reactnativecommunity.webview.RNCWebViewPackage;",
           "packageInstance": "new RNCWebViewPackage()",
           "buildTypes": [],
@@ -411,14 +411,14 @@
           "componentDescriptors": [
             "RNCWebViewComponentDescriptor"
           ],
-          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-webview/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "D:/Projetos/PostSynchronizer/node_modules/react-native-webview/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
           "isPureCxxDependency": false
         },
         "windows": {
-          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview",
+          "folder": "D:\\Projetos\\PostSynchronizer\\node_modules\\react-native-webview",
           "projects": [
             {
               "projectFile": "ReactNativeWebView\\ReactNativeWebView.vcxproj",
@@ -781,7 +781,7 @@
         {
           "name": "--path <path>",
           "description": "Path to the React Native project root.",
-          "default": "F:\\Projetos\\PostSynchronizer"
+          "default": "D:\\Projetos\\PostSynchronizer"
         },
         {
           "name": "--platform <string>",
@@ -1122,7 +1122,7 @@
   "assets": [],
   "project": {
     "ios": {
-      "sourceDir": "F:\\Projetos\\PostSynchronizer\\ios",
+      "sourceDir": "D:\\Projetos\\PostSynchronizer\\ios",
       "xcodeProject": {
         "name": "PostSynchronizer.xcodeproj",
         "path": ".",
@@ -1131,7 +1131,7 @@
       "assets": []
     },
     "android": {
-      "sourceDir": "F:\\Projetos\\PostSynchronizer\\android",
+      "sourceDir": "D:\\Projetos\\PostSynchronizer\\android",
       "appName": "app",
       "packageName": "com.postsynchronizer",
       "applicationId": "com.postsynchronizer",
@@ -1139,7 +1139,7 @@
       "assets": []
     },
     "windows": {
-      "folder": "F:\\Projetos\\PostSynchronizer",
+      "folder": "D:\\Projetos\\PostSynchronizer",
       "sourceDir": "windows",
       "solutionFile": "PostSynchronizer.sln",
       "project": {

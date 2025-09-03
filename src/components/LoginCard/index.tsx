@@ -5,6 +5,7 @@ import { styles } from './styles';
 import { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import Button from '../Button';
 import { Alert } from 'react-native';
+import Logger from 'src/services/LoggerService';
 import { BLUESKY, THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
 import { useTwitter } from 'react-native-simple-twitter';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -70,16 +71,16 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
 
     const { twitter, TWModal } = useTwitter({
         onSuccess: async (user, oauth) => {
-            console.info(`[X] Login bem-sucedido para o usuário: @${user.screen_name}`);
+            Logger.info(`[X] Login bem-sucedido para o usuário: @${user.screen_name}`);
             try {
                 setCreds(prev => ({ ...prev, token: oauth.oauth_token, tokenSecret: oauth.oauth_token_secret, aditional: JSON.stringify({ ...user, token: prev.token, tokenSecret: prev.tokenSecret, }) }))
                 Alert.alert("Sucesso!", "Sua conta do X (Twitter) foi conectada.");
             } catch (error) {
-                console.error(error as Error, { message: 'Falha ao salvar credenciais do X' });
+                Logger.error(error as Error, { message: 'Falha ao salvar credenciais do X' });
             }
         },
         onError: (err) => {
-            console.error(new Error(JSON.stringify(err)), { message: '[X] Falha no login' });
+            Logger.error(new Error(JSON.stringify(err)), { message: '[X] Falha no login' });
             Alert.alert("Erro no Login", "Não foi possível conectar sua conta do X.");
         },
     });
@@ -90,7 +91,7 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
             await twitter.setConsumerKey(creds.consumerKey, creds.consumerSecret);
             await twitter.login();
         } catch (error) {
-            console.error(error as Error, { message: '[X] Erro ao iniciar o fluxo de login' });
+            Logger.error(error as Error, { message: '[X] Erro ao iniciar o fluxo de login' });
         } finally {
             setIsProcessing(false)
         }

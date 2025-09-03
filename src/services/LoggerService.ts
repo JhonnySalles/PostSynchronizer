@@ -14,11 +14,10 @@ const config = {
     severity: __DEV__ ? 'debug' : 'error',
     transport: fileAsyncTransport,
     transportOptions: {
-        FS: RNFS as any,
-        filePath: `${RNFS.DocumentDirectoryPath}/app_logs.txt`,
-        // Define o tamanho máximo do arquivo de log (ex: 1MB)
-        fileMaxSize: 1024 * 1024,
-        // Define o número máximo de arquivos de log rotacionados
+        FS: RNFS,
+        filePath: RNFS.DocumentDirectoryPath,
+        fileName: 'app_logs.txt',
+        fileMaxSize: 1024 * 1024, // 1MB
         fileBackupCount: 2,
     },
 };

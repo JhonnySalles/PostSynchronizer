@@ -10,6 +10,7 @@ import PostDao, { Post as PostHistoryItem } from '../../dao/PostDao';
 import { PostDraftData, RootTabParamList } from '../../navigation/types';
 import LoadingIndicator from '../../components/LoadingIndicator';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Logger from 'src/services/LoggerService';
 
 type HistoryScreenNavigationProp = BottomTabNavigationProp<RootTabParamList, 'History'>;
 
@@ -29,8 +30,8 @@ const HistoryScreen = () => {
                 try {
                     const items = await PostDao.getAll();
                     setHistory(items);
-                } catch (error) {
-                    console.error('Erro ao buscar histórico:', error);
+                } catch (e: Error | any) {
+                    Logger.error(e, {message: 'Erro ao buscar histórico:'});
                 } finally {
                     setIsLoading(false);
                 }
@@ -63,7 +64,8 @@ const HistoryScreen = () => {
                         try {
                             await PostDao.delete(postId);
                             setHistory(prevHistory => prevHistory.filter(post => post.id !== postId));
-                        } catch (error) {
+                        } catch (e: Error | any) {
+                            Logger.error(e, {message: 'Não foi possível deletar o item.'});
                             Alert.alert("Erro", "Não foi possível deletar o item.");
                         }
                     },

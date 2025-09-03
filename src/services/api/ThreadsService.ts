@@ -3,6 +3,7 @@ import { IApiService, PostData, ResultPost } from './IApiService';
 import AuthTokenDao, { Credentials } from '../../dao/AuthTokenDao';
 import { PlatformType, THREADS } from '../../constants/platforms';
 import { THREADS_CALLBACK_URL } from '@env';
+import Logger from 'src/services/LoggerService';
 import InAppBrowser, { RedirectResult } from 'react-native-inappbrowser-reborn';
 
 
@@ -23,7 +24,7 @@ export class ThreadsService implements IApiService {
         if (!credentials.token)
             return null;
 
-        console.info(`[${this.platform}] Tentando renovar o token de longa duração...`);
+        Logger.info(`[${this.platform}] Tentando renovar o token de longa duração...`);
         try {
 
             this.inicializa(credentials);
@@ -42,11 +43,11 @@ export class ThreadsService implements IApiService {
             };
 
             await AuthTokenDao.saveCredentials(newCredentials);
-            console.info(`[${this.platform}] Token renovado com sucesso. Nova expiração: ${newExpiresAt}`);
+            Logger.info(`[${this.platform}] Token renovado com sucesso. Nova expiração: ${newExpiresAt}`);
 
             return newCredentials;
         } catch (error) {
-            console.error(error as Error, { message: `[${this.platform}] Falha ao renovar o token. O usuário pode precisar logar novamente.` });
+            Logger.error(error as Error, { message: `[${this.platform}] Falha ao renovar o token. O usuário pode precisar logar novamente.` });
             return null;
         }
     }
@@ -54,7 +55,7 @@ export class ThreadsService implements IApiService {
     async validateAndRefreshToken(): Promise<void> {
         const credentials = await AuthTokenDao.getCredentialsForPlatform<Credentials>(this.platform as PlatformType);
         if (!credentials?.token || !credentials.aditional || !credentials.active) {
-            console.debug(`[${this.platform}] Sem credenciais para validar/renovar.`);
+            Logger.debug(`[${this.platform}] Sem credenciais para validar/renovar.`);
             return;
         }
 
@@ -62,10 +63,10 @@ export class ThreadsService implements IApiService {
         const twoHoursFromNow = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000); // Cinco dias restantes
 
         if (expirationDate < twoHoursFromNow) {
-            console.warn(`[${this.platform}] Token expira em menos de 5 dias (em ${expirationDate.toLocaleString()}). Renovando agora...`);
+            Logger.warn(`[${this.platform}] Token expira em menos de 5 dias (em ${expirationDate.toLocaleString()}). Renovando agora...`);
             await this.refreshToken(credentials);
         } else
-            console.info(`[${this.platform}] Token ainda é válido. Expira em: ${expirationDate.toLocaleString()}`);
+            Logger.info(`[${this.platform}] Token ainda é válido. Expira em: ${expirationDate.toLocaleString()}`);
     }
 
     private async login(credentials: Credentials): Promise<boolean> {
@@ -99,22 +100,22 @@ export class ThreadsService implements IApiService {
             credentials.token = longLivedToken;
 
             await AuthTokenDao.saveCredentials(credentials);
-            console.info(`[${this.platform}] Login bem-sucedido e token salvo. Usuário: @${profile?.username}`);
+            Logger.info(`[${this.platform}] Login bem-sucedido e token salvo. Usuário: @${profile?.username}`);
             return true;
         } catch (error) {
             InAppBrowser.closeAuth();
-            console.error(error as Error, { message: `[${this.platform}] Falha no processo de login OAuth` });
+            Logger.error(error as Error, { message: `[${this.platform}] Falha no processo de login OAuth` });
             return false;
         }
     }
 
     async test(credentials: Credentials): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
-            console.info(`[${this.platform}] Testando credenciais salvas...`);
+            Logger.info(`[${this.platform}] Testando credenciais salvas...`);
             try {
                 resolve(this.login(credentials));
             } catch (error) {
-                console.error(error as Error, { message: `[${this.platform}] Teste de credenciais falhou` });
+                Logger.error(error as Error, { message: `[${this.platform}] Teste de credenciais falhou` });
                 reject(false);
             }
         });
@@ -122,7 +123,7 @@ export class ThreadsService implements IApiService {
 
     async post(data: PostData): Promise<ResultPost> {
         return new Promise(async (resolve, reject) => {
-            console.info(`[${this.platform}] Iniciando postagem com nova lógica...`);
+            Logger.info(`[${this.platform}] Iniciando postagem com nova lógica...`);
             try {
                 const credentials = await AuthTokenDao.getCredentialsForPlatform<Credentials>(this.platform as PlatformType);
                 if (!credentials?.token)
@@ -150,17 +151,17 @@ export class ThreadsService implements IApiService {
                 let creationId: string;
 
                 if (!data.imagesUrl || data.imagesUrl.length === 0) {
-                    console.info(`[${this.platform}] Criando container de texto...`);
+                    Logger.info(`[${this.platform}] Criando container de texto...`);
                     creationId = await this.client.createMediaContainer({
                         userId,
                         mediaType: 'TEXT',
                         text: data.text,
                     });
                 } else if (data.imagesUrl.length === 1) {
-                    console.info(`[${this.platform}] Fazendo upload da imagem para obter URL pública...`);
+                    Logger.info(`[${this.platform}] Fazendo upload da imagem para obter URL pública...`);
                     const mediaUrl = data.imagesUrl[0] //await ImageUploadService.uploadImageAndGetUrl(data.images[0]); // Threads necessita de uma url, no qual irá vir do tumblr
 
-                    console.info(`[${this.platform}] Criando container de imagem única...`);
+                    Logger.info(`[${this.platform}] Criando container de imagem única...`);
                     creationId = await this.client.createMediaContainer({
                         userId,
                         mediaType: 'IMAGE',
@@ -169,7 +170,7 @@ export class ThreadsService implements IApiService {
                     });
                     //await this.waitForContainerReady(creationId);
                 } else {
-                    console.info(`[${this.platform}] Criando containers para cada item do carrossel...`);
+                    Logger.info(`[${this.platform}] Criando containers para cada item do carrossel...`);
                     const itemContainerIds = await Promise.all(
                         data.imagesUrl.map(url => this.client!.createCarouselItemContainer({
                             userId,
@@ -181,7 +182,7 @@ export class ThreadsService implements IApiService {
                     // Espera todos os itens do carrossel estarem prontos
                     //await Promise.all(itemContainerIds.map(id => this.waitForContainerReady(id)));
 
-                    console.info(`[${this.platform}] Criando container principal do carrossel...`);
+                    Logger.info(`[${this.platform}] Criando container principal do carrossel...`);
                     creationId = await this.client.createCarouselContainer({
                         userId,
                         children: itemContainerIds,
@@ -189,16 +190,16 @@ export class ThreadsService implements IApiService {
                     });
                 }
 
-                console.info(`[${this.platform}] Publicando container ID: ${creationId}...`);
+                Logger.info(`[${this.platform}] Publicando container ID: ${creationId}...`);
                 await this.client.publishMediaContainer({
                     userId,
                     creationId
                 });
 
-                console.info(`[${this.platform}] Postagem bem-sucedida!`);
+                Logger.info(`[${this.platform}] Postagem bem-sucedida!`);
                 resolve({ sucess: true });
             } catch (error) {
-                console.error(error as Error, { message: `[${this.platform}] Falha na postagem` });
+                Logger.error(error as Error, { message: `[${this.platform}] Falha na postagem` });
                 reject({ sucess: false });
             }
         });

@@ -2,7 +2,7 @@ import { BskyAgent, RichText } from '@atproto/api';
 import { IApiService, PostData, ResultPost } from './IApiService';
 import { BLUESKY, PlatformType } from '../../constants/platforms';
 import AuthTokenDao, { Credentials } from '../../dao/AuthTokenDao';
-import Logger from '../LoggerService';
+import Logger from 'src/services/LoggerService';
 import RNFS from 'react-native-fs';
 
 export class BlueskyService implements IApiService {

@@ -7,6 +7,7 @@ import { BLUESKY, THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
 import AuthTokenDao, { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import { useFocusEffect } from '@react-navigation/native';
 import LoadingIndicator from 'src/components/LoadingIndicator';
+import Logger from 'src/services/LoggerService';
 
 const DEFAULT: Credentials = {
     platform: UNKNOW,
@@ -29,7 +30,8 @@ const SettingsScreen = () => {
                 setIsLoading(true);
                 try {
                     setConnections(await AuthTokenDao.getAllCredentials());
-                } catch (error) {
+                } catch (e: Error | any) {
+                    Logger.error(e, {msg: 'Não foi possível carregar as configurações salvas.'});
                     Alert.alert("Erro", "Não foi possível carregar as configurações salvas.");
                 } finally {
                     setIsLoading(false);
@@ -44,9 +46,9 @@ const SettingsScreen = () => {
         try {
             await AuthTokenDao.saveCredentials(credentials);
             Alert.alert('Sucesso!', 'Credenciais foram salvas no banco de dados.');
-        } catch (error) {
+        } catch (e: Error | any) {
+            Logger.error(e, {message: 'Falha ao salvar credenciais.'});
             Alert.alert('Erro', 'Não foi possível salvar as credenciais.');
-            console.error(error as Error, { message: 'Falha ao salvar credenciais.' });
         }
     };
 
@@ -65,8 +67,8 @@ const SettingsScreen = () => {
                 }
             } else
                 Alert.alert("Falha na Conexão", "As credenciais são inválidas. Verifique os dados e tente novamente.");
-        } catch (error) {
-            console.error(error as Error, { message: "Erro ao testar credenciais" });
+        } catch (e: Error | any) {
+            Logger.error(e, {message: 'Erro ao testar credenciais.'});
             Alert.alert("Erro", "Ocorreu um erro inesperado ao tentar testar as credenciais.");
         } finally {
             setIsTesting(null);
@@ -82,7 +84,8 @@ const SettingsScreen = () => {
 
         try {
             await AuthTokenDao.updateActiveStatus(credentials);
-        } catch (error) {
+        } catch (e: Error | any) {
+            Logger.error(e, {message: 'Não foi possível atualizar o status da conexão.'});
             Alert.alert("Erro", "Não foi possível atualizar o status da conexão.");
             setConnections(prev =>
                 prev.map(conn =>

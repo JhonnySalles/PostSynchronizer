@@ -3,6 +3,7 @@ import { IApiService, PostData, ResultPost } from './IApiService';
 import AuthTokenDao, { Credentials, TumblrBlogs, TumblrCredentials } from '../../dao/AuthTokenDao';
 import { PlatformType, TUMBLR } from '../../constants/platforms';
 import RNFS from 'react-native-fs';
+import Logger from 'src/services/LoggerService';
 
 export interface TestResult {
     success: boolean;
@@ -28,7 +29,7 @@ export class TumblrService implements IApiService {
     constructor() { }
 
     private async getBlogs(credentials: Credentials): Promise<TestResult> {
-        console.info(`[${this.platform}] Obtendo informações de blogs...`);
+        Logger.info(`[${this.platform}] Obtendo informações de blogs...`);
 
         const tumblrCreds = credentials as TumblrCredentials;
 
@@ -43,7 +44,7 @@ export class TumblrService implements IApiService {
 
                 testClient.userInfo(async (err: Error | null, resp: TumblrUserInfoResponse) => {
                     if (err || !resp?.user?.blogs) {
-                        console.warn(`[${this.platform}] Não foi possível obter informações do usuário:`, err?.message);
+                        Logger.warn(`[${this.platform}] Não foi possível obter informações do usuário:`, err?.message);
                         return resolve({ success: false, error: err?.message || "" });
                     }
                     const blogName = (credentials as TumblrCredentials).blogName;
@@ -51,18 +52,18 @@ export class TumblrService implements IApiService {
                     (credentials as TumblrCredentials).blogs = blogs;
                     (credentials as TumblrCredentials).blogName = blogs.find(b => b.selected)?.name || ''
                     await AuthTokenDao.saveCredentials(credentials);
-                    console.info(`[${this.platform}] Informações obtidas com sucesso! Blogs encontrados: ${blogs.length} -- Blogs: ${blogs.map(b => b.name).join(", ")}`);
+                    Logger.info(`[${this.platform}] Informações obtidas com sucesso! Blogs encontrados: ${blogs.length} -- Blogs: ${blogs.map(b => b.name).join(", ")}`);
                     resolve({ success: true, blogs, error: null });
                 });
             } catch (error) {
-                console.error(error as Error, { message: `[${this.platform}] Erro inesperado no teste` });
+                Logger.error(error as Error, { message: `[${this.platform}] Erro inesperado no teste` });
                 resolve({ success: false, error: (error as Error).message });
             }
         });
     }
 
     async test(credentials: Credentials): Promise<boolean> {
-        console.info(`[${this.platform}] Testando credenciais...`);
+        Logger.info(`[${this.platform}] Testando credenciais...`);
 
         const tumblrCreds = credentials as TumblrCredentials;
 
@@ -70,24 +71,24 @@ export class TumblrService implements IApiService {
             try {
                 const blogs = await this.getBlogs(credentials);
                 if (blogs.success)
-                    console.info(`[${this.platform}] Teste de credenciais bem-sucedido para a plataforma: ${this.platform}`);
+                    Logger.info(`[${this.platform}] Teste de credenciais bem-sucedido para a plataforma: ${this.platform}`);
                 else
-                    console.warn(`[${this.platform}] Teste de credenciais falhou:`, blogs.error);
+                    Logger.warn(`[${this.platform}] Teste de credenciais falhou:`, blogs.error);
                 resolve(blogs.success);
             } catch (error) {
-                console.error(error as Error, { message: `[${this.platform}] Erro inesperado durante o teste de credenciais` });
+                Logger.error(error as Error, { message: `[${this.platform}] Erro inesperado durante o teste de credenciais` });
                 resolve(false);
             }
         });
     }
 
     async post(data: PostData): Promise<ResultPost> {
-        console.info(`[${this.platform}] Iniciando postagem...`);
+        Logger.info(`[${this.platform}] Iniciando postagem...`);
 
         const credentials = await AuthTokenDao.getCredentialsForPlatform<TumblrCredentials>(this.platform as PlatformType);
         if (!credentials) {
             const authError = new Error(`Credenciais do Tumblr não encontradas. Conecte sua conta nas Configurações.`);
-            console.error(authError);
+            Logger.error(authError);
             throw authError;
         }
 
@@ -112,7 +113,7 @@ export class TumblrService implements IApiService {
 
                 client.createPost(credentials.blogName, postOptions, (err, resp) => {
                     if (err) {
-                        console.error(err, { message: `[${this.platform}] Falha na postagem API` });
+                        Logger.error(err, { message: `[${this.platform}] Falha na postagem API` });
                         return reject({ sucess: false });
                     }
 
@@ -120,11 +121,11 @@ export class TumblrService implements IApiService {
                     if (resp!.photos && Array.isArray(resp!.photos))
                         imageUrls = resp!.photos.map(photo => photo.original_size.url);
                     
-                    console.info(`[${this.platform}] Postagem bem-sucedida! ID: ${resp!.id}`);
+                    Logger.info(`[${this.platform}] Postagem bem-sucedida! ID: ${resp!.id}`);
                     resolve({ sucess: true, imagesUrl: imageUrls });
                 });
             } catch (error) {
-                console.error(error as Error, { message: `[${this.platform}] Erro ao preparar postagem` });
+                Logger.error(error as Error, { message: `[${this.platform}] Erro ao preparar postagem` });
                 reject({ sucess: false });
             }
         });

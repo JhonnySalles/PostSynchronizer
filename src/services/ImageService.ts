@@ -2,6 +2,7 @@ import { Image, Alert } from 'react-native';
 import ImageEditor from '@react-native-community/image-editor';
 //import { getPixelColor } from 'react-native-pixel-color';
 import RNFS from 'react-native-fs';
+import Logger from 'src/services/LoggerService';
 
 const BLACK_THRESHOLD = 30; // Tolerância para o "preto" (0-255). Ajuda com JPEGs.
 
@@ -41,11 +42,11 @@ class ImageProcessingService {
             const newWidth = rightBound - leftBound;
 
             if (newWidth <= 0 || newWidth >= width - 2) {
-                console.log('Nenhuma borda preta significativa detectada.');
+                Logger.info('Nenhuma borda preta significativa detectada.');
                 return imageUri;
             }
 
-            console.log(`Novos limites encontrados: Esquerda=${leftBound}, Direita=${rightBound}. Nova Largura=${newWidth}`);
+            Logger.debbug(`Novos limites encontrados: Esquerda=${leftBound}, Direita=${rightBound}. Nova Largura=${newWidth}`);
 
             const cropData = {
                 offset: { x: leftBound, y: 0 },
@@ -57,11 +58,11 @@ class ImageProcessingService {
 
             const newPath = await this.saveImageWithCorrectedName(croppedImageUri, imageUri);
 
-            console.log('Imagem corrigida e salva em:', newPath);
+            Logger.info('Imagem corrigida e salva em:', newPath);
             return newPath;*/}
 
         } catch (error) {
-            console.error('Erro no processamento automático da imagem:', error);
+            Logger.error(error as Error, { message: `Erro no processamento automático da imagem:` });
             Alert.alert('Erro', 'Não foi possível corrigir a imagem automaticamente.');
             return imageUri;
         }
