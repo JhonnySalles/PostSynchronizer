@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
+import { View } from 'react-native';
 import { SafeAreaView, ScrollView, Text, Alert, } from 'react-native';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import LoginCard from '../../components/LoginCard';
 import { ApiServiceFactory } from 'src/services/api';
 import { BLUESKY, THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
@@ -8,6 +9,8 @@ import AuthTokenDao, { Credentials, TumblrCredentials } from 'src/dao/AuthTokenD
 import { useFocusEffect } from '@react-navigation/native';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import Logger from 'src/services/LoggerService';
+import { Picker } from '@react-native-picker/picker';
+import { useTheme } from '../../theme/ThemeProvider';
 
 const DEFAULT: Credentials = {
     platform: UNKNOW,
@@ -24,6 +27,9 @@ const SettingsScreen = () => {
     const [isTesting, setIsTesting] = useState<string | null>(null);
     const [connections, setConnections] = useState<Credentials[]>([]);
 
+    const { themeMode, setThemeMode, colors } = useTheme();
+    const styles = getStyles(colors);
+
     useFocusEffect(
         useCallback(() => {
             const loadSettings = async () => {
@@ -31,7 +37,7 @@ const SettingsScreen = () => {
                 try {
                     setConnections(await AuthTokenDao.getAllCredentials());
                 } catch (e: Error | any) {
-                    Logger.error(e, {msg: 'Não foi possível carregar as configurações salvas.'});
+                    Logger.error(e, { msg: 'Não foi possível carregar as configurações salvas.' });
                     Alert.alert("Erro", "Não foi possível carregar as configurações salvas.");
                 } finally {
                     setIsLoading(false);
@@ -47,7 +53,7 @@ const SettingsScreen = () => {
             await AuthTokenDao.saveCredentials(credentials);
             Alert.alert('Sucesso!', 'Credenciais foram salvas no banco de dados.');
         } catch (e: Error | any) {
-            Logger.error(e, {message: 'Falha ao salvar credenciais.'});
+            Logger.error(e, { message: 'Falha ao salvar credenciais.' });
             Alert.alert('Erro', 'Não foi possível salvar as credenciais.');
         }
     };
@@ -63,12 +69,12 @@ const SettingsScreen = () => {
 
                 if (credentials.platform === TUMBLR) {
                     const salvado = await AuthTokenDao.getCredentialsForPlatform<TumblrCredentials>(credentials.platform)
-                    setConnections(connections.map(c => c.platform === TUMBLR ? {...c, blogs: salvado?.blogs, blogName: salvado?.blogName } : c))
+                    setConnections(connections.map(c => c.platform === TUMBLR ? { ...c, blogs: salvado?.blogs, blogName: salvado?.blogName } : c))
                 }
             } else
                 Alert.alert("Falha na Conexão", "As credenciais são inválidas. Verifique os dados e tente novamente.");
         } catch (e: Error | any) {
-            Logger.error(e, {message: 'Erro ao testar credenciais.'});
+            Logger.error(e, { message: 'Erro ao testar credenciais.' });
             Alert.alert("Erro", "Ocorreu um erro inesperado ao tentar testar as credenciais.");
         } finally {
             setIsTesting(null);
@@ -85,7 +91,7 @@ const SettingsScreen = () => {
         try {
             await AuthTokenDao.updateActiveStatus(credentials);
         } catch (e: Error | any) {
-            Logger.error(e, {message: 'Não foi possível atualizar o status da conexão.'});
+            Logger.error(e, { message: 'Não foi possível atualizar o status da conexão.' });
             Alert.alert("Erro", "Não foi possível atualizar o status da conexão.");
             setConnections(prev =>
                 prev.map(conn =>
@@ -100,7 +106,21 @@ const SettingsScreen = () => {
             <ScrollView contentContainerStyle={styles.container}>
                 <LoadingIndicator visible={isLoading} />
 
-                <Text style={styles.screenTitle}>Configurar Contas</Text>
+                <View style={styles.themeSelectorContainer}>
+                    <Text style={styles.themeSelectorLabel}>Aparência do Aplicativo</Text>
+                    <View style={styles.pickerWrapper}>
+                        <Picker
+                            selectedValue={themeMode}
+                            onValueChange={(itemValue) => setThemeMode(itemValue)}
+                            dropdownIconColor={colors.text}
+                            style={{ width: '100%', color: colors.text, }}
+                        >
+                            <Picker.Item label="Padrão do Sistema" value="system" />
+                            <Picker.Item label="Modo Claro" value="light" />
+                            <Picker.Item label="Modo Escuro" value="dark" />
+                        </Picker>
+                    </View>
+                </View>
 
                 <LoginCard
                     credential={connections.find(c => c.platform === TUMBLR) || { ...DEFAULT, platform: TUMBLR }}

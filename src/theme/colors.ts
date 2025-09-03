@@ -10,10 +10,12 @@ export interface ColorsType {
     text: string;
     textPrimary: string;
     textSecondary: string;
+    title: string;
     border: string;
     success: string;
     error: string;
     inactive: string;
+    shadown: string;
 }
 
 // Paleta para o modo claro
@@ -28,10 +30,12 @@ const lightColors: ColorsType = {
     text: '#121212',
     textPrimary: '#ffffff',
     textSecondary: '#666666',
+    title: '#333333',
     border: '#dddddd',
     success: '#28a745',
     error: '#dc3545',
     inactive: '#808080',
+    shadown: '#000000',
 };
 
 // Paleta para o modo escuro
@@ -46,10 +50,12 @@ const darkColors: ColorsType = {
     text: '#ffffff',
     textPrimary: '#ffffff',
     textSecondary: '#a0a0a0',
+    title: '#333333',
     border: '#333333',
     success: '#28a745',
     error: '#dc3545',
     inactive: '#808080',
+    shadown: '#000000',
 };
 
 export const palette = {

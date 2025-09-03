@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleProp, ViewStyle, TextStyle, Switch, ActivityIndicator, } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import Button from '../Button';
 import { Alert } from 'react-native';
@@ -9,6 +9,7 @@ import Logger from 'src/services/LoggerService';
 import { BLUESKY, THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
 import { useTwitter } from 'react-native-simple-twitter';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useTheme } from '../../theme/ThemeProvider';
 
 interface LoginCardProps {
     credential: Credentials;
@@ -28,6 +29,9 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
     const [isOpening, setIsOpening] = useState(false);
     const [blogItems, setBlogItems] = useState<{ label: string; value: string }[]>([]);
 
+    const { colors, isDark } = useTheme();
+    const styles = getStyles(colors);
+
     useEffect(() => {
         setCreds(credential);
         if (credential.platform === TUMBLR && (creds as TumblrCredentials).blogs && (creds as TumblrCredentials).blogs.length > 0)
@@ -41,7 +45,7 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
     };
 
     const areCredsValid = (): boolean => {
-        if (!creds) 
+        if (!creds)
             return false;
 
         const keys = Object.keys(creds);
@@ -168,11 +172,11 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
 
             {creds.platform === X && <TWModal />}
 
-            {placeholderConsumer && <TextInput style={styles.input} placeholder={placeholderConsumer} value={creds.consumerKey} onChangeText={v => handleInputChange('consumerKey', v)} />}
-            {placeholderConsumerSecret && <TextInput style={styles.input} placeholder={placeholderConsumerSecret} value={creds.consumerSecret} onChangeText={v => handleInputChange('consumerSecret', v)} />}
-            {placeholderToken && <TextInput style={styles.input} placeholder={placeholderToken} value={creds.token} onChangeText={v => handleInputChange('token', v)} editable={creds.platform != X} />}
-            {placeholderTokenSecret && <TextInput style={styles.input} placeholder={placeholderTokenSecret} value={creds.tokenSecret} onChangeText={v => handleInputChange('tokenSecret', v)} editable={creds.platform != X} />}
-                
+            {placeholderConsumer && <TextInput style={styles.input} placeholder={placeholderConsumer} placeholderTextColor={colors.textSecondary} value={creds.consumerKey} onChangeText={v => handleInputChange('consumerKey', v)} />}
+            {placeholderConsumerSecret && <TextInput style={styles.input} placeholder={placeholderConsumerSecret} placeholderTextColor={colors.textSecondary} value={creds.consumerSecret} onChangeText={v => handleInputChange('consumerSecret', v)} />}
+            {placeholderToken && <TextInput style={styles.input} placeholder={placeholderToken} placeholderTextColor={colors.textSecondary} value={creds.token} onChangeText={v => handleInputChange('token', v)} editable={creds.platform != X} />}
+            {placeholderTokenSecret && <TextInput style={styles.input} placeholder={placeholderTokenSecret} placeholderTextColor={colors.textSecondary} value={creds.tokenSecret} onChangeText={v => handleInputChange('tokenSecret', v)} editable={creds.platform != X} />}
+
             {creds.platform === TUMBLR &&
                 <DropDownPicker
                     open={isOpening}
@@ -184,7 +188,12 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
                     }}
                     setItems={setBlogItems}
                     multiple={false}
-                    mode="BADGE"
+                    theme={isDark ? "DARK" : "LIGHT"}
+                    style={styles.pickerContainer}
+                    textStyle={styles.pickerTextStyle}
+                    placeholderStyle={styles.pickerPlaceholderStyle}
+                    dropDownContainerStyle={styles.pickerDropDownContainer}
+                    listItemLabelStyle={styles.pickerListItemLabel}
                     placeholder="Selecione um blog para postar"
                     listMode="SCROLLVIEW"
                     zIndex={3000}

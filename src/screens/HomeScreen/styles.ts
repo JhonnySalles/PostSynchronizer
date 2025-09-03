@@ -33,7 +33,7 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
     },
     // Área de Texto
     textArea: {
-        flex: 1, // Ocupa o espaço disponível
+        flex: 1,
         minHeight: 150,
         fontSize: 16,
         textAlignVertical: 'top',
@@ -116,17 +116,16 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
     },
     // Container para as sugestões
     suggestionsContainer: {
-        maxHeight: 120, // Limita a altura da lista de sugestões
+        maxHeight: 120,
         backgroundColor: colors.card,
         borderRadius: 8,
         borderWidth: 1,
         borderColor: colors.border,
-        // Posição absoluta para flutuar sobre o conteúdo
         position: 'absolute',
         left: 15,
         right: 15,
-        top: 310, // Ajuste este valor conforme necessário para sua UI
-        zIndex: 1, // Garante que fique na frente
+        top: 310,
+        zIndex: 1,
     },
     suggestionItem: {
         padding: 12,
@@ -174,6 +173,19 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         color: colors.textPrimary,
         marginLeft: 8,
     },
+    progressContainer: {
+        height: 4,
+        backgroundColor: colors.background,
+        borderRadius: 4,
+        marginTop: 10,
+        marginBottom: 5,
+        overflow: 'hidden',
+    },
+    progressBar: {
+        height: '100%',
+        backgroundColor: colors.primary,
+        borderRadius: 4,
+    },
     countersContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
@@ -198,10 +210,9 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         marginLeft: 5,
         fontSize: 13,
         fontWeight: '600',
-        color: '#FFFFFF',
+        color: colors.textPrimary,
     },
     counterIcon: {
-        color: '#FFFFFF',
-    }
-
+        color: colors.textPrimary,
+    },
 });

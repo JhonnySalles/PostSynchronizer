@@ -4,7 +4,7 @@ import { ColorsType } from 'src/theme/colors';
 export const getStyles = (colors: ColorsType) => StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: colors.background,
     },
     container: {
         flex: 1,
@@ -16,16 +16,16 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
     },
     emptyText: {
         fontSize: 18,
-        color: '#888',
+        color: colors.textSecondary,
     },
     // Estilos do Card de Histórico
     itemCard: {
-        backgroundColor: '#fff',
+        backgroundColor: colors.card,
         borderRadius: 8,
         padding: 15,
         marginVertical: 8,
         marginHorizontal: 16,
-        shadowColor: '#000',
+        shadowColor: colors.shadown,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 3,
@@ -47,24 +47,24 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         borderRadius: 12,
     },
     statusText: {
-        color: '#fff',
+        color: colors.text,
         fontWeight: 'bold',
         fontSize: 12,
     },
     postedBadge: {
-        backgroundColor: '#28a745', // Verde
+        backgroundColor: colors.secondary,
     },
     draftBadge: {
-        backgroundColor: '#ffc107', // Amarelo
+        backgroundColor: colors.tertiary,
     },
     dateText: {
         fontSize: 12,
-        color: '#888',
+        color: colors.textSecondary,
         marginRight: 10,
     },
     contentText: {
         fontSize: 15,
-        color: '#333',
+        color: colors.text,
         marginBottom: 10,
     },
     imageThumbnail: {
@@ -77,7 +77,7 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         marginTop: 10,
         paddingTop: 10,
         borderTopWidth: 1,
-        borderTopColor: '#eee',
+        borderTopColor: colors.border,
     },
     footerIconsContainer: {
         flexDirection: 'row',
@@ -91,7 +91,7 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
     platformsText: {
         fontSize: 12,
         fontStyle: 'italic',
-        color: '#666',
+        color: colors.textSecondary,
     },
     deleteButton: {
         right: 10,
