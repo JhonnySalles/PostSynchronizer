@@ -20,7 +20,8 @@ const MIGRATIONS = [
         images TEXT,
         status TEXT NOT NULL, -- 'draft' ou 'posted'
         tags TEXT,
-        platforms TEXT,
+        platforms_send TEXT,
+        platforms_success TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`,
