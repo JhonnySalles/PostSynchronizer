@@ -7,6 +7,7 @@ import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
 import * as Sentry from '@sentry/react-native';
 import { SENTRY_DSN } from '@env';
 import { refreshAllTokens } from './src/services/api';
+import Logger from './src/services/LoggerService';
 
 Sentry.init({
     dsn: SENTRY_DSN,
@@ -37,9 +38,9 @@ const App = () => {
         const initializeDB = async () => {
             try {
                 await getDBConnection();
-                console.log('Banco de dados inicializado com sucesso.');
+                Logger.info('Banco de dados inicializado com sucesso.');
             } catch (error) {
-                console.error('Falha na inicialização do banco de dados:', error);
+                Logger.error(error as Error, { message: 'Falha na inicialização do banco de dados:' });
             }
         };
         initializeDB();
@@ -50,7 +51,7 @@ const App = () => {
             try {
                 await refreshAllTokens();
             } catch (error) {
-                console.error(error as Error, { message: 'Falha na verificação de token durante a inicialização do app' });
+                Logger.error(error as Error, { message: 'Falha na verificação de token durante a inicialização do app' });
             }
         };
         const timer = setTimeout(performStartupTokenRefresh, 2000);

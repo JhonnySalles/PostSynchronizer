@@ -1,3 +1,5 @@
+import Logger from 'src/services/LoggerService';
+
 import { PlatformType, X, TUMBLR, THREADS, UNKNOW, BLUESKY } from '../../constants/platforms';
 import { IApiService } from './IApiService';
 import { XService } from './XService';
@@ -25,7 +27,7 @@ export const ApiServiceFactory = (platform: PlatformType): IApiService => {
 
 
 export async function refreshAllTokens(): Promise<void> {
-    console.info('[App Startup] Iniciando verificação de tokens para todos os serviços...');
+    Logger.info('[App Startup] Iniciando verificação de tokens para todos os serviços...');
 
     const allPlatforms: PlatformType[] = [THREADS, X, TUMBLR];
 
@@ -34,7 +36,7 @@ export async function refreshAllTokens(): Promise<void> {
             const service = ApiServiceFactory(platform);
             return service.validateAndRefreshToken();
         } catch (error) {
-            console.error(error as Error, { message: `Falha ao criar serviço para a plataforma ${platform}` });
+            Logger.error(error as Error, { message: `Falha ao criar serviço para a plataforma ${platform}` });
             return Promise.resolve();
         }
     });
@@ -43,11 +45,11 @@ export async function refreshAllTokens(): Promise<void> {
 
     results.forEach((result, index) => {
         if (result.status === 'rejected') {
-            console.error(new Error(`Falha na verificação de token para a plataforma: ${allPlatforms[index]}`), {
+            Logger.error(new Error(`Falha na verificação de token para a plataforma: ${allPlatforms[index]}`), {
                 reason: result.reason,
             });
         }
     });
 
-    console.info('[App Startup] Processo de verificação de tokens concluído.');
+    Logger.info('[App Startup] Processo de verificação de tokens concluído.');
 }

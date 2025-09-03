@@ -1,4 +1,5 @@
 import { SQLiteDatabase } from 'react-native-sqlite-storage';
+import Logger from 'src/services/LoggerService';
 
 
 const MIGRATIONS = [
@@ -39,22 +40,22 @@ export const runMigrations = async (db: SQLiteDatabase): Promise<void> => {
             await db.executeSql('INSERT INTO db_version (version) VALUES (0);');
 
 
-        console.log(`Versão atual do banco de dados: ${currentVersion}`);
+        Logger.debug(`Versão atual do banco de dados: ${currentVersion}`);
 
         if (currentVersion < MIGRATIONS.length) {
-            console.log('Iniciando migrações...');
+            Logger.debug('Iniciando migrações...');
             for (let i = currentVersion; i < MIGRATIONS.length; i++) {
                 await db.executeSql(MIGRATIONS[i]);
                 const newVersion = i + 1;
                 await db.executeSql('UPDATE db_version SET version = ?;', [newVersion]);
-                console.log(`Migração #${newVersion} aplicada com sucesso.`);
+                Logger.debug(`Migração #${newVersion} aplicada com sucesso.`);
             }
-            console.log('Todas as migrações foram concluídas.');
+            Logger.debug('Todas as migrações foram concluídas.');
         } else
-            console.log('O banco de dados já está atualizado.');
+            Logger.debug('O banco de dados já está atualizado.');
     } catch (error) {
         const sqlError = error as Error;
-        console.error('Erro ao executar migrações:', sqlError.message);
+        Logger.error(error as Error, { message: `Erro ao executar migrações: ${sqlError.message}` });
         throw error;
     }
 };

@@ -17,6 +17,8 @@ import { RootTabParamList } from '../../navigation/types';
 import { BLUESKY, PlatformType, THREADS, TUMBLR, UNKNOW, X } from '../../constants/platforms';
 import AuthTokenDao from '../../dao/AuthTokenDao';
 import { PostData } from 'src/services/api/IApiService';
+import { requestGalleryPermission } from 'src/utils/permissions';
+import Logger from 'src/services/LoggerService';
 
 type Connections = {
     platfom: PlatformType;
@@ -79,8 +81,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     const newConnectionStatus = connections.map(cnn => ({ ...cnn, active: cnn.platfom in activePlatforms, error: false }))
                     setConnections(newConnectionStatus);
                     setActivePlatforms(activePlatforms);
-                } catch (error) {
-                    console.error('Erro ao buscar conexões:', error);
+                } catch (e: Error | any) {
+                    Logger.error(e, {message: 'Erro ao buscar conexões:'});
                 }
             };
 
@@ -98,8 +100,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         try {
             const suggestions = await PostDao.getTagSuggestions(query);
             setTagSuggestions(suggestions);
-        } catch (error) {
-            console.error("Falha ao buscar sugestões de tags na tela.");
+        } catch (e: Error | any) {
+            Logger.error(e, {message: 'Falha ao buscar sugestões de tags na tela.'});
         }
     };
 
@@ -125,7 +127,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     const handleImagePicker = () => {
         launchImageLibrary({ mediaType: 'photo', selectionLimit: 0 }, response => {
             if (response.didCancel)
-                console.log('Usuário cancelou a seleção de imagem');
+                Logger.debug('Usuário cancelou a seleção de imagem');
             else if (response.errorCode)
                 Alert.alert('Erro', `Erro ao selecionar imagem: ${response.errorMessage}`);
             else if (response.assets) {
@@ -175,6 +177,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     };
 
     const handleSelectImages = async () => {
+        const hasPermission = await requestGalleryPermission();
+        if (!hasPermission) {
+            Alert.alert("Permissão Negada", "Você precisa conceder permissão para acessar a galeria de imagens.");
+            return;
+        }
+
         try {
             const images = await ImagePicker.openPicker({
                 multiple: true,
@@ -188,8 +196,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
             const newImages = images.map(img => img.path);
             setSelectedImages(prev => [...prev, ...newImages].slice(0, 4));
-        } catch (e) {
-            console.log('Erro ao selecionar ou recortar imagem:', e);
+        } catch (e: Error | any) {
+            Logger.error(e, {message: 'Erro ao selecionar ou recortar imagem:'});
         }
     };
 
@@ -214,8 +222,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
             setSelectedImages(prevImages => prevImages.map(img => (img === imageToCrop ? croppedImage.path : img)));
             setImageToCrop(null);
-        } catch (e) {
-            console.log('Erro ao recortar imagem existente:', e);
+        } catch (e: Error | any) {
+            Logger.error(e, {message: 'Erro ao recortar imagem existente:'});
             setImageToCrop(null);
         }
     };
@@ -255,7 +263,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                 Alert.alert('Sucesso!', 'Seu rascunho foi salvo.');
             }
             handleCancel();
-        } catch (error) {
+        } catch (e: Error | any) {
+            Logger.error(e, {message: 'Não foi possível salvar o rascunho.'});
             Alert.alert('Erro', 'Não foi possível salvar o rascunho.');
         }
     };
@@ -295,7 +304,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             const successfulPlatforms: PlatformType[] = [];
 
             if (needsTumblrFirst) {
-                console.info('[Post Flow] Iniciando postagem no Tumblr para obter URLs...');
+                Logger.info('[Post Flow] Iniciando postagem no Tumblr para obter URLs...');
                 try {
                     const tumblrService = ApiServiceFactory(TUMBLR);
                     const resultPost = await tumblrService.post(originalPostData);
@@ -303,7 +312,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                         originalPostData.imagesUrl = resultPost.imagesUrl;
 
                     successfulPlatforms.push(TUMBLR);
-                } catch (error) {
+                } catch (e: Error | any) {
+                    Logger.error(e, {message: 'Erro ao postar:'});
                 }
             }
 
@@ -327,7 +337,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     newlySuccessful.push(platform as PlatformType);
                 else {
                     failedPlatforms.push(platform as PlatformType);
-                    console.error(`Falha ao postar em ${platform}:`, result.status === 'rejected' ? result.reason : 'retornou false');
+                    Logger.warn(`Falha ao postar em ${platform}:`, result.status === 'rejected' ? result.reason : 'retornou false');
                 }
             });
 
@@ -342,12 +352,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     platforms: successfulPlatforms.join(', '),
                     tags: tagsText,
                 };
-                
+
                 if (editingPostId)
                     await PostDao.update(editingPostId, postData);
-                else 
+                else
                     await PostDao.create(postData);
-                
+
                 Alert.alert('Sucesso!', `Postagem enviada para: ${allSuccessful.join(', ')}`);
                 handleCancel();
             } else
@@ -356,8 +366,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     `Sucesso em: ${newlySuccessful.join(', ') || 'Nenhuma'}\n\nFalha em: ${failedPlatforms.join(', ')}\n\nClique em "Postar" novamente para tentar enviar para as plataformas restantes.`
                 );
 
-        } catch (error) {
-            console.error('Erro ao postar:', error);
+        } catch (e: Error | any) {
+            Logger.error(e, {message: 'Erro ao postar:'});
             Alert.alert('Erro', 'Ocorreu um erro ao processar sua postagem.');
         } finally {
             setIsPosting(false);
