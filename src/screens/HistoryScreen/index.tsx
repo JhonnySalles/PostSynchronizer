@@ -79,7 +79,6 @@ const HistoryScreen = () => {
         const platformsToSend = item.platformsSend?.split(',').map(p => p.trim()) || [];
         const platformsWithSuccess = item.platformsSuccess?.split(',').map(p => p.trim()) || [];
 
-        console.log(item.platformsSend, item.platformsSuccess)
         return (
             <TouchableOpacity onPress={() => handleItemPress(item)}>
                 <View style={styles.itemCard}>
@@ -120,11 +119,10 @@ const HistoryScreen = () => {
                             <View style={styles.footerIconsContainer}>
                                 {platformsToSend.map(platformName => {
                                     const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === platformName);
-                                    console.log(SOCIAL_PLATFORMS, platformName)
                                     if (!platformInfo) 
                                         return null;
-                                    const wasSuccessful = platformsWithSuccess.includes(platformName);
 
+                                    const wasSuccessful = platformsWithSuccess.includes(platformName);
                                     return (
                                         <Icon
                                             key={platformName}
