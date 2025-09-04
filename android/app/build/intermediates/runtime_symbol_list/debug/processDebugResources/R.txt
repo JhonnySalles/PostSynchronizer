@@ -3927,8 +3927,11 @@ int layout ucrop_layout_rotate_wheel 0x7f0b007a
 int layout ucrop_layout_scale_wheel 0x7f0b007b
 int layout ucrop_view 0x7f0b007c
 int menu ucrop_menu_activity 0x7f0d0000
-int mipmap ic_launcher 0x7f0e0000
-int mipmap ic_launcher_round 0x7f0e0001
+int mipmap app_icon 0x7f0e0000
+int mipmap app_icon_background 0x7f0e0001
+int mipmap app_icon_foreground 0x7f0e0002
+int mipmap app_icon_monochrome 0x7f0e0003
+int mipmap app_icon_round 0x7f0e0004
 int plurals mtrl_badge_content_description 0x7f0f0000
 int string abc_action_bar_home_description 0x7f100000
 int string abc_action_bar_up_description 0x7f100001

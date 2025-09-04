@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigation';
 import { getDBConnection } from './src/database';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
+import { AppLightTheme, AppDarkTheme } from './src/navigation/NavigationTheme';
 import * as Sentry from '@sentry/react-native';
 import { SENTRY_DSN } from '@env';
 import { refreshAllTokens } from './src/services/api';
@@ -25,8 +26,10 @@ Sentry.init({
 const AppContent = () => {
     const { colors, isDark } = useTheme();
 
+    const navigationTheme = isDark ? AppDarkTheme : AppLightTheme;
+
     return (
-        <NavigationContainer>
+        <NavigationContainer theme={navigationTheme}>
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={colors.background} />
             <AppNavigator />
         </NavigationContainer>

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
-import { Appearance } from 'react-native';
+import { Appearance, ColorSchemeName } from 'react-native';
 import { palette, ColorsType } from './colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Logger from 'src/services/LoggerService';
@@ -50,6 +50,17 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         try {
             await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
             setThemeMode(mode);
+
+            let newScheme: ColorSchemeName;
+            if (mode === 'dark')
+                newScheme = 'dark';
+            else if (mode === 'light')
+                newScheme = 'light';
+            else
+                newScheme = null;
+            
+            Appearance.setColorScheme(newScheme);
+            Logger.info(`[ThemeProvider] Tema do app definido para: ${mode}. Esquema nativo: ${newScheme}`);
         } catch (error) {
             Logger.error(error as Error, { message: 'Falha ao salvar preferência de tema' });
         }

@@ -36,6 +36,7 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
         marginBottom: 12,
         borderWidth: 1,
         borderColor: colors.border,
+        color: colors.text,
     },
     button: {
         backgroundColor: colors.primary,

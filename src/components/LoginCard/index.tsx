@@ -155,9 +155,9 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
             <View style={styles.switchContainer}>
                 <Text style={styles.switchLabel}>Ativo para postagem</Text>
                 <Switch
-                    trackColor={{ false: '#767577', true: '#81b0ff' }}
-                    thumbColor={creds.active ? '#f5dd4b' : '#f4f3f4'}
-                    ios_backgroundColor="#3e3e3e"
+                    trackColor={{ false: colors.primaryOutherAccent, true: colors.primaryAccent }}
+                    thumbColor={creds.active ? colors.primary : colors.primaryOuther}
+                    ios_backgroundColor={colors.inactive}
                     onValueChange={() => {
                         const credenciais = { ...credential, active: !credential.active };
                         setCreds(credenciais);
