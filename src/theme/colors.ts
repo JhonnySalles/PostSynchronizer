@@ -1,6 +1,9 @@
 // Define a estrutura de tipos para nossas cores
 export interface ColorsType {
     primary: string;
+    primaryAccent: string;
+    primaryOuther: string;
+    primaryOutherAccent: string;
     secondary: string;
     tertiary: string;
     cancel: string;
@@ -16,11 +19,19 @@ export interface ColorsType {
     error: string;
     inactive: string;
     shadown: string;
+
+    tumblr: string;
+    twitter: string;
+    threads: string;
+    bluesky: string;
 }
 
 // Paleta para o modo claro
 const lightColors: ColorsType = {
     primary: '#007BFF',
+    primaryAccent: '#81b0ff',
+    primaryOuther: '#808080',
+    primaryOutherAccent: '#767577',
     secondary: '#28a745',
     tertiary: '#ffc107',
     cancel: '#dc3545',
@@ -36,11 +47,19 @@ const lightColors: ColorsType = {
     error: '#dc3545',
     inactive: '#808080',
     shadown: '#000000',
+
+    tumblr: '#35465c',
+    twitter: '#1DA1F2',
+    threads: '#000000',
+    bluesky: '#0288dbff',
 };
 
 // Paleta para o modo escuro
 const darkColors: ColorsType = {
     primary: '#007BFF',
+    primaryAccent: '#81b0ff',
+    primaryOuther: '#808080',
+    primaryOutherAccent: '#767577',
     secondary: '#28a745',
     tertiary: '#ffc107',
     cancel: '#dc3545',
@@ -49,13 +68,18 @@ const darkColors: ColorsType = {
     card: '#1e1e1e',
     text: '#ffffff',
     textPrimary: '#ffffff',
-    textSecondary: '#a0a0a0',
-    title: '#333333',
-    border: '#333333',
+    textSecondary: '#bfbfbf',
+    title: '#bfbfbf',
+    border: '#808080',
     success: '#28a745',
     error: '#dc3545',
-    inactive: '#808080',
+    inactive: '#bfbfbf',
     shadown: '#000000',
+
+    tumblr: '#A9B8C5',
+    twitter: '#88C9F7',
+    threads: '#E0E0E0',
+    bluesky: '#62B8E9',
 };
 
 export const palette = {

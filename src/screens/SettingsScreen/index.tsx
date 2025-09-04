@@ -125,10 +125,10 @@ const SettingsScreen = () => {
                 <LoginCard
                     credential={connections.find(c => c.platform === TUMBLR) || { ...DEFAULT, platform: TUMBLR }}
                     iconName="logo-tumblr"
-                    iconColor="#35465c"
+                    iconColor={colors.tumblr}
                     onSave={(credentials: Credentials) => handleSave(credentials)}
                     onTest={handleTestCredentials}
-                    buttonStyle={{ backgroundColor: '#35465c' }}
+                    buttonStyle={{ backgroundColor: colors.tumblr }}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
                     isTesting={isTesting === TUMBLR}
                 />
@@ -136,10 +136,10 @@ const SettingsScreen = () => {
                 <LoginCard
                     credential={connections.find(c => c.platform === X) || { ...DEFAULT, platform: X }}
                     iconName="logo-twitter"
-                    iconColor="#1DA1F2"
+                    iconColor={colors.twitter}
                     onSave={(credentials: Credentials) => handleSave(credentials)}
                     onTest={handleTestCredentials}
-                    buttonStyle={{ backgroundColor: '#1DA1F2' }}
+                    buttonStyle={{ backgroundColor: colors.twitter }}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
                     isTesting={isTesting === X}
                 />
@@ -147,10 +147,10 @@ const SettingsScreen = () => {
                 <LoginCard
                     credential={connections.find(c => c.platform === THREADS) || { ...DEFAULT, platform: THREADS }}
                     iconName="at-sharp"
-                    iconColor="#000000"
+                    iconColor={colors.threads}
                     onSave={(credentials: Credentials) => handleSave(credentials)}
                     onTest={handleTestCredentials}
-                    buttonStyle={{ backgroundColor: '#000000' }}
+                    buttonStyle={{ backgroundColor: colors.threads }}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
                     isTesting={isTesting === THREADS}
                 />
@@ -158,10 +158,10 @@ const SettingsScreen = () => {
                 <LoginCard
                     credential={connections.find(c => c.platform === BLUESKY) || { ...DEFAULT, platform: BLUESKY }}
                     iconName="chatbubbles-outline"
-                    iconColor="#0288dbff"
+                    iconColor={colors.bluesky}
                     onSave={(credentials: Credentials) => handleSave(credentials)}
                     onTest={handleTestCredentials}
-                    buttonStyle={{ backgroundColor: '#0288dbff' }}
+                    buttonStyle={{ backgroundColor: colors.bluesky }}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
                     isTesting={isTesting === THREADS}
                 />
