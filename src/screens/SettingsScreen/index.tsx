@@ -11,6 +11,7 @@ import LoadingIndicator from 'src/components/LoadingIndicator';
 import Logger from 'src/services/LoggerService';
 import { Picker } from '@react-native-picker/picker';
 import { useTheme } from '../../theme/ThemeProvider';
+import { DARK, LIGHT, SYSTEM } from 'src/constants/themes';
 
 const DEFAULT: Credentials = {
     platform: UNKNOW,
@@ -115,9 +116,9 @@ const SettingsScreen = () => {
                             dropdownIconColor={colors.text}
                             style={{ width: '100%', color: colors.text, }}
                         >
-                            <Picker.Item label="Padrão do Sistema" value="system" />
-                            <Picker.Item label="Modo Claro" value="light" />
-                            <Picker.Item label="Modo Escuro" value="dark" />
+                            <Picker.Item label="Padrão do Sistema" value={ SYSTEM } />
+                            <Picker.Item label="Modo Claro" value={ LIGHT } />
+                            <Picker.Item label="Modo Escuro" value={ DARK } />
                         </Picker>
                     </View>
                 </View>

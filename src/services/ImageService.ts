@@ -1,6 +1,6 @@
-import { Image, Alert } from 'react-native';
+import { Alert } from 'react-native';
 import ImageEditor from '@react-native-community/image-editor';
-import { Skia, Image as SkImage } from '@shopify/react-native-skia';
+import { Skia } from '@shopify/react-native-skia';
 import RNFS from 'react-native-fs';
 import Logger from 'src/services/LoggerService';
 

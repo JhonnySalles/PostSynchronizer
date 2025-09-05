@@ -11,7 +11,7 @@ import { PostDraftData, RootTabParamList } from '../../navigation/types';
 import LoadingIndicator from '../../components/LoadingIndicator';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Logger from 'src/services/LoggerService';
-import { BLUESKY, SOCIAL_PLATFORMS, THREADS, TUMBLR, X } from 'src/constants/platforms';
+import { SOCIAL_PLATFORMS } from 'src/constants/platforms';
 
 type HistoryScreenNavigationProp = BottomTabNavigationProp<RootTabParamList, 'History'>;
 

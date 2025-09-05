@@ -6,7 +6,7 @@ import { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import Button from '../Button';
 import { Alert } from 'react-native';
 import Logger from 'src/services/LoggerService';
-import { BLUESKY, THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
+import { BLUESKY, THREADS, TUMBLR, X } from 'src/constants/platforms';
 import { useTwitter } from 'react-native-simple-twitter';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useTheme } from '../../theme/ThemeProvider';
