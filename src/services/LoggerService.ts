@@ -14,7 +14,7 @@ const config = {
     severity: __DEV__ ? 'debug' : 'error',
     transport: fileAsyncTransport,
     transportOptions: {
-        FS: RNFS,
+        FS: RNFS as any,
         filePath: RNFS.DocumentDirectoryPath,
         fileName: 'app_logs.txt',
         fileMaxSize: 1024 * 1024, // 1MB

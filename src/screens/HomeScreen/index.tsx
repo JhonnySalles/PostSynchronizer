@@ -13,7 +13,7 @@ import { ApiServiceFactory } from '../../services/api';
 import ImageProcessingService from '../../services/ImageService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
-import { BLUESKY, PlatformType, SOCIAL_PLATFORMS, THREADS, TUMBLR, UNKNOW, X } from '../../constants/platforms';
+import { PlatformType, SOCIAL_PLATFORMS, UNKNOW, THREADS, TUMBLR, X, BLUESKY } from '../../constants/platforms';
 import AuthTokenDao from '../../dao/AuthTokenDao';
 import { PostData } from 'src/services/api/IApiService';
 import { requestGalleryPermission } from 'src/utils/permissions';
@@ -37,7 +37,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     const { colors } = useTheme();
     const styles = getStyles(colors);
 
-    const [connections, setConnections] = useState<Connections[]>([{ ...DEFAULT, platform: TUMBLR }, { ...DEFAULT, platform: X }, { ...DEFAULT, platform: THREADS },]);
+    const [connections, setConnections] = useState<Connections[]>([{ ...DEFAULT, platform: TUMBLR }, { ...DEFAULT, platform: X }, { ...DEFAULT, platform: THREADS }, { ...DEFAULT, platform: BLUESKY } ]);
     const [activePlatforms, setActivePlatforms] = useState<PlatformType[]>([]);
     const [postText, setPostText] = useState('');
     const [tagsText, setTagsText] = useState('');

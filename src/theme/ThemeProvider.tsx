@@ -3,8 +3,9 @@ import { Appearance, ColorSchemeName } from 'react-native';
 import { palette, ColorsType } from './colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Logger from 'src/services/LoggerService';
+import { SYSTEM, LIGHT, DARK } from 'src/constants/themes';
 
-export type ThemeMode = 'system' | 'light' | 'dark';
+export type ThemeMode = typeof SYSTEM | typeof LIGHT | typeof DARK;
 const THEME_STORAGE_KEY = '@app:themeMode';
 
 interface ThemeContextType {
@@ -17,13 +18,13 @@ interface ThemeContextType {
 export const ThemeContext = createContext<ThemeContextType>({
     isDark: false,
     colors: palette.light,
-    themeMode: 'system',
+    themeMode: SYSTEM,
     setThemeMode: () => { },
 });
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-    const systemScheme = Appearance.getColorScheme() || 'light';
-    const [themeMode, setThemeMode] = useState<ThemeMode>('system');
+    const systemScheme = Appearance.getColorScheme() || LIGHT;
+    const [themeMode, setThemeMode] = useState<ThemeMode>(SYSTEM);
 
     useEffect(() => {
         const loadThemePreference = async () => {
@@ -40,8 +41,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-            if (themeMode === 'system')
-                setThemeMode('system');
+            if (themeMode === SYSTEM)
+                setThemeMode(SYSTEM);
         });
         return () => subscription.remove();
     }, [themeMode]);
@@ -52,10 +53,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
             setThemeMode(mode);
 
             let newScheme: ColorSchemeName;
-            if (mode === 'dark')
-                newScheme = 'dark';
-            else if (mode === 'light')
-                newScheme = 'light';
+            if (mode === DARK)
+                newScheme = DARK;
+            else if (mode === LIGHT)
+                newScheme = LIGHT;
             else
                 newScheme = null;
             
@@ -66,7 +67,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const isDark = themeMode === 'dark' || (themeMode === 'system' && systemScheme === 'dark');
+    const isDark = themeMode === DARK || (themeMode === SYSTEM && systemScheme === DARK);
     const currentColors = isDark ? palette.dark : palette.light;
 
     const themeValue = {
