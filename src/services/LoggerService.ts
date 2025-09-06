@@ -48,6 +48,7 @@ class LoggerService {
         const message = args.map(arg => String(arg)).join(' ');
         log.info(message);
         Sentry.addBreadcrumb({ category: 'log', message, level: 'info' });
+        console.log(message);
     }
 
     /**
@@ -58,6 +59,7 @@ class LoggerService {
         const message = args.map(arg => String(arg)).join(' ');
         log.warn(message);
         Sentry.addBreadcrumb({ category: 'log', message, level: 'warning' });
+        console.log(message);
     }
 
     /**
@@ -68,7 +70,7 @@ class LoggerService {
      */
     public error(error: Error, context?: Record<string, any>): void {
         log.error(error, context);
-        console.log(error)
+        console.log(error);
 
         if (context)
             Sentry.setContext('Custom Context', context);

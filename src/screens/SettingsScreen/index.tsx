@@ -61,6 +61,7 @@ const SettingsScreen = () => {
 
     const handleTestCredentials = async (credentials: Credentials) => {
         setIsTesting(credentials.platform);
+        setConnections(connections.filter(c => c.platform !== credentials.platform).concat([credentials]));
         try {
             const service = ApiServiceFactory(credentials.platform);
             const isValid = await service.test(credentials);

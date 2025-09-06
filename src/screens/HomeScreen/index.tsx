@@ -22,6 +22,7 @@ import Logger from 'src/services/LoggerService';
 type Connections = {
     platform: PlatformType;
     active: boolean;
+    configured: boolean;
     error: boolean;
 };
 
@@ -30,6 +31,7 @@ type HomeScreenProps = BottomTabScreenProps<RootTabParamList, 'Home'>;
 const DEFAULT = {
     platform: UNKNOW,
     active: false,
+    configured: false,
     error: false
 }
 
@@ -71,7 +73,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             const fetchConnections = async () => {
                 try {
                     const activePlatforms = await AuthTokenDao.getActivePlatforms();
-                    const newConnectionStatus = connections.map(cnn => ({ ...cnn, active: cnn.platform in activePlatforms, error: false }))
+                    const configuredPlatforms = await AuthTokenDao.getAllPlatforms();
+                    const newConnectionStatus = connections.map(cnn => ({ ...cnn, active: activePlatforms.includes(cnn.platform), configured: configuredPlatforms.includes(cnn.platform), error: false }))
                     setConnections(newConnectionStatus);
                     setActivePlatforms(activePlatforms);
                 } catch (e: Error | any) {
@@ -251,7 +254,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         const connectedPlatforms = connections
             .filter(conn => conn.active)
             .map(conn => conn.platform);
-
+     
         if (connectedPlatforms.length === 0) {
             Alert.alert('Nenhuma Conta Conectada', 'Vá para as Configurações para conectar suas contas primeiro.');
             return;
@@ -264,7 +267,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
         try {
             setIsPosting(true);
-            const platformsToTry = activePlatforms.filter(p => !connectedPlatforms.includes(p as PlatformType));
+            const platformsToTry = activePlatforms.filter(p => connectedPlatforms.includes(p as PlatformType));
 
             let idPost = editingPostId;
             const postData = {
@@ -338,16 +341,15 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             setSuccessfulPlatforms(allSuccessful);
 
             if (failedPlatforms.length === 0) {
-                postData.platformsSuccess = successfulPlatforms.join(', '),
-                    await PostDao.update(idPost!, postData);
                 Alert.alert('Sucesso!', `Postagem enviada para: ${allSuccessful.join(', ')}`);
                 handleCancel();
             } else
-                Alert.alert(
-                    'Postagem Parcial',
-                    `Sucesso em: ${newlySuccessful.join(', ') || 'Nenhuma'}\n\nFalha em: ${failedPlatforms.join(', ')}\n\nClique em "Postar" novamente para tentar enviar para as plataformas restantes.`
-                );
+                Alert.alert('Postagem Parcial', `Sucesso em: ${newlySuccessful.join(', ') || 'Nenhuma'}\n\nFalha em: ${failedPlatforms.join(', ')}\n\nClique em "Postar" novamente para tentar enviar para as plataformas restantes.`);
 
+            if (allSuccessful.length > 0) {
+                postData.platformsSuccess = allSuccessful.join(', ');
+                await PostDao.update(idPost!, postData);
+            }
         } catch (e: Error | any) {
             Logger.error(e, { message: 'Erro ao postar:' });
             Alert.alert('Erro', 'Ocorreu um erro ao processar sua postagem.');
@@ -394,9 +396,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.container}>
                 <View style={styles.statusContainer}>
-                    {activePlatforms.map(platform => {
-                        const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === platform);
-                        if (!platformInfo)
+                    {connections.map(connection => {
+                        const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === connection.platform);
+                        if (!platformInfo || !connection.configured)
                             return null;
 
                         return (
