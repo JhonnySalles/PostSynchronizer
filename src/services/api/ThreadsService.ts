@@ -123,16 +123,19 @@ export class ThreadsService implements IApiService {
 
     async post(data: PostData): Promise<ResultPost> {
         return new Promise(async (resolve, reject) => {
-            Logger.info(`[${this.platform}] Iniciando postagem com nova lógica...`);
+            Logger.info(`[${this.platform}] Iniciando postagem...`);
             try {
                 const credentials = await AuthTokenDao.getCredentialsForPlatform<Credentials>(this.platform as PlatformType);
-                if (!credentials?.token)
-                    throw new Error(`Access Token do Threads não encontrado.`);
+                if (!credentials)
+                    throw new Error(`Credenciais não encontradas. Conecte sua conta nas Configurações.`);
 
                 if (!credentials.active) {
                     resolve({ sucess: false });
                     return;
                 }
+
+                if (!credentials.token)
+                    await this.login(credentials)
 
                 if (data.images && data.images.length > 0 && (!data.imagesUrl || data.imagesUrl.length === 0))
                     throw new Error(`Não encontrado links das imagens, postagem abortada.`);

@@ -111,7 +111,7 @@ export class TumblrService implements IApiService {
                 } else
                     postOptions = { type: 'text', body: data.text, tags: data.tags?.join(',') };
 
-                client.createPost(credentials.blogName, postOptions, (err, resp) => {
+                client.createPost(credentials.blogName, postOptions, (err: any, resp: any) => {
                     if (err) {
                         Logger.error(err, { message: `[${this.platform}] Falha na postagem API` });
                         return reject({ sucess: false });
@@ -119,7 +119,7 @@ export class TumblrService implements IApiService {
 
                     let imageUrls: string[] = [];
                     if (resp!.photos && Array.isArray(resp!.photos))
-                        imageUrls = resp!.photos.map(photo => photo.original_size.url);
+                        imageUrls = resp!.photos.map((photo: any) => photo.original_size.url);
                     
                     Logger.info(`[${this.platform}] Postagem bem-sucedida! ID: ${resp!.id}`);
                     resolve({ sucess: true, imagesUrl: imageUrls });

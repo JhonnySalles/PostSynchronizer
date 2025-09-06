@@ -149,6 +149,26 @@ class AuthTokenDao {
      * Retorna uma lista com todas as plataformas que possuem um token salvo (conectadas).
      * @returns Uma lista de nomes de plataformas ativas.
      */
+    public async getAllPlatforms(): Promise<PlatformType[]> {
+        const db = await getDBConnection();
+        try {
+            const results = await db.executeSql('SELECT platform FROM auth_tokens');
+            const platforms: PlatformType[] = [];
+            results.forEach(result => {
+                for (let i = 0; i < result.rows.length; i++)
+                    platforms.push(result.rows.item(i).platform);
+            });
+            return platforms;
+        } catch (error) {
+            Logger.error(error as Error, { message: `Erro ao buscar plataformas [DAO]:` });
+            throw error;
+        }
+    }
+
+    /**
+     * Retorna uma lista com todas as plataformas que possuem um token salvo (conectadas).
+     * @returns Uma lista de nomes de plataformas ativas.
+     */
     public async getActivePlatforms(): Promise<PlatformType[]> {
         const db = await getDBConnection();
         try {
