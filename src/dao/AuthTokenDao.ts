@@ -42,13 +42,13 @@ class AuthTokenDao {
                 credential.aditional = JSON.stringify((credential as TumblrCredentials).blogs);
 
             if (results[0].rows.length > 0) {
-                Logger.info(`Atualizando credenciais para ${credential.platform} [DAO]`);
+                Logger.info(`[Auth Token Dao] Atualizando credenciais para ${credential.platform}`);
                 await db.executeSql(
                     'UPDATE auth_tokens SET consumer_key = ?, consumer_secret = ?, token = ?, token_secret = ?, aditional = ?, active = ?, updated_at = ? WHERE platform = ?',
                     [credential.consumerKey, credential.consumerSecret, credential.token, credential.tokenSecret, credential.aditional, credential.active ? 1 : 0, new Date().toISOString(), credential.platform]
                 );
             } else {
-                Logger.info(`Inserindo novas credenciais para ${credential.platform} [DAO]`);
+                Logger.info(`[Auth Token Dao] Inserindo novas credenciais para ${credential.platform}`);
                 const createdAt = new Date().toISOString();
                 await db.executeSql(
                     'INSERT INTO auth_tokens (platform, consumer_key, consumer_secret, token, token_secret, aditional, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -57,10 +57,10 @@ class AuthTokenDao {
             }
 
             await db.executeSql('COMMIT;');
-            Logger.info(`Credenciais para ${credential.platform} salvas com sucesso [DAO]`);
+            Logger.info(`[Auth Token Dao] Credenciais para ${credential.platform} salvas com sucesso`);
         } catch (error) {
             await db.executeSql('ROLLBACK;');
-            Logger.error(error as Error, { message: `Erro ao salvar credenciais para ${credential.platform} [DAO]:` });
+            Logger.error(error as Error, { message: `[Auth Token Dao] Erro ao salvar credenciais para ${credential.platform}:` });
             throw error;
         }
     }
@@ -100,7 +100,7 @@ class AuthTokenDao {
 
             return credential;
         } catch (error) {
-            Logger.error(error as Error, { message: `Erro ao buscar credenciais para ${platform} [DAO]:` });
+            Logger.error(error as Error, { message: `[Auth Token Dao] Erro ao buscar credenciais para ${platform}:` });
             throw error;
         }
     }
@@ -140,7 +140,7 @@ class AuthTokenDao {
             });
             return allCredentials;
         } catch (error) {
-            Logger.error(error as Error, { message: 'Erro ao buscar todas as credenciais [DAO]' });
+            Logger.error(error as Error, { message: '[Auth Token Dao] Erro ao buscar todas as credenciais' });
             throw error;
         }
     }
@@ -160,7 +160,7 @@ class AuthTokenDao {
             });
             return platforms;
         } catch (error) {
-            Logger.error(error as Error, { message: `Erro ao buscar plataformas [DAO]:` });
+            Logger.error(error as Error, { message: `[Auth Token Dao] Erro ao buscar plataformas:` });
             throw error;
         }
     }
@@ -180,7 +180,7 @@ class AuthTokenDao {
             });
             return platforms;
         } catch (error) {
-            Logger.error(error as Error, { message: `Erro ao buscar plataformas ativas [DAO]:` });
+            Logger.error(error as Error, { message: `[Auth Token Dao] Erro ao buscar plataformas ativas:` });
             throw error;
         }
     }
@@ -194,9 +194,9 @@ class AuthTokenDao {
         try {
             const activeValue = credentials.active ? 1 : 0;
             await db.executeSql('UPDATE auth_tokens SET active = ? WHERE platform = ?', [activeValue, credentials.platform]);
-            Logger.info(`[DAO] Status da plataforma ${credentials.platform} atualizado para ${credentials.active}`);
+            Logger.info(`[Auth Token Dao] Status da plataforma ${credentials.platform} atualizado para ${credentials.active}`);
         } catch (error) {
-            Logger.error(error as Error, { message: `Erro ao atualizar status para ${credentials.platform} [DAO]` });
+            Logger.error(error as Error, { message: `[Auth Token Dao] Erro ao atualizar status para ${credentials.platform}` });
             throw error;
         }
     }

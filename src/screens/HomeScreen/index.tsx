@@ -18,6 +18,7 @@ import AuthTokenDao from '../../dao/AuthTokenDao';
 import { PostData } from 'src/services/api/IApiService';
 import { requestGalleryPermission } from 'src/utils/permissions';
 import Logger from 'src/services/LoggerService';
+import { useProgress } from '../../contexts/ProgressContext';
 
 type Connections = {
     platform: PlatformType;
@@ -39,7 +40,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     const { colors } = useTheme();
     const styles = getStyles(colors);
 
-    const [connections, setConnections] = useState<Connections[]>([{ ...DEFAULT, platform: TUMBLR }, { ...DEFAULT, platform: X }, { ...DEFAULT, platform: THREADS }, { ...DEFAULT, platform: BLUESKY } ]);
+    const { startPosting, updateProgress, finishPosting, failPosting } = useProgress();
+    const [connections, setConnections] = useState<Connections[]>([{ ...DEFAULT, platform: TUMBLR }, { ...DEFAULT, platform: X }, { ...DEFAULT, platform: THREADS }, { ...DEFAULT, platform: BLUESKY }]);
     const [activePlatforms, setActivePlatforms] = useState<PlatformType[]>([]);
     const [postText, setPostText] = useState('');
     const [tagsText, setTagsText] = useState('');
@@ -78,7 +80,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     setConnections(newConnectionStatus);
                     setActivePlatforms(activePlatforms);
                 } catch (e: Error | any) {
-                    Logger.error(e, { message: 'Erro ao buscar conexões:' });
+                    Logger.error(e, { message: '[Home Screen] Erro ao buscar conexões:' });
                 }
             };
 
@@ -97,7 +99,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             const suggestions = await PostDao.getTagSuggestions(query);
             setTagSuggestions(suggestions);
         } catch (e: Error | any) {
-            Logger.error(e, { message: 'Falha ao buscar sugestões de tags na tela.' });
+            Logger.error(e, { message: '[Home Screen] Falha ao buscar sugestões de tags na tela.' });
         }
     };
 
@@ -200,7 +202,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
             setSelectedImages(prevImages => prevImages.map(img => (img === uri ? croppedImage.path : img)));
         } catch (e: Error | any) {
-            Logger.error(e, { message: 'Erro ao recortar imagem existente:' });
+            Logger.error(e, { message: '[Home Screen] Erro ao recortar imagem existente:' });
         }
     };
 
@@ -245,7 +247,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             }
             handleCancel();
         } catch (e: Error | any) {
-            Logger.error(e, { message: 'Não foi possível salvar o rascunho.' });
+            Logger.error(e, { message: '[Home Screen] Não foi possível salvar o rascunho.' });
             Alert.alert('Erro', 'Não foi possível salvar o rascunho.');
         }
     };
@@ -254,7 +256,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         const connectedPlatforms = connections
             .filter(conn => conn.active)
             .map(conn => conn.platform);
-     
+
         if (connectedPlatforms.length === 0) {
             Alert.alert('Nenhuma Conta Conectada', 'Vá para as Configurações para conectar suas contas primeiro.');
             return;
@@ -290,6 +292,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                 return;
             }
 
+            startPosting(platformsToTry.length);
+
             const originalPostData: PostData = {
                 text: postText,
                 images: selectedImages,
@@ -309,17 +313,21 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
                     successfulPlatforms.push(TUMBLR);
                 } catch (e: Error | any) {
-                    Logger.error(e, { message: 'Erro ao postar:' });
+                    Logger.error(e, { message: '[Post Flow] Erro ao postar no Tumblr:' });
                 }
             }
 
+            let index = 0;
             const postPromises = platformsToTry.filter(p => !successfulPlatforms.includes(p as PlatformType)).map(platform => {
                 const service = ApiServiceFactory(platform as PlatformType);
-                return service.post({
+                const result = service.post({
                     text: postText,
                     images: selectedImages,
                     tags: tagsText.split(',').map(t => t.trim()).filter(t => t),
                 });
+                index++;
+                updateProgress(index);
+                return result;
             });
 
             const results = await Promise.allSettled(postPromises);
@@ -333,7 +341,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     newlySuccessful.push(platform as PlatformType);
                 else {
                     failedPlatforms.push(platform as PlatformType);
-                    Logger.warn(`Falha ao postar em ${platform}:`, result.status === 'rejected' ? result.reason : 'retornou false');
+                    Logger.warn(`[Post Flow] Falha ao postar em ${platform}:`, result.status === 'rejected' ? result.reason : 'retornou false');
                 }
             });
 
@@ -351,10 +359,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                 await PostDao.update(idPost!, postData);
             }
         } catch (e: Error | any) {
-            Logger.error(e, { message: 'Erro ao postar:' });
+            Logger.error(e, { message: '[Post Flow] Erro ao postar:' });
             Alert.alert('Erro', 'Ocorreu um erro ao processar sua postagem.');
+            failPosting((e as Error).message);
         } finally {
             setIsPosting(false);
+            finishPosting();
         }
     };
 
@@ -512,30 +522,30 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                         />
                     </>
                 )}
-
-                <View style={styles.actionsContainer}>
-                    <Button
-                        title={'Cancelar'}
-                        onPress={handleCancel}
-                        style={[styles.actionButton, styles.cancelButton]}
-                        textStyle={styles.cancelButtonText}
-                    />
-
-                    <Button
-                        title={'Rascunho'}
-                        onPress={handleSaveDraft}
-                        style={[styles.actionButton, styles.draftButton]}
-                        textStyle={styles.draftButtonText}
-                    />
-
-                    <Button
-                        title={'Postar'}
-                        onPress={handlePost}
-                        style={[styles.actionButton, styles.postButton]}
-                        textStyle={styles.postButtonText}
-                    />
-                </View>
             </ScrollView>
+
+            <View style={styles.actionsContainer}>
+                <Button
+                    title={'Cancelar'}
+                    onPress={handleCancel}
+                    style={[styles.actionButton, styles.cancelButton]}
+                    textStyle={styles.cancelButtonText}
+                />
+
+                <Button
+                    title={'Rascunho'}
+                    onPress={handleSaveDraft}
+                    style={[styles.actionButton, styles.draftButton]}
+                    textStyle={styles.draftButtonText}
+                />
+
+                <Button
+                    title={'Postar'}
+                    onPress={handlePost}
+                    style={[styles.actionButton, styles.postButton]}
+                    textStyle={styles.postButtonText}
+                />
+            </View>
         </SafeAreaView>
     );
 };

@@ -17,18 +17,18 @@ class ImageProcessingService {
         try {
             const bounds = await this.findCropBoundsWithSkia(imageUri);
             if (!bounds) {
-                Logger.info('Não foi possível analisar a imagem com o Skia.');
+                Logger.info('[Image Service] Não foi possível analisar a imagem com o Skia.');
                 return imageUri;
             }
 
             const { x, width, originalWidth, originalHeight } = bounds;
 
             if (width <= 0 || width >= originalWidth - 2) {
-                Logger.info('Nenhuma borda preta significativa detectada.');
+                Logger.info('[Image Service] Nenhuma borda preta significativa detectada.');
                 return imageUri;
             }
 
-            Logger.debug(`Novos limites encontrados: Esquerda=${x}, Largura=${width}`);
+            Logger.debug(`[Image Service] Novos limites encontrados: Esquerda=${x}, Largura=${width}`);
 
             const cropData = {
                 offset: { x, y: 0 },
@@ -39,10 +39,10 @@ class ImageProcessingService {
             const croppedImageUri = cropResult.uri;
             const newPath = await this.saveImageWithCorrectedName(croppedImageUri, imageUri);
 
-            Logger.info(`Imagem corrigida e salva em: ${newPath}`);
+            Logger.info(`[Image Service] Imagem corrigida e salva em: ${newPath}`);
             return newPath;
         } catch (error) {
-            Logger.error(error as Error, { message: `Erro no processamento automático da imagem:` });
+            Logger.error(error as Error, { message: `[Image Service] Erro no processamento automático da imagem:` });
             Alert.alert('Erro', 'Não foi possível corrigir a imagem automaticamente.');
             return imageUri;
         }

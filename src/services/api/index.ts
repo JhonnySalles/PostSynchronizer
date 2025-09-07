@@ -36,7 +36,7 @@ export async function refreshAllTokens(): Promise<void> {
             const service = ApiServiceFactory(platform);
             return service.validateAndRefreshToken();
         } catch (error) {
-            Logger.error(error as Error, { message: `Falha ao criar serviço para a plataforma ${platform}` });
+            Logger.error(error as Error, { message: `[App Startup] Falha ao criar serviço para a plataforma ${platform}` });
             return Promise.resolve();
         }
     });
@@ -44,11 +44,8 @@ export async function refreshAllTokens(): Promise<void> {
     const results = await Promise.allSettled(refreshPromises);
 
     results.forEach((result, index) => {
-        if (result.status === 'rejected') {
-            Logger.error(new Error(`Falha na verificação de token para a plataforma: ${allPlatforms[index]}`), {
-                reason: result.reason,
-            });
-        }
+        if (result.status === 'rejected')
+            Logger.error(new Error(`[App Startup] Falha na verificação de token para a plataforma: ${allPlatforms[index]}`), { reason: result.reason, });
     });
 
     Logger.info('[App Startup] Processo de verificação de tokens concluído.');

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigation';
@@ -9,6 +9,7 @@ import * as Sentry from '@sentry/react-native';
 import { SENTRY_DSN } from '@env';
 import { refreshAllTokens } from './src/services/api';
 import Logger from './src/services/LoggerService';
+import { ProgressProvider } from './src/contexts/ProgressContext';
 
 Sentry.init({
     dsn: SENTRY_DSN,
@@ -41,9 +42,9 @@ const App = () => {
         const initializeDB = async () => {
             try {
                 await getDBConnection();
-                Logger.info('Banco de dados inicializado com sucesso.');
+                Logger.info('[App Startup] Banco de dados inicializado com sucesso.');
             } catch (error) {
-                Logger.error(error as Error, { message: 'Falha na inicialização do banco de dados:' });
+                Logger.error(error as Error, { message: '[App Startup] Falha na inicialização do banco de dados:' });
             }
         };
         initializeDB();
@@ -54,7 +55,7 @@ const App = () => {
             try {
                 await refreshAllTokens();
             } catch (error) {
-                Logger.error(error as Error, { message: 'Falha na verificação de token durante a inicialização do app' });
+                Logger.error(error as Error, { message: '[App Startup] Falha na verificação de token durante a inicialização do app' });
             }
         };
         const timer = setTimeout(performStartupTokenRefresh, 2000);
@@ -64,7 +65,9 @@ const App = () => {
 
     return (
         <ThemeProvider>
-            <AppContent />
+            <ProgressProvider>
+                <AppContent />
+            </ProgressProvider>
         </ThemeProvider>
     );
 };

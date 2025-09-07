@@ -76,16 +76,16 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
 
     const { twitter, TWModal } = useTwitter({
         onSuccess: async (user, oauth) => {
-            Logger.info(`[X] Login bem-sucedido para o usuário: @${user.screen_name}`);
+            Logger.info(`[Login Card - X] Login bem-sucedido para o usuário: @${user.screen_name}`);
             try {
                 setCreds(prev => ({ ...prev, token: oauth.oauth_token, tokenSecret: oauth.oauth_token_secret, aditional: JSON.stringify({ ...user, token: prev.token, tokenSecret: prev.tokenSecret, }) }))
                 Alert.alert("Sucesso!", "Sua conta do X (Twitter) foi conectada.");
             } catch (error) {
-                Logger.error(error as Error, { message: 'Falha ao salvar credenciais do X' });
+                Logger.error(error as Error, { message: '[Login Card - X] Falha ao salvar credenciais do X' });
             }
         },
         onError: (err) => {
-            Logger.error(new Error(JSON.stringify(err)), { message: '[X] Falha no login' });
+            Logger.error(new Error(JSON.stringify(err)), { message: '[Login Card - X] Falha no login' });
             Alert.alert("Erro no Login", "Não foi possível conectar sua conta do X.");
         },
     });
@@ -96,7 +96,7 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
             await twitter.setConsumerKey(creds.consumerKey, creds.consumerSecret);
             await twitter.login();
         } catch (error) {
-            Logger.error(error as Error, { message: '[X] Erro ao iniciar o fluxo de login' });
+            Logger.error(error as Error, { message: '[Login Card - X] Erro ao iniciar o fluxo de login' });
         } finally {
             setIsProcessing(false)
         }

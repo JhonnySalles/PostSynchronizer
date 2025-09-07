@@ -38,7 +38,7 @@ const SettingsScreen = () => {
                 try {
                     setConnections(await AuthTokenDao.getAllCredentials());
                 } catch (e: Error | any) {
-                    Logger.error(e, { msg: 'Não foi possível carregar as configurações salvas.' });
+                    Logger.error(e, { msg: '[Settings Screen] Não foi possível carregar as configurações salvas.' });
                     Alert.alert("Erro", "Não foi possível carregar as configurações salvas.");
                 } finally {
                     setIsLoading(false);
@@ -54,7 +54,7 @@ const SettingsScreen = () => {
             await AuthTokenDao.saveCredentials(credentials);
             Alert.alert('Sucesso!', 'Credenciais foram salvas no banco de dados.');
         } catch (e: Error | any) {
-            Logger.error(e, { message: 'Falha ao salvar credenciais.' });
+            Logger.error(e, { message: '[Settings Screen] Falha ao salvar credenciais.' });
             Alert.alert('Erro', 'Não foi possível salvar as credenciais.');
         }
     };
@@ -76,7 +76,7 @@ const SettingsScreen = () => {
             } else
                 Alert.alert("Falha na Conexão", "As credenciais são inválidas. Verifique os dados e tente novamente.");
         } catch (e: Error | any) {
-            Logger.error(e, { message: 'Erro ao testar credenciais.' });
+            Logger.error(e, { message: '[Settings Screen] Erro ao testar credenciais.' });
             Alert.alert("Erro", "Ocorreu um erro inesperado ao tentar testar as credenciais.");
         } finally {
             setIsTesting(null);
@@ -84,22 +84,15 @@ const SettingsScreen = () => {
     };
 
     const handleStatusChange = async (credentials: Credentials) => {
-        setConnections(prev =>
-            prev.map(conn =>
-                conn.platform === credentials.platform ? credentials : conn
-            )
-        );
+        setConnections(connections.filter(c => c.platform !== credentials.platform).concat([credentials]));
 
         try {
             await AuthTokenDao.updateActiveStatus(credentials);
         } catch (e: Error | any) {
-            Logger.error(e, { message: 'Não foi possível atualizar o status da conexão.' });
+            Logger.error(e, { message: '[Settings Screen] Não foi possível atualizar o status da conexão.' });
             Alert.alert("Erro", "Não foi possível atualizar o status da conexão.");
-            setConnections(prev =>
-                prev.map(conn =>
-                    conn.platform === credentials.platform ? { ...credentials, active: !credentials.active } : conn
-                )
-            );
+            credentials.active = !credentials.active;
+            setConnections(connections.filter(c => c.platform !== credentials.platform).concat([credentials]));
         }
     };
 

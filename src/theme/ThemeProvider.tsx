@@ -33,7 +33,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
                 if (savedMode)
                     setThemeMode(savedMode);
             } catch (error) {
-                Logger.error(error as Error, { message: 'Falha ao carregar preferência de tema' });
+                Logger.error(error as Error, { message: '[Theme Provider] Falha ao carregar preferência de tema' });
             }
         };
         loadThemePreference();
@@ -61,9 +61,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
                 newScheme = null;
             
             Appearance.setColorScheme(newScheme);
-            Logger.info(`[ThemeProvider] Tema do app definido para: ${mode}. Esquema nativo: ${newScheme}`);
+            Logger.info(`[Theme Provider] Tema do app definido para: ${mode}. Esquema nativo: ${newScheme}`);
         } catch (error) {
-            Logger.error(error as Error, { message: 'Falha ao salvar preferência de tema' });
+            Logger.error(error as Error, { message: '[Theme Provider] Falha ao salvar preferência de tema' });
         }
     };
 

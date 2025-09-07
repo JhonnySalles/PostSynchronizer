@@ -14,7 +14,7 @@ export const requestGalleryPermission = async (): Promise<boolean> => {
         const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,);
         return result === PermissionsAndroid.RESULTS.GRANTED;
     } catch (e: Error | any) {
-        Logger.error(e, {message: 'Erro ao solicitar permissão da galeria:'});
+        Logger.error(e, {message: '[Permissions] Erro ao solicitar permissão da galeria:'});
         return false;
     }
 };

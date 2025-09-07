@@ -1,6 +1,7 @@
 import { logger, fileAsyncTransport } from 'react-native-logs';
 import * as Sentry from '@sentry/react-native';
 import RNFS from 'react-native-fs';
+import { IS_PRODUCTION } from 'src/constants/app';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -38,6 +39,8 @@ class LoggerService {
         const message = args.map(arg => String(arg)).join(' ');
         log.debug(message);
         Sentry.addBreadcrumb({ category: 'debug', message, level: 'debug' });
+        if (!IS_PRODUCTION)
+            console.log(message);
     }
 
     /**
@@ -48,7 +51,8 @@ class LoggerService {
         const message = args.map(arg => String(arg)).join(' ');
         log.info(message);
         Sentry.addBreadcrumb({ category: 'log', message, level: 'info' });
-        console.log(message);
+        if (!IS_PRODUCTION)
+            console.log(message);
     }
 
     /**
@@ -59,7 +63,8 @@ class LoggerService {
         const message = args.map(arg => String(arg)).join(' ');
         log.warn(message);
         Sentry.addBreadcrumb({ category: 'log', message, level: 'warning' });
-        console.log(message);
+        if (!IS_PRODUCTION)
+            console.log(message);
     }
 
     /**
@@ -70,7 +75,8 @@ class LoggerService {
      */
     public error(error: Error, context?: Record<string, any>): void {
         log.error(error, context);
-        console.log(error);
+        if (!IS_PRODUCTION)
+            console.log(error);
 
         if (context)
             Sentry.setContext('Custom Context', context);
