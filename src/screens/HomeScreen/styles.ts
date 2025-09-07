@@ -10,7 +10,7 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: 15,
+        paddingHorizontal: 16,
     },
     // Seção de Status das Conexões
     statusContainer: {
@@ -71,10 +71,12 @@ export const getStyles = (colors: ColorsType) => StyleSheet.create({
     actionsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingTop: 10,
-        marginBottom: 35,
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
         borderTopWidth: 1,
-        borderTopColor: colors.border
+        borderTopColor: colors.border,
+        backgroundColor: colors.background,
     },
     actionButton: {
         flex: 1,

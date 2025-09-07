@@ -22,7 +22,7 @@ export const getDBConnection = async (): Promise<SQLiteDatabase> => {
     openingPromise = (async () => {
         try {
             const db = await openDatabase({ name: DATABASE_NAME, location: 'default' });
-            Logger.debug('Conexão com o banco de dados estabelecida.');
+            Logger.debug('[DB] Conexão com o banco de dados estabelecida.');
             await runMigrations(db);
             dbInstance = db;
             return db;
@@ -40,6 +40,6 @@ export const closeDBConnection = async (): Promise<void> => {
     if (dbInstance) {
         await dbInstance.close();
         dbInstance = null;
-        Logger.debug('Conexão com o banco de dados fechada.');
+        Logger.debug('[DB] Conexão com o banco de dados fechada.');
     }
 };

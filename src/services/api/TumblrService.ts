@@ -12,15 +12,15 @@ export interface TestResult {
 }
 
 interface TumblrBlog {
-  name: string;
-  title: string;
+    name: string;
+    title: string;
 }
 
 interface TumblrUserInfoResponse {
-  user: {
-    blogs: TumblrBlog[];
-    name: string;
-  };
+    user: {
+        blogs: TumblrBlog[];
+        name: string;
+    };
 }
 
 export class TumblrService implements IApiService {
@@ -88,7 +88,7 @@ export class TumblrService implements IApiService {
         const credentials = await AuthTokenDao.getCredentialsForPlatform<TumblrCredentials>(this.platform as PlatformType);
         if (!credentials) {
             const authError = new Error(`Credenciais do Tumblr não encontradas. Conecte sua conta nas Configurações.`);
-            Logger.error(authError);
+            Logger.error(authError, { message: `[${this.platform}] Credenciais do Tumblr não encontradas. Conecte sua conta nas Configurações` });
             throw authError;
         }
 
@@ -106,8 +106,13 @@ export class TumblrService implements IApiService {
             try {
                 let postOptions: any = {};
                 if (data.images && data.images.length > 0) {
-                    const imageBase64 = await RNFS.readFile(data.images[0], 'base64');
-                    postOptions = { type: 'photo', caption: data.text, data64: imageBase64, tags: data.tags?.join(',') };
+                    if (data.images.length > 1) {
+                        const base64Images = await Promise.all(data.images.map(imagePath => RNFS.readFile(imagePath, 'base64')));
+                        postOptions = { type: 'photo', caption: data.text, data: base64Images, tags: data.tags?.join(',') };
+                    } else {
+                        const imageBase64 = await RNFS.readFile(data.images[0], 'base64');
+                        postOptions = { type: 'photo', caption: data.text, data64: imageBase64, tags: data.tags?.join(',') };
+                    }
                 } else
                     postOptions = { type: 'text', body: data.text, tags: data.tags?.join(',') };
 
@@ -120,7 +125,7 @@ export class TumblrService implements IApiService {
                     let imageUrls: string[] = [];
                     if (resp!.photos && Array.isArray(resp!.photos))
                         imageUrls = resp!.photos.map((photo: any) => photo.original_size.url);
-                    
+
                     Logger.info(`[${this.platform}] Postagem bem-sucedida! ID: ${resp!.id}`);
                     resolve({ sucess: true, imagesUrl: imageUrls });
                 });

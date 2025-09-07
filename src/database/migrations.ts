@@ -41,22 +41,22 @@ export const runMigrations = async (db: SQLiteDatabase): Promise<void> => {
             await db.executeSql('INSERT INTO db_version (version) VALUES (0);');
 
 
-        Logger.debug(`Versão atual do banco de dados: ${currentVersion}`);
+        Logger.debug(`[Migrations] Versão atual do banco de dados: ${currentVersion}`);
 
         if (currentVersion < MIGRATIONS.length) {
-            Logger.debug('Iniciando migrações...');
+            Logger.debug('[Migrations] Iniciando migrações...');
             for (let i = currentVersion; i < MIGRATIONS.length; i++) {
                 await db.executeSql(MIGRATIONS[i]);
                 const newVersion = i + 1;
                 await db.executeSql('UPDATE db_version SET version = ?;', [newVersion]);
-                Logger.debug(`Migração #${newVersion} aplicada com sucesso.`);
+                Logger.debug(`[Migrations] Migração #${newVersion} aplicada com sucesso.`);
             }
-            Logger.debug('Todas as migrações foram concluídas.');
+            Logger.debug('[Migrations] Todas as migrações foram concluídas.');
         } else
-            Logger.debug('O banco de dados já está atualizado.');
+            Logger.debug('[Migrations] O banco de dados já está atualizado.');
     } catch (error) {
         const sqlError = error as Error;
-        Logger.error(error as Error, { message: `Erro ao executar migrações: ${sqlError.message}` });
+        Logger.error(error as Error, { message: `[Migrations] Erro ao executar migrações: ${sqlError.message}` });
         throw error;
     }
 };

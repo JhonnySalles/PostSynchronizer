@@ -34,7 +34,7 @@ export class XService implements IApiService {
         const credentials = await AuthTokenDao.getCredentialsForPlatform<Credentials>(this.platform as PlatformType);
         if (!credentials) {
             const authError = new Error(`Credenciais do X não encontradas. Conecte sua conta nas Configurações.`);
-            Logger.error(authError);
+            Logger.error(authError, { message: `[${this.platform}] Credenciais do X não encontradas. Conecte sua conta nas Configurações` });
             throw authError;
         }
 

@@ -44,7 +44,7 @@ class PostDao {
             });
             return posts;
         } catch (error) {
-            Logger.error(error as Error, { message: 'Erro ao buscar todos os posts [DAO]:' });
+            Logger.error(error as Error, { message: '[Post Dao] Erro ao buscar todos os posts:' });
             throw error;
         }
     }
@@ -76,7 +76,7 @@ class PostDao {
             });
             return Array.from(uniqueTags);
         } catch (error) {
-            Logger.error(error as Error, { message: 'Erro ao buscar sugestões de tags [DAO]:' });
+            Logger.error(error as Error, { message: '[Post Dao] Erro ao buscar sugestões de tags:' });
             throw error;
         }
     }
@@ -107,10 +107,10 @@ class PostDao {
             if (insertId === undefined || insertId < 0)
                 throw new Error("Falha ao obter o ID do post inserido.");
 
-            Logger.info('Post criado com sucesso [DAO]');
+            Logger.info('[Post Dao] Post criado com sucesso');
             return insertId;
         } catch (error) {
-            Logger.error(error as Error, { message: 'Erro ao criar post [DAO]:' });
+            Logger.error(error as Error, { message: '[Post Dao] Erro ao criar post:' });
             throw error;
         }
     }
@@ -138,9 +138,9 @@ class PostDao {
                 'UPDATE posts SET content = ?, images = ?, status = ?, platforms_send = ?, platforms_success = ?, tags = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
                 [content, imagesJson, status, platforms_send, platforms_success, tags, postId]
             );
-            Logger.info(`Post ID ${postId} atualizado com sucesso [DAO]`);
+            Logger.info(`[Post Dao] Post ID ${postId} atualizado com sucesso`);
         } catch (error) {
-            Logger.error(error as Error, { message: `Erro ao atualizar post ID ${postId} [DAO]` });
+            Logger.error(error as Error, { message: `[Post Dao] Erro ao atualizar post ID ${postId}` });
             throw error;
         }
     }
@@ -153,9 +153,9 @@ class PostDao {
         const db = await getDBConnection();
         try {
             await db.executeSql('DELETE FROM posts WHERE id = ?', [postId]);
-            Logger.info(`Post ID ${postId} deletado com sucesso [DAO]`);
+            Logger.info(`[Post Dao] Post ID ${postId} deletado com sucesso`);
         } catch (error) {
-            Logger.error(error as Error, { message: `Erro ao deletar post ID ${postId} [DAO]` });
+            Logger.error(error as Error, { message: `[Post Dao] Erro ao deletar post ID ${postId}` });
             throw error;
         }
     }
