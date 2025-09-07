@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>PostSynchronizer</string>
+	<string>Post Synchronizer</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -68,5 +68,7 @@
         <string>Ionicons.ttf</string>
         <string>MaterialCommunityIcons.ttf</string>
     </array>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Precisamos de acesso para salvar as imagens editadas na sua galeria.</string>
 </dict>
 </plist>

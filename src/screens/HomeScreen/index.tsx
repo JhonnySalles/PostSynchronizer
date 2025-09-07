@@ -132,6 +132,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         const images = await ImagePicker.openPicker({
             multiple: true,
             mediaType: 'photo',
+            maxFiles: 50, 
+            selectionLimit: 50, 
         });
         const imagePaths = images.map(img => img.path);
         setSelectedImages(prev => [...prev, ...imagePaths]);
@@ -376,14 +378,14 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                 onPress={() => handleAdjustSingleImage(index)}
                 disabled={isAdjustingImages}
             >
-                <Icon name="crop-outline" size={18} color="#fff" />
+                <Icon name="crop-outline" size={18} color={colors.card} />
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.removeIconOverlay}
                 onPress={() => handleRemoveImage(index)}
                 disabled={isAdjustingImages}
             >
-                <Icon name="close-circle" size={24} color="red" />
+                <Icon name="close-circle" size={24} color={colors.cancel} />
             </TouchableOpacity>
         </TouchableOpacity>
     );

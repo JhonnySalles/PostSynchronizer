@@ -3,6 +3,7 @@ import ImageEditor from '@react-native-community/image-editor';
 import { Skia } from '@shopify/react-native-skia';
 import RNFS from 'react-native-fs';
 import Logger from 'src/services/LoggerService';
+import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 
 const BLACK_THRESHOLD = 30; // Tolerância para o "preto" (0-255). Ajuda com JPEGs.
 
@@ -119,12 +120,29 @@ class ImageProcessingService {
         const originalPathParts = originalUri.split('/');
         const originalFilename = originalPathParts[originalPathParts.length - 1];
         const [name, extension] = originalFilename.split('.');
-
         const newFilename = `${name}_corrigido.${extension || 'jpg'}`;
-        const newPath = `${RNFS.DocumentDirectoryPath}/${newFilename}`;
-
+        const lastSlashIndex = originalUri.lastIndexOf('/');
+        const originalDirectory = originalUri.substring(0, lastSlashIndex);
+        const cleanDirectory = originalDirectory.startsWith('file://') ? originalDirectory.substring(7) : originalDirectory;
+        const newPath = `${cleanDirectory}/${newFilename}`;
         await RNFS.moveFile(tempUri, newPath);
+        await this.saveImageToGallery(newPath);
         return `file://${newPath}`;
+    }
+
+    private async saveImageToGallery(tempUri: string): Promise<string> {
+        try {
+            const newPathWithExtension = `${RNFS.CachesDirectoryPath}/${Date.now()}.jpg`;
+            await RNFS.copyFile(tempUri, newPathWithExtension);
+            const galleryUri = await CameraRoll.save(`file://${newPathWithExtension}`, { type: 'photo', album: 'CortarImagem' });
+            Logger.info(`[Image Service] Imagem salva na galeria: ${galleryUri}`);
+            await RNFS.unlink(newPathWithExtension);
+            return galleryUri;
+        } catch (error) {
+            Logger.error(error as Error, { message: `[Image Service] Erro ao salvar imagem na galeria:` });
+            Alert.alert("Erro", "Não foi possível salvar a imagem na galeria.");
+            return tempUri;
+        }
     }
 }
 
