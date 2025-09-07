@@ -30,6 +30,8 @@ target 'PostSynchronizer' do
     # Pods for testing
   end
 
+  use_flipper!({'Flipper' => '0.58.0'}) 
+  
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
