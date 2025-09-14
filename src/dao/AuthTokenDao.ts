@@ -4,16 +4,11 @@ import Logger from 'src/services/LoggerService';
 
 export interface Credentials {
     platform: typeof UNKNOW | typeof X | typeof TUMBLR | typeof THREADS | typeof BLUESKY;
-    consumerKey: string;
-    consumerSecret: string;
-    token: string;
-    tokenSecret: string;
     active: boolean;
     aditional: string;
 }
 
 export interface TumblrCredentials extends Credentials {
-    platform: typeof TUMBLR;
     blogName: string;
     blogs: TumblrBlogs[];
 }

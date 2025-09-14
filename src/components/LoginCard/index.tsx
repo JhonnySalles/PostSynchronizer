@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleProp, ViewStyle, TextStyle, Switch, ActivityIndicator, } from 'react-native';
+import { View, Text, StyleProp, ViewStyle, TextStyle, Switch, ActivityIndicator, } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getStyles } from './styles';
 import { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import Button from '../Button';
-import { Alert } from 'react-native';
-import Logger from 'src/services/LoggerService';
 import { BLUESKY, THREADS, TUMBLR, X } from 'src/constants/platforms';
-import { useTwitter } from 'react-native-simple-twitter';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useTheme } from '../../theme/ThemeProvider';
 
@@ -15,17 +12,15 @@ interface LoginCardProps {
     credential: Credentials;
     iconName: string;
     iconColor: string;
-    onSave: (credentials: Credentials) => void;
-    onTest: (credentials: Credentials) => void;
-    isTesting?: boolean;
+    onConsult?: (credentials: Credentials) => void;
+    isConsulting?: boolean;
     buttonStyle?: StyleProp<ViewStyle>;
     buttonTextStyle?: StyleProp<TextStyle>;
     onStatusChange?: (credentials: Credentials) => void;
 }
 
-const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting = false, onStatusChange }: LoginCardProps) => {
+const LoginCard = ({ credential, iconName, iconColor, onConsult, isConsulting = false, onStatusChange }: LoginCardProps) => {
     const [creds, setCreds] = useState<Credentials>(credential);
-    const [isProcessing, setIsProcessing] = useState(false);
     const [isOpening, setIsOpening] = useState(false);
     const [blogItems, setBlogItems] = useState<{ label: string; value: string }[]>([]);
 
@@ -40,104 +35,10 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
             setBlogItems([]);
     }, [credential]);
 
-    const handleInputChange = (field: keyof Credentials, value: string) => {
-        setCreds(prev => ({ ...prev, [field]: value }));
+    const handleConsultPress = () => {
+        if (onConsult)
+            onConsult(creds);
     };
-
-    const areCredsValid = (): boolean => {
-        if (!creds)
-            return false;
-
-        const keys = Object.keys(creds);
-        const keysToValidate = keys.filter(key => key !== 'platform' && key !== 'active');
-
-        return keysToValidate.some(key => {
-            const value = (creds as any)[key];
-            return typeof value === 'string' && value.trim() !== '';
-        });
-    };
-
-    const handleSavePress = () => {
-        if (areCredsValid()) {
-            let credenciais = creds
-            if (credential.platform === TUMBLR && (creds as TumblrCredentials).blogs)
-                credenciais = { ...credenciais, blogs: (creds as TumblrCredentials).blogs.map(b => ({ ...b, selected: b.name === (creds as TumblrCredentials).blogName })) } as TumblrCredentials
-            onSave(credenciais);
-        } else
-            Alert.alert("Campos Vazios", "Por favor, preencha uma credencial ao menos para salvar.");
-    };
-
-    const handleTestPress = () => {
-        if (areCredsValid())
-            onTest(creds);
-        else
-            Alert.alert("Campos Vazios", "Por favor, preencha uma credencial ao menos antes de testar.");
-    };
-
-    const { twitter, TWModal } = useTwitter({
-        onSuccess: async (user, oauth) => {
-            Logger.info(`[Login Card - X] Login bem-sucedido para o usuário: @${user.screen_name}`);
-            try {
-                setCreds(prev => ({ ...prev, token: oauth.oauth_token, tokenSecret: oauth.oauth_token_secret, aditional: JSON.stringify({ ...user, token: prev.token, tokenSecret: prev.tokenSecret, }) }))
-                Alert.alert("Sucesso!", "Sua conta do X (Twitter) foi conectada.");
-            } catch (error) {
-                Logger.error(error as Error, { message: '[Login Card - X] Falha ao salvar credenciais do X' });
-            }
-        },
-        onError: (err) => {
-            Logger.error(new Error(JSON.stringify(err)), { message: '[Login Card - X] Falha no login' });
-            Alert.alert("Erro no Login", "Não foi possível conectar sua conta do X.");
-        },
-    });
-
-    const handleXLogin = async () => {
-        try {
-            setIsProcessing(true)
-            await twitter.setConsumerKey(creds.consumerKey, creds.consumerSecret);
-            await twitter.login();
-        } catch (error) {
-            Logger.error(error as Error, { message: '[Login Card - X] Erro ao iniciar o fluxo de login' });
-        } finally {
-            setIsProcessing(false)
-        }
-    };
-
-    let placeholderConsumer;
-    let placeholderConsumerSecret;
-    let placeholderToken;
-    let placeholderTokenSecret;
-
-    switch (creds.platform) {
-        case X:
-            placeholderConsumer = "Consumer Key";
-            placeholderConsumerSecret = "Consumer Secret";
-            placeholderToken = undefined;
-            placeholderTokenSecret = undefined;
-            break;
-        case TUMBLR:
-            placeholderConsumer = "Consumer Key";
-            placeholderConsumerSecret = "Consumer Secret";
-            placeholderToken = "Token";
-            placeholderTokenSecret = "Token Secret";
-            break;
-        case THREADS:
-            placeholderConsumer = "Client ID";
-            placeholderConsumerSecret = "Client Secret";
-            placeholderToken = undefined;
-            placeholderTokenSecret = undefined;
-            break;
-        case BLUESKY:
-            placeholderConsumer = "Identifier";
-            placeholderConsumerSecret = "Password";
-            placeholderToken = undefined;
-            placeholderTokenSecret = undefined;
-            break;
-        default:
-            placeholderConsumer = "Consumer Key";
-            placeholderConsumerSecret = "Consumer Secret";
-            placeholderToken = "Token";
-            placeholderTokenSecret = "Token Secret";
-    }
 
     return (
         <View style={styles.cardContainer}>
@@ -145,7 +46,7 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
                 <Icon name={iconName} size={30} color={iconColor} />
                 <Text style={[styles.title, { color: iconColor }]}>{creds.platform}</Text>
 
-                {(isTesting || isProcessing) && (
+                {isConsulting && (
                     <View style={styles.activityIndicatorContainer}>
                         <ActivityIndicator size={30} color="#007bff" />
                     </View>
@@ -159,23 +60,15 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
                     thumbColor={creds.active ? colors.primary : colors.primaryOuther}
                     ios_backgroundColor={colors.inactive}
                     onValueChange={() => {
-                        const credenciais = { ...credential, active: !credential.active };
-                        setCreds(credenciais);
-                        if (onStatusChange)
-                            onStatusChange(credenciais);
-                    }
+                            const credenciais = { ...credential, active: !credential.active };
+                            setCreds(credenciais);
+                            if (onStatusChange)
+                                onStatusChange(credenciais);
+                        }
                     }
                     value={creds.active}
-                    disabled={!areCredsValid()}
                 />
             </View>
-
-            {creds.platform === X && <TWModal />}
-
-            {placeholderConsumer && <TextInput style={styles.input} placeholder={placeholderConsumer} placeholderTextColor={colors.textSecondary} value={creds.consumerKey} onChangeText={v => handleInputChange('consumerKey', v)} />}
-            {placeholderConsumerSecret && <TextInput style={styles.input} placeholder={placeholderConsumerSecret} placeholderTextColor={colors.textSecondary} value={creds.consumerSecret} onChangeText={v => handleInputChange('consumerSecret', v)} />}
-            {placeholderToken && <TextInput style={styles.input} placeholder={placeholderToken} placeholderTextColor={colors.textSecondary} value={creds.token} onChangeText={v => handleInputChange('token', v)} editable={creds.platform != X} />}
-            {placeholderTokenSecret && <TextInput style={styles.input} placeholder={placeholderTokenSecret} placeholderTextColor={colors.textSecondary} value={creds.tokenSecret} onChangeText={v => handleInputChange('tokenSecret', v)} editable={creds.platform != X} />}
 
             {creds.platform === TUMBLR &&
                 <DropDownPicker
@@ -201,24 +94,18 @@ const LoginCard = ({ credential, iconName, iconColor, onSave, onTest, isTesting 
                 />
             }
 
-            {creds.platform === X && <Button title="Conectar com X (Twitter)" onPress={handleXLogin} disabled={isProcessing} />}
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                <Button
-                    title={isTesting ? 'Testando...' : 'Testar'}
-                    variant="secondary"
-                    onPress={handleTestPress}
-                    isLoading={isTesting}
-                    disabled={isTesting}
-                    style={{ flex: 1, marginRight: 10 }}
-                />
-                <Button
-                    title="Salvar"
-                    onPress={handleSavePress}
-                    disabled={isTesting}
-                    style={{ flex: 1 }}
-                />
-            </View>
+            {creds.platform === TUMBLR &&
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                    <Button
+                        title={isConsulting ? 'Consultando...' : 'Consultar blogs'}
+                        variant="secondary"
+                        onPress={handleConsultPress}
+                        isLoading={isConsulting}
+                        disabled={isConsulting}
+                        style={{ flex: 1, marginRight: 10 }}
+                    />
+                </View>
+            }
         </View>
     );
 };

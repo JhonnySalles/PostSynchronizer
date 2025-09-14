@@ -5,15 +5,16 @@ import Logger from 'src/services/LoggerService';
 const MIGRATIONS = [
     `CREATE TABLE IF NOT EXISTS auth_tokens (
       platform TEXT PRIMARY KEY NOT NULL,
-      consumer_key TEXT,
-      consumer_secret TEXT,
-      token TEXT,
-      token_secret TEXT,
       aditional TEXT,
       active INTEGER NOT NULL DEFAULT 1,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`,
+    `INSERT INTO auth_tokens (platform, active, created_at, updated_at) VALUES 
+        ("tumblr", 0, NOW(), NOW()),
+        ("threads", 0, NOW(), NOW()),
+        ("x", 0, NOW(), NOW()),
+        ("bluesky", 0, NOW(), NOW());`,
     `CREATE TABLE IF NOT EXISTS posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         content TEXT,
@@ -24,7 +25,7 @@ const MIGRATIONS = [
         platforms_success TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );`,
+    );`
 ];
 
 
