@@ -10,3 +10,4 @@ mipmap app_icon_monochrome
 mipmap app_icon_round
 string app_name
 style AppTheme
+xml network_security_config

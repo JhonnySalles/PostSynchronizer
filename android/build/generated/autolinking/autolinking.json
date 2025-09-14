@@ -55,6 +55,32 @@
         }
       }
     },
+    "@react-native-camera-roll/camera-roll": {
+      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-camera-roll\\camera-roll",
+      "name": "@react-native-camera-roll/camera-roll",
+      "platforms": {
+        "ios": {
+          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-camera-roll\\camera-roll\\react-native-cameraroll.podspec",
+          "version": "7.10.2",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-camera-roll\\camera-roll\\android",
+          "packageImportPath": "import com.reactnativecommunity.cameraroll.CameraRollPackage;",
+          "packageInstance": "new CameraRollPackage()",
+          "buildTypes": [],
+          "libraryName": "rncameraroll",
+          "componentDescriptors": [],
+          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": null
+      }
+    },
     "@react-native-community/image-editor": {
       "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\image-editor",
       "name": "@react-native-community/image-editor",
@@ -87,7 +113,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-picker\\picker\\RNCPicker.podspec",
-          "version": "2.11.1",
+          "version": "2.11.2",
           "configurations": [],
           "scriptPhases": []
         },
@@ -142,7 +168,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@sentry\\react-native\\RNSentry.podspec",
-          "version": "6.20.0",
+          "version": "6.21.0",
           "configurations": [],
           "scriptPhases": []
         },
@@ -171,7 +197,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@shopify\\react-native-skia\\react-native-skia.podspec",
-          "version": "2.2.9",
+          "version": "2.2.14",
           "configurations": [],
           "scriptPhases": []
         },
@@ -336,7 +362,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-screens\\RNScreens.podspec",
-          "version": "4.15.4",
+          "version": "4.16.0",
           "configurations": [],
           "scriptPhases": []
         },

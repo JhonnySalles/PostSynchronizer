@@ -2,149 +2,298 @@ import axios, { AxiosInstance } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Logger from 'src/services/LoggerService';
 import RNFS from 'react-native-fs';
-import { API_BASE_URL, API_USERNAME, API_PASSWORD, API_FIXED_ACCESS_TOKEN } from '@env';
-import AuthTokenDao, { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
+import { API_BASE_URL, API_USERNAME, API_PASSWORD, API_ACCESS_TOKEN } from '@env';
+import AuthTokenDao, { TumblrBlogs, TumblrCredentials } from 'src/dao/AuthTokenDao';
+import { io, Socket } from 'socket.io-client';
+import EventEmitter from 'eventemitter3';
+import { Alert } from 'react-native';
 
 const JWT_TOKEN_KEY = 'api_jwt_token';
 const JWT_EXPIRES_AT_KEY = 'api_jwt_expires_at';
 
-export interface PostPayload {
-    platforms: string[];
-    text: string;
-    images: string[];
-    tags?: string[];
-    platformOptions?: {
-        tumblr?: {
-            blogName: string;
-        };
-    };
+export interface ImagePayload {
+  base64?: string;
+  path?: string;
+  platforms?: string[];
 }
 
+export interface PostPayload {
+  platforms: string[];
+  text: string;
+  images: ImagePayload[];
+  tags?: string[];
+  platformOptions?: {
+    tumblr?: {
+      blogName: string;
+    };
+  };
+}
+
+export interface ProgressUpdate {
+  type: 'progress' | 'summary';
+  platform?: string;
+  status?: 'success' | 'error';
+  progress?: number;
+  error?: string | null;
+  summary?: {
+    successful: string[];
+    failed: string[];
+  };
+}
+
+export type ProgressCallback = (update: ProgressUpdate) => void;
+
 class ApiService {
-    private axiosInstance: AxiosInstance;
+  private axiosInstance: AxiosInstance;
+  private socket: Socket;
+  private eventEmitter: EventEmitter;
 
-    constructor() {
-        this.axiosInstance = axios.create({
-            baseURL: API_BASE_URL,
-            headers: { 'Content-Type': 'application/json' },
-        });
+  constructor() {
+    Logger.info('[ApiService] Iniciando criação do service, endereço da api:', API_BASE_URL);
 
-        this.axiosInstance.interceptors.request.use(async (config) => {
-            const token = await AsyncStorage.getItem(JWT_TOKEN_KEY);
-            if (token)
-                config.headers.Authorization = `Bearer ${token}`;
-            return config;
-        });
+    this.axiosInstance = axios.create({
+      baseURL: API_BASE_URL,
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    this.axiosInstance.interceptors.request.use(async config => {
+      const token = await AsyncStorage.getItem(JWT_TOKEN_KEY);
+      // prettier-ignore
+      if (token) 
+        config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    });
+
+    this.eventEmitter = new EventEmitter();
+
+    this.socket = io(API_BASE_URL, {
+      autoConnect: true,
+      transports: ['websocket'],
+    });
+
+    this.socket.on('connect', () => {
+      Logger.info('[ApiService] Conectado ao servidor WebSocket com ID:', this.socket.id);
+    });
+
+    this.socket.on('progressUpdate', (data: ProgressUpdate) => {
+      Logger.info('[ApiService] Progresso recebido via WebSocket:', data);
+      this.eventEmitter.emit('post_update', data);
+    });
+
+    this.socket.on('taskCompleted', (data: ProgressUpdate) => {
+      Logger.info('[ApiService] Tarefa concluída recebida via WebSocket:', data);
+      this.eventEmitter.emit('post_update', { ...data, type: 'summary' });
+    });
+
+    this.socket.on('disconnect', () => {
+      Logger.warn('[ApiService] Desconectado do servidor WebSocket.');
+    });
+  }
+
+  /**
+   * Realiza o login na API backend e salva o token JWT.
+   */
+  async login(): Promise<boolean> {
+    try {
+      Logger.info('[ApiService] Autenticando na API backend...');
+      const response = await this.axiosInstance.post('/auth/login', {
+        username: API_USERNAME,
+        password: API_PASSWORD,
+        accessToken: API_ACCESS_TOKEN,
+      });
+
+      const { token, expiration } = response.data;
+      if (token && expiration) {
+        await AsyncStorage.setItem(JWT_TOKEN_KEY, token);
+        await AsyncStorage.setItem(JWT_EXPIRES_AT_KEY, expiration);
+        Logger.info('[ApiService] Autenticação bem-sucedida.');
+        return true;
+      }
+      Logger.error(new Error('[ApiService] Falha na autenticação: Token ou expiração ausente na resposta.'));
+      return false;
+    } catch (error) {
+      Logger.error(error as Error, { message: '[ApiService] Falha na autenticação' });
+      return false;
+    }
+  }
+
+  /**
+   * Renova o token JWT se estiver expirado. Deve ser chamado uma vez ao dia.
+   */
+  async refreshTokens(): Promise<void> {
+    try {
+      const expiration = await AsyncStorage.getItem(JWT_EXPIRES_AT_KEY);
+      const oldToken = await AsyncStorage.getItem(JWT_TOKEN_KEY);
+
+      if (!expiration || !oldToken) {
+        Logger.warn('[ApiService] Nenhum token encontrado. Realizando login...');
+        this.login();
+        return;
+      }
+
+      if (expiration && Date.now() < new Date(expiration).getTime()) {
+        Logger.info('[ApiService] Token JWT ainda é válido.');
+        return;
+      }
+
+      Logger.info('[ApiService] Token JWT expirado. Renovando...');
+      const response = await this.axiosInstance.post(
+        '/auth/token/refresh',
+        { accessToken: API_ACCESS_TOKEN },
+        { headers: { Authorization: `Bearer ${oldToken}` } },
+      );
+
+      const { token, expiration: newExpiration } = response.data;
+      if (token && newExpiration) {
+        await AsyncStorage.setItem(JWT_TOKEN_KEY, token);
+        await AsyncStorage.setItem(JWT_EXPIRES_AT_KEY, newExpiration);
+        Logger.info('[ApiService] Token JWT renovado com sucesso.');
+      }
+    } catch (error) {
+      Logger.error(error as Error, { message: '[ApiService] Falha ao renovar token. Um novo login será necessário.' });
+      await AsyncStorage.removeItem(JWT_TOKEN_KEY);
+      await AsyncStorage.removeItem(JWT_EXPIRES_AT_KEY);
+    }
+  }
+
+  private isConnected(timeout = 3000): Promise<boolean> {
+    // prettier-ignore
+    if (this.socket.connected) 
+        return Promise.resolve(true);
+
+    return new Promise(resolve => {
+      const timer = setTimeout(() => {
+        Logger.warn('[ApiService] Timeout ao tentar conectar ao WebSocket.');
+        this.socket.off('connect');
+        this.socket.off('connect_error');
+        resolve(false);
+      }, timeout);
+
+      this.socket.once('connect', () => {
+        clearTimeout(timer);
+        this.socket.off('connect_error');
+        resolve(true);
+      });
+
+      this.socket.once('connect_error', err => {
+        clearTimeout(timer);
+        this.socket.off('connect');
+        Logger.error(err, { message: '[ApiService] Erro de conexão com WebSocket.' });
+        resolve(false);
+      });
+
+      this.socket.connect();
+    });
+  }
+
+  private async prepareImagesForBackend(images: ImagePayload[]) {
+    return Promise.all(
+      images.map(async imageInfo => {
+        const base64Data = await RNFS.readFile(imageInfo.path!, 'base64');
+        const imageType = imageInfo.path!.endsWith('.png') ? 'png' : 'jpeg';
+        const dataUrl = `data:image/${imageType};base64,${base64Data}`;
+        return { base64: dataUrl, platforms: imageInfo.platforms };
+      }),
+    );
+  }
+
+  async post(
+    payload: PostPayload,
+    onProgress: ProgressCallback,
+    options: { forceNoWebSocket?: boolean } = {},
+  ): Promise<{ success: boolean; message?: string; isWebSocket?: boolean }> {
+    if (options.forceNoWebSocket) {
+      Logger.warn('[ApiService] Forçando postagem sem WebSocket por solicitação do usuário.');
+      const { socketId, ...backendPayload } = {
+        ...payload,
+        images: await this.prepareImagesForBackend(payload.images),
+        socketId: undefined,
+      };
+      const response = await this.axiosInstance.post('/publish-all/post', backendPayload);
+      // prettier-ignore
+      if (response.status === 202) {
+        Logger.info('[ApiService] Requisição de postagem aceita pelo backend.');
+        return { success: true };
+      } else 
+        return { success: false, message: `Status inesperado: ${response.status}` };
     }
 
-    /**
-     * Realiza o login na API backend e salva o token JWT.
-     */
-    async login(): Promise<boolean> {
-        try {
-            Logger.info('[ApiService] Autenticando na API backend...');
-            const response = await this.axiosInstance.post('/auth/login', {
-                username: API_USERNAME,
-                password: API_PASSWORD,
-                accessToken: API_FIXED_ACCESS_TOKEN,
-            });
+    const isConnected = await this.isConnected(3000);
 
-            const { token, expiresAt } = response.data;
-            if (token && expiresAt) {
-                await AsyncStorage.setItem(JWT_TOKEN_KEY, token);
-                await AsyncStorage.setItem(JWT_EXPIRES_AT_KEY, expiresAt);
-                Logger.info('[ApiService] Autenticação bem-sucedida.');
-                return true;
-            }
-            return false;
-        } catch (error) {
-            Logger.error(error as Error, { message: '[ApiService] Falha na autenticação' });
-            return false;
-        }
+    // prettier-ignore
+    if (!isConnected) 
+        return { success: false, message: 'Não foi possível conectar ao servidor de progresso.', isWebSocket: true };
+
+    const progressListener = (update: ProgressUpdate) => {
+      onProgress(update);
+      if (update.type === 'summary') {
+        this.eventEmitter.removeListener('post_update', progressListener);
+      }
+    };
+    this.eventEmitter.addListener('post_update', progressListener);
+
+    try {
+      Logger.info(`[ApiService] Enviando post para: ${payload.platforms.join(', ')}`);
+
+      const backendPayload = {
+        socketId: this.socket.id,
+        platforms: payload.platforms,
+        text: payload.text,
+        images: await this.prepareImagesForBackend(payload.images),
+        tags: payload.tags,
+        platformOptions: payload.platformOptions,
+      };
+
+      const response = await this.axiosInstance.post('/publish-all/post', backendPayload);
+
+      if (response.status === 202) {
+        Logger.info('[ApiService] Requisição de postagem aceita pelo backend.');
+        return { success: true };
+      } else {
+        this.eventEmitter.removeListener('post_update', progressListener);
+        return { success: false, message: `Status inesperado: ${response.status}` };
+      }
+    } catch (error: any) {
+      this.eventEmitter.removeListener('post_update', progressListener);
+      const errorMsg = error.response?.data?.message || error.message;
+      Logger.error(error, { message: `[ApiService] Falha ao enviar postagem: ${errorMsg}` });
+      return { success: false, message: errorMsg };
     }
+  }
 
-    /**
-     * Renova o token JWT se estiver expirado. Deve ser chamado uma vez ao dia.
-     */
-    async refreshTokenIfNeeded(): Promise<void> {
-        try {
-            const expiresAt = await AsyncStorage.getItem(JWT_EXPIRES_AT_KEY);
-            if (!expiresAt || Date.now() < new Date(expiresAt).getTime()) {
-                Logger.info('[ApiService] Token JWT ainda é válido.');
-                return;
-            }
+  async getTumblrBlogs(credentials: TumblrCredentials): Promise<TumblrBlogs[]> {
+    try {
+      const response = await this.axiosInstance.get<{ blogs: { name: string; title: string }[] }>('/tumblr/blogs');
+      const blogs = response.data.blogs || [];
 
-            Logger.info('[ApiService] Token JWT expirado. Renovando...');
-            const oldToken = await AsyncStorage.getItem(JWT_TOKEN_KEY);
-            const response = await this.axiosInstance.post('/auth/token/refresh', 
-                { accessToken: API_FIXED_ACCESS_TOKEN },
-                { headers: { Authorization: `Bearer ${oldToken}` } }
-            );
+      const apiBlogs = response.data.blogs || [];
 
-            const { token, expiresAt: newExpiresAt } = response.data;
-            if (token && newExpiresAt) {
-                await AsyncStorage.setItem(JWT_TOKEN_KEY, token);
-                await AsyncStorage.setItem(JWT_EXPIRES_AT_KEY, newExpiresAt);
-                Logger.info('[ApiService] Token JWT renovado com sucesso.');
-            }
-        } catch (error) {
-            Logger.error(error as Error, { message: '[ApiService] Falha ao renovar token. Um novo login será necessário.' });
-            await AsyncStorage.removeItem(JWT_TOKEN_KEY);
-            await AsyncStorage.removeItem(JWT_EXPIRES_AT_KEY);
-        }
+      // prettier-ignore
+      if (apiBlogs.length === 0)
+        return [];
+
+      const credentials = await AuthTokenDao.getCredentialsForPlatform<TumblrCredentials>('tumblr');
+      const currentBlogName = credentials?.blogName;
+
+      const processedBlogs: TumblrBlogs[] = apiBlogs.map(blog => ({
+        name: blog.name,
+        title: blog.title,
+        selected: blog.name === currentBlogName,
+      }));
+
+      if (credentials) {
+        credentials.blogs = processedBlogs;
+        const selectedBlog = processedBlogs.find(b => b.selected);
+        credentials.blogName = selectedBlog ? selectedBlog.name : processedBlogs[0].name;
+        await AuthTokenDao.saveCredentials(credentials);
+      }
+
+      return processedBlogs;
+    } catch (error) {
+      Logger.error(error as Error, { message: '[ApiService] Falha ao buscar blogs do Tumblr.' });
+      return [];
     }
-
-    async post(payload: PostPayload): Promise<{ success: boolean; message?: string }> {
-        try {
-            Logger.info(`[ApiService] Enviando post para as plataformas: ${payload.platforms.join(', ')}`);
-            
-            const imagesAsDataUrls = await Promise.all(
-                payload.images.map(async (imagePath) => {
-                    const base64Data = await RNFS.readFile(imagePath, 'base64');
-                    const imageType = imagePath.endsWith('.png') ? 'png' : 'jpeg';
-                    return `data:image/${imageType};base64,${base64Data}`;
-                })
-            );
-
-            const backendPayload = {
-                platforms: payload.platforms,
-                text: payload.text,
-                images: imagesAsDataUrls,
-                tags: payload.tags,
-                platformOptions: payload.platformOptions,
-            };
-
-            const response = await this.axiosInstance.post('/post/publish-all', backendPayload);
-
-            if (response.status === 202) {
-                Logger.info('[ApiService] Requisição de postagem aceita pelo backend.');
-                return { success: true };
-            } else {
-                Logger.warn('[ApiService] Backend retornou um status inesperado:', response.status);
-                return { success: false, message: `Status inesperado: ${response.status}` };
-            }
-        } catch (error: any) {
-            const errorMsg = error.response?.data?.message || error.message;
-            Logger.error(error, { message: `[ApiService] Falha ao enviar postagem: ${errorMsg}` });
-            return { success: false, message: errorMsg };
-        }
-    }
-
-    async getTumblrBlogs(credentials: TumblrCredentials): Promise<string[]> {
-        try {
-            const response = await this.axiosInstance.get('/tumblr/blogs');
-            const blogs = response.data.blogs || [];
-            //const blogName = (credentials as TumblrCredentials).blogName;
-            //const data = blogs.map<TumblrBlogs>((blog: { name: any; title: any; }) => ({ name: blog.name, title: blog.title, selected: blog.name === blogName }));
-            //(credentials as TumblrCredentials).blogs = data;
-            //(credentials as TumblrCredentials).blogName = data.find(b => b.selected)?.name || ''
-            await AuthTokenDao.saveCredentials(credentials);
-            return blogs;
-        } catch (error) {
-            Logger.error(error as Error, { message: '[ApiService] Falha ao buscar blogs do Tumblr.' });
-            return [];
-        }
-    }
+  }
 }
 
 export const apiService = new ApiService();
