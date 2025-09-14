@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 // @react-native-async-storage/async-storage
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+// @react-native-camera-roll/camera-roll
+import com.reactnativecommunity.cameraroll.CameraRollPackage;
 // @react-native-community/image-editor
 import com.reactnativecommunity.imageeditor.ImageEditorPackage;
 // @react-native-picker/picker
@@ -84,6 +86,7 @@ public class PackageList {
     return new ArrayList<>(Arrays.<ReactPackage>asList(
       new MainReactPackage(mConfig),
       new AsyncStoragePackage(),
+      new CameraRollPackage(),
       new ImageEditorPackage(),
       new RNCPickerPackage(),
       new RNSentryPackage(),

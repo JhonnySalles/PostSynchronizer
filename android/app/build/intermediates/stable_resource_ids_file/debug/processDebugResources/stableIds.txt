@@ -1,3 +1,4 @@
+com.postsynchronizer:xml/network_security_config = 0x7f130004
 com.postsynchronizer:xml/imagepicker_provider_paths = 0x7f130002
 com.postsynchronizer:styleable/Variant = 0x7f120092
 com.postsynchronizer:styleable/Transform = 0x7f120090
@@ -987,7 +988,7 @@ com.postsynchronizer:macro/m3_comp_icon_button_selected_icon_color = 0x7f0c0059
 com.postsynchronizer:macro/m3_comp_filter_chip_label_text_type = 0x7f0c0058
 com.postsynchronizer:macro/m3_comp_filter_chip_container_shape = 0x7f0c0057
 com.postsynchronizer:macro/m3_comp_filled_tonal_icon_button_toggle_selected_icon_color = 0x7f0c0055
-com.postsynchronizer:xml/rn_dev_preferences = 0x7f130004
+com.postsynchronizer:xml/rn_dev_preferences = 0x7f130005
 com.postsynchronizer:macro/m3_comp_filled_tonal_button_label_text_color = 0x7f0c0053
 com.postsynchronizer:macro/m3_comp_filled_text_field_supporting_text_type = 0x7f0c0051
 com.postsynchronizer:macro/m3_comp_filled_text_field_error_trailing_icon_color = 0x7f0c004f

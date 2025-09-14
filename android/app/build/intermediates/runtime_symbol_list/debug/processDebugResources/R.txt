@@ -7227,4 +7227,5 @@ int xml file_provider_paths 0x7f130000
 int xml image_share_filepaths 0x7f130001
 int xml imagepicker_provider_paths 0x7f130002
 int xml ivpusic_imagepicker_provider_paths 0x7f130003
-int xml rn_dev_preferences 0x7f130004
+int xml network_security_config 0x7f130004
+int xml rn_dev_preferences 0x7f130005

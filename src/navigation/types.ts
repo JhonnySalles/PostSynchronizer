@@ -2,15 +2,19 @@
 // e os parâmetros que cada uma pode receber.
 // 'undefined' significa que a rota não recebe nenhum parâmetro.
 export type RootTabParamList = {
-    Home: { postToEdit?: PostDraftData } | undefined;
-    History: undefined;
-    Settings: undefined;
+  Home: { postToEdit?: PostDraftData } | undefined;
+  History: undefined;
+  Settings: undefined;
 };
 
 export interface PostDraftData {
-    id: number;
-    content: string;
-    tags: string;
-    images: string[];
+  id: number;
+  content: string;
+  tags: string;
+  images: SelectedImage[];
 }
 
+export interface SelectedImage {
+  path: string;
+  platforms: string[];
+}
