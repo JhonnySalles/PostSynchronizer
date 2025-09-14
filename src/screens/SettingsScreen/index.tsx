@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { SafeAreaView, ScrollView, Text, Alert, } from 'react-native';
 import { getStyles } from './styles';
 import LoginCard from '../../components/LoginCard';
-import { ApiServiceFactory } from 'src/services/api';
+import { apiService } from 'src/services/ApiService';
 import { BLUESKY, THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
 import AuthTokenDao, { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import { useFocusEffect } from '@react-navigation/native';
@@ -15,17 +15,13 @@ import { DARK, LIGHT, SYSTEM } from 'src/constants/themes';
 
 const DEFAULT: Credentials = {
     platform: UNKNOW,
-    consumerKey: '',
-    consumerSecret: '',
-    token: '',
-    tokenSecret: '',
     active: false,
     aditional: ''
 }
 
 const SettingsScreen = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [isTesting, setIsTesting] = useState<string | null>(null);
+    const [isConsulting, setIsConsulting] = useState<string | null>(null);
     const [connections, setConnections] = useState<Credentials[]>([]);
 
     const { themeMode, setThemeMode, colors } = useTheme();
@@ -49,24 +45,13 @@ const SettingsScreen = () => {
         }, [])
     );
 
-    const handleSave = async (credentials: Credentials) => {
-        try {
-            await AuthTokenDao.saveCredentials(credentials);
-            Alert.alert('Sucesso!', 'Credenciais foram salvas no banco de dados.');
-        } catch (e: Error | any) {
-            Logger.error(e, { message: '[Settings Screen] Falha ao salvar credenciais.' });
-            Alert.alert('Erro', 'Não foi possível salvar as credenciais.');
-        }
-    };
-
-    const handleTestCredentials = async (credentials: Credentials) => {
-        setIsTesting(credentials.platform);
+    const handleConsultBlogs = async (credentials: Credentials) => {
+        setIsConsulting(credentials.platform);
         setConnections(connections.filter(c => c.platform !== credentials.platform).concat([credentials]));
         try {
-            const service = ApiServiceFactory(credentials.platform);
-            const isValid = await service.test(credentials);
+            const blogs = await apiService.getTumblrBlogs(credentials as TumblrCredentials);
 
-            if (isValid) {
+            if (blogs && blogs.length > 0) {
                 Alert.alert("Sucesso!", `As credenciais são válidas e a conexão com o ${credentials.platform} foi bem-sucedida.`);
 
                 if (credentials.platform === TUMBLR) {
@@ -79,7 +64,7 @@ const SettingsScreen = () => {
             Logger.error(e, { message: '[Settings Screen] Erro ao testar credenciais.' });
             Alert.alert("Erro", "Ocorreu um erro inesperado ao tentar testar as credenciais.");
         } finally {
-            setIsTesting(null);
+            setIsConsulting(null);
         }
     };
 
@@ -121,44 +106,34 @@ const SettingsScreen = () => {
                     credential={connections.find(c => c.platform === TUMBLR) || { ...DEFAULT, platform: TUMBLR }}
                     iconName="logo-tumblr"
                     iconColor={colors.tumblr}
-                    onSave={(credentials: Credentials) => handleSave(credentials)}
-                    onTest={handleTestCredentials}
+                    onConsult={handleConsultBlogs}
                     buttonStyle={{ backgroundColor: colors.tumblr }}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
-                    isTesting={isTesting === TUMBLR}
+                    isConsulting={isConsulting === TUMBLR}
                 />
 
                 <LoginCard
                     credential={connections.find(c => c.platform === X) || { ...DEFAULT, platform: X }}
                     iconName="logo-twitter"
                     iconColor={colors.twitter}
-                    onSave={(credentials: Credentials) => handleSave(credentials)}
-                    onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: colors.twitter }}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
-                    isTesting={isTesting === X}
                 />
 
                 <LoginCard
                     credential={connections.find(c => c.platform === THREADS) || { ...DEFAULT, platform: THREADS }}
                     iconName="at-sharp"
                     iconColor={colors.threads}
-                    onSave={(credentials: Credentials) => handleSave(credentials)}
-                    onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: colors.threads }}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
-                    isTesting={isTesting === THREADS}
                 />
 
                 <LoginCard
                     credential={connections.find(c => c.platform === BLUESKY) || { ...DEFAULT, platform: BLUESKY }}
                     iconName="chatbubbles-outline"
                     iconColor={colors.bluesky}
-                    onSave={(credentials: Credentials) => handleSave(credentials)}
-                    onTest={handleTestCredentials}
                     buttonStyle={{ backgroundColor: colors.bluesky }}
                     onStatusChange={(credentials) => handleStatusChange(credentials)}
-                    isTesting={isTesting === THREADS}
                 />
             </ScrollView>
         </SafeAreaView>
