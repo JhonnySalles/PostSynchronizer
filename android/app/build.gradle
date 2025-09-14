@@ -125,6 +125,16 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def project = "post-synchronizer"
+            def version = variant.versionName
+            def buildType = variant.buildType.name
+            outputFileName = "${project}-v${version}-${buildType}.apk"
+        }
+    }
+    
     packagingOptions {
         resources {
             exclude 'META-INF/LICENSE'

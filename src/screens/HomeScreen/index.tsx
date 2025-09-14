@@ -434,7 +434,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
             setTimeout(() => {
               setIsPosting(false);
-              setConnections(prev => prev.map(c => ({ ...c, postStatus: 'idle' })));
             }, 1000);
           }
         };
