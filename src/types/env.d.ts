@@ -1,5 +1,6 @@
 declare module '@env' {
   export const SENTRY_DSN: string;
+  export const SENTRY_ENVIRONMENT: 'production' | 'development';
   export const API_BASE_URL: string;
   export const API_USERNAME: string;
   export const API_PASSWORD: string;

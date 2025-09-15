@@ -100,3 +100,4 @@ fastlane/report.xml
 fastlane/Preview.html
 ios/sentry.properties
 android/sentry.properties
+compileAndSend.bat
