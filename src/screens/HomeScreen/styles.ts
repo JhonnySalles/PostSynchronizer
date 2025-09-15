@@ -58,13 +58,13 @@ export const getStyles = (colors: ColorsType) =>
       color: colors.textPrimary,
     },
     carouselContainer: {
-      height: 200,
+      height: 250,
       marginBottom: 5,
       marginTop: 15,
     },
     imageItem: {
-      width: 200,
-      height: 200,
+      width: 250,
+      height: 250,
       borderRadius: 8,
       marginRight: 10,
     },
@@ -80,8 +80,8 @@ export const getStyles = (colors: ColorsType) =>
       backgroundColor: colors.background,
     },
     actionButton: {
-      flex: 1,
       padding: 15,
+      paddingHorizontal: 16,
       borderRadius: 8,
       alignItems: 'center',
       marginHorizontal: 5,
@@ -89,6 +89,7 @@ export const getStyles = (colors: ColorsType) =>
     actionButtonText: {
       fontSize: 16,
       fontWeight: 'bold',
+      textAlign: 'center',
     },
     cancelButton: {
       backgroundColor: colors.cancel,
@@ -146,7 +147,7 @@ export const getStyles = (colors: ColorsType) =>
     editIconOverlay: {
       position: 'absolute',
       top: 5,
-      left: 40,
+      left: -5,
       backgroundColor: 'rgba(0, 0, 0, 0.6)',
       padding: 6,
       borderRadius: 15,
@@ -156,7 +157,7 @@ export const getStyles = (colors: ColorsType) =>
       position: 'absolute',
       top: 5,
       right: 5,
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
       padding: 6,
       borderRadius: 15,
       zIndex: 2,
@@ -165,7 +166,7 @@ export const getStyles = (colors: ColorsType) =>
       position: 'absolute',
       bottom: 5,
       left: 5,
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      backgroundColor: 'rgba(255, 255, 255, 0.4)',
       borderRadius: 8,
       paddingHorizontal: 5,
       paddingVertical: 3,

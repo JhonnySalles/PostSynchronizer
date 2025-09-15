@@ -6,13 +6,14 @@ import { getDBConnection } from './src/database';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
 import { AppLightTheme, AppDarkTheme } from './src/navigation/NavigationTheme';
 import * as Sentry from '@sentry/react-native';
-import { SENTRY_DSN } from '@env';
+import { SENTRY_DSN, SENTRY_ENVIRONMENT } from '@env';
 import { apiService } from './src/services/ApiService';
 import Logger from './src/services/LoggerService';
 import { ProgressProvider } from './src/contexts/ProgressContext';
 
 Sentry.init({
   dsn: SENTRY_DSN,
+  environment: SENTRY_ENVIRONMENT,
 
   sendDefaultPii: true,
 

@@ -58,7 +58,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     { ...DEFAULT, platform: THREADS },
     { ...DEFAULT, platform: BLUESKY },
   ]);
-  const [activePlatforms, setActivePlatforms] = useState<PlatformType[]>([]);
+
   const [postText, setPostText] = useState('');
   const [tagsText, setTagsText] = useState('');
 
@@ -72,10 +72,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
   const [isPosting, setIsPosting] = useState(false);
   const [postProgress, setPostProgress] = useState(0);
-  const [postingPlatforms, setPostingPlatforms] = useState<PlatformType[]>([]);
-  const [postResults, setPostResults] = useState<Record<PlatformType, 'success' | 'error'>>(
-    {} as Record<PlatformType, 'success' | 'error'>,
-  );
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -115,8 +111,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       fetchConnections();
     }, []),
   );
-
-  const getActivePlatforms = () => connections.filter(c => c.active).map(c => c.platform);
 
   const handleTextChange = (text: string) => {
     setPostText(text);
@@ -171,12 +165,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       selectionLimit: 50,
     });
 
+    const activePlatforms = connections.filter(c => c.active).map(c => c.platform);
     const newImages: SelectedImage[] = images.map(img => ({
       path: img.path,
       platforms: activePlatforms,
     }));
 
-    const imagePaths = images.map(img => img.path);
     setSelectedImages(prevImages => {
       const allImages = [...prevImages, ...newImages];
       return allImages.map((img, index) => {
@@ -261,9 +255,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
       setSelectedImages(prev => prev.map(img => (img.path === image.path ? { ...img, path: croppedImage.path } : img)));
     } catch (e: Error | any) {
-      Logger.error(e, {
-        message: '[Home Screen] Erro ao recortar imagem existente:',
-      });
+      // prettier-ignore
+      if (e.message === 'User cancelled image selection')
+        Logger.info('[Home Screen] Usuário cancelou a seleção/recorte de imagem.');
+      else
+        Logger.error(e, { message: '[Home Screen] Erro ao recortar imagem existente:', });
     }
   };
 
@@ -409,7 +405,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       const postWithFeedback = async () => {
         setIsPosting(true);
         setPostProgress(0);
-        setPostResults({} as Record<PlatformType, 'success' | 'error'>);
 
         const handleProgressUpdate = (update: ProgressUpdate) => {
           if (update.type === 'progress' && update.progress) {
@@ -492,36 +487,38 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         onPress={() => handleAdjustSingleImage(index)}
         disabled={isAdjustingImages}
       >
-        <Icon name="crop-outline" size={18} color={colors.card} />
+        <Icon name="crop-outline" size={20} color={colors.card} />
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.removeIconOverlay}
         onPress={() => handleRemoveImage(index)}
         disabled={isAdjustingImages}
       >
-        <Icon name="close-circle" size={24} color={colors.cancel} />
+        <Icon name="close-circle" size={20} color={colors.cancel} />
       </TouchableOpacity>
 
       <View style={styles.platformIconsOverlay}>
-        {activePlatforms.map(platform => {
-          const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === platform);
-          // prettier-ignore
-          if (!platformInfo) 
-            return null;
+        {connections
+          .filter(c => c.active)
+          .map(connection => {
+            const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === connection.platform);
+            // prettier-ignore
+            if (!platformInfo) 
+                return null;
 
-          const isSelected = item.platforms.includes(platform);
-          const iconColor = isSelected ? getPlatformColor(platform) : colors.inactive;
+            const isSelected = item.platforms.includes(connection.platform);
+            const iconColor = isSelected ? getPlatformColor(connection.platform) : '#505050';
 
-          return (
-            <TouchableOpacity
-              key={platform}
-              onPress={() => handleToggleImagePlatform(index, platform)}
-              style={styles.platformIconWrapper}
-            >
-              <Icon name={platformInfo.icon} size={22} color={iconColor} />
-            </TouchableOpacity>
-          );
-        })}
+            return (
+              <TouchableOpacity
+                key={connection.platform}
+                onPress={() => handleToggleImagePlatform(index, connection.platform)}
+                style={styles.platformIconWrapper}
+              >
+                <Icon name={platformInfo.icon} size={22} color={iconColor} />
+              </TouchableOpacity>
+            );
+          })}
       </View>
     </TouchableOpacity>
   );
@@ -529,15 +526,15 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const getPlatformColor = (platform: PlatformType): string => {
     switch (platform) {
       case TUMBLR:
-        return colors.tumblr;
+        return '#3a5477ff';
       case X:
-        return colors.twitter;
+        return '#1DA1F2';
       case THREADS:
-        return colors.threads;
+        return '#000000';
       case BLUESKY:
-        return colors.bluesky;
+        return '#0288dbff';
       default:
-        return colors.inactive;
+        return '#505050';
     }
   };
 
@@ -564,14 +561,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
         <View style={styles.statusContainer}>
-          {SOCIAL_PLATFORMS.map(platformInfo => {
-            const connection = connections.find(c => c.platform === platformInfo.name);
-            return (
-              <View key={platformInfo.name} style={styles.statusIconWrapper}>
-                <Icon name={platformInfo.icon} size={30} color={getIconColor(platformInfo.name)} />
-              </View>
-            );
-          })}
+          {SOCIAL_PLATFORMS.map(platformInfo => (
+            <View key={platformInfo.name} style={styles.statusIconWrapper}>
+              <Icon name={platformInfo.icon} size={30} color={getIconColor(platformInfo.name)} />
+            </View>
+          ))}
         </View>
 
         <TextInput
@@ -584,18 +578,18 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         />
 
         <View style={styles.countersContainer}>
-          {activePlatforms.map(platform => {
-            const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === platform);
+          {SOCIAL_PLATFORMS.map(platform => {
+            const platformInfo = connections.find(c => c.platform === platform.name);
             // prettier-ignore
             if (!platformInfo) 
                 return null;
 
-            const limit = platformInfo.limits || 0;
+            const limit = platform.limits || 0;
             const remaining = limit - postText.length;
 
             return (
-              <View key={platform} style={[styles.counterCard, remaining < 0 && styles.counterCardError]}>
-                <Icon name={platformInfo.icon} size={16} style={styles.counterIcon} />
+              <View key={platform.name} style={[styles.counterCard, remaining < 0 && styles.counterCardError]}>
+                <Icon name={platform.icon} size={16} style={styles.counterIcon} />
                 <Text style={styles.counterText}>{remaining}</Text>
               </View>
             );
@@ -608,6 +602,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           placeholderTextColor={colors.textSecondary}
           value={tagsText}
           onChangeText={handleTagsChange}
+          onBlur={() => setTagSuggestions([])}
         />
 
         {tagSuggestions.length > 0 && (

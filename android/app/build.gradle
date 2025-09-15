@@ -1,6 +1,12 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: 'com.google.firebase.appdistribution'
+
+project.ext.envConfigFiles = [
+    debug: ".env",
+    release: ".env.production",
+]
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -171,3 +177,7 @@ project.ext.vectoricons = [
 ]
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
+firebaseAppDistribution {
+    appId = "1:800176313344:android:a38a0d0ae604939d41f4e5"
+}
