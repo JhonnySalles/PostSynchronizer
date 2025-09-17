@@ -20,7 +20,7 @@ import { useTheme } from '../../theme/ThemeProvider';
 import Button from '../../components/Button';
 
 import PostDao from '../../dao/PostDao';
-import { apiService, PostPayload, ProgressUpdate } from '../../services/ApiService';
+import { apiService, PostPayload, ProgressUpdate, SinglePostPayload } from '../../services/ApiService';
 import ImageProcessingService from '../../services/ImageService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
@@ -374,19 +374,20 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         prev.map(c => (platformsToPost.includes(c.platform) ? { ...c, postStatus: 'pending' } : c)),
       );
 
-      const postForDb = {
+      const draftData = {
         content: currentPostText,
         images: currentSelectedImages,
-        status: 'posted' as const,
+        status: 'draft' as const,
         tags: currentTagsText,
+        platformsSend: platformsToPost.join(', '),
       };
 
       let postId = editingPostId;
       // prettier-ignore
       if (postId)
-        await PostDao.update(postId, postForDb);
+        await PostDao.update(postId, draftData);
       else
-        postId = await PostDao.create(postForDb);
+        postId = await PostDao.create(draftData);
 
       handleCancel();
 
@@ -411,7 +412,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         setIsPosting(true);
         const result = await apiService.post(payload, () => {}, { forceNoWebSocket: true });
         // prettier-ignore
-        if (result.success)
+        if (result.success) {
           Toast.show({
             type: 'success',
             text1: 'Sucesso!',
@@ -419,7 +420,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-        else 
+
+          PostDao.update(postId!, { platformsSuccess: UNKNOW, status: 'posted' });
+        } else 
           Toast.show({
             type: 'error',
             text1: 'Erro',
@@ -455,6 +458,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
               }),
             );
 
+            PostDao.update(postId!, { platformsSuccess: finalResults.successful.join(', '), status: 'posted' });
             setTimeout(() => {
               setIsPosting(false);
             }, 1000);
@@ -503,6 +507,97 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         position: 'top',
         visibilityTime: 4000,
       });
+    }
+  };
+
+  const handlePostToSingle = async (platform: PlatformType) => {
+    if (!connections.find(c => c.platform === platform && c.active)) {
+      Alert.alert('Conta Inativa', `Ative a conta de ${platform} nas configurações.`);
+      return;
+    }
+
+    if (!postText.trim() && selectedImages.length === 0) {
+      Alert.alert('Conteúdo Vazio', 'Escreva algo ou anexe uma imagem para postar.');
+      return;
+    }
+
+    if (platform === X || platform === BLUESKY) {
+      const twitterImageCount = selectedImages.filter(img => img.platforms.includes(X)).length;
+      const blueskyImageCount = selectedImages.filter(img => img.platforms.includes(BLUESKY)).length;
+      if (twitterImageCount > 4 || blueskyImageCount > 4) {
+        Alert.alert('Limite de Imagens Excedido', 'X (Twitter) e Bluesky aceitam no máximo 4 imagens.');
+        return;
+      }
+    }
+
+    Toast.show({ type: 'info', text1: 'Enviando...', text2: `Preparando post para ${platform}.` });
+
+    // Salva o post como rascunho antes de enviar
+    const draftData = {
+      content: postText,
+      images: selectedImages,
+      status: 'draft' as const,
+      tags: tagsText,
+      platformsSend: platform,
+    };
+
+    try {
+      let postId = editingPostId;
+      // prettier-ignore
+      if (postId) 
+        await PostDao.update(postId, draftData);
+      else 
+        postId = await PostDao.create(draftData);
+
+      setEditingPostId(postId);
+
+      setIsPosting(true);
+      setConnections(prev => prev.map(c => (c.platform === platform ? { ...c, postStatus: 'pending' } : c)));
+
+      let blogName = null;
+      if (platform === TUMBLR) {
+        const tumblrCreds = await AuthTokenDao.getCredentialsForPlatform<TumblrCredentials>(TUMBLR);
+        blogName = tumblrCreds?.blogName || null;
+      }
+
+      const payload: SinglePostPayload = {
+        platform,
+        text: postText,
+        images: [...selectedImages],
+        tags: tagsText
+          .split(',')
+          .map(t => t.trim())
+          .filter(t => t),
+        blogName: blogName,
+      };
+
+      const result = await apiService.postSingle(platform, payload);
+      if (result.success) {
+        Toast.show({
+          type: 'success',
+          text1: 'Sucesso!',
+          text2: `Post enviado com sucesso para ${platform}.`,
+          position: 'top',
+          visibilityTime: 4000,
+        });
+        PostDao.update(postId!, { platformsSuccess: platform, status: 'posted' });
+        setConnections(prev => prev.map(c => (c.platform === platform ? { ...c, postStatus: 'success' } : c)));
+      } else {
+        setConnections(prev => prev.map(c => (c.platform === platform ? { ...c, postStatus: 'error' } : c)));
+        Toast.show({
+          type: 'error',
+          text1: 'Erro',
+          text2: `Falha ao enviar postagem: ${result.message}`,
+          position: 'top',
+          visibilityTime: 4000,
+        });
+      }
+
+      setIsPosting(false);
+    } catch (e: any) {
+      Logger.error(e, { message: `[Single Post Flow] Erro ao postar em ${platform}` });
+      setConnections(prev => prev.map(c => (c.platform === platform ? { ...c, postStatus: 'error' } : c)));
+      Toast.show({ type: 'error', text1: 'Erro', text2: `Falha ao enviar para ${platform}.` });
     }
   };
 
@@ -600,16 +695,23 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     }
   };
 
+  const renderStatusIcon = (platformInfo: (typeof SOCIAL_PLATFORMS)[0]) => {
+    return (
+      <TouchableOpacity
+        key={platformInfo.name}
+        style={styles.statusIconWrapper}
+        onLongPress={() => handlePostToSingle(platformInfo.name)}
+        delayLongPress={500}
+      >
+        <Icon name={platformInfo.icon} size={30} color={getIconColor(platformInfo.name)} />
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
-        <View style={styles.statusContainer}>
-          {SOCIAL_PLATFORMS.map(platformInfo => (
-            <View key={platformInfo.name} style={styles.statusIconWrapper}>
-              <Icon name={platformInfo.icon} size={30} color={getIconColor(platformInfo.name)} />
-            </View>
-          ))}
-        </View>
+        <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
 
         <TextInput
           style={styles.textArea}
@@ -630,12 +732,18 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             const limit = platform.limits || 0;
             let tagsLimit = 0;
             if (tagsText && tagsText.trim().length > 0)
-                switch (platform.name) {
-                    case X:
-                    case BLUESKY:
-                        tagsLimit = tagsText.trim().split(',').filter(tag => tag.trim()).map(tag => `#${tag.replace(/ /g, '')}`).join(' ').length + (postText.length > 0 ? 1 : 0);
-                        break;
-                }
+              switch (platform.name) {
+                case X:
+                case BLUESKY:
+                  tagsLimit =
+                    tagsText
+                      .trim()
+                      .split(',')
+                      .filter(tag => tag.trim())
+                      .map(tag => `#${tag.replace(/ /g, '')}`)
+                      .join(' ').length + (postText.length > 0 ? 1 : 0);
+                  break;
+              }
 
             const remaining = limit - postText.length - tagsLimit;
 

@@ -123,6 +123,51 @@ class PostDao {
    * @param {PostDataPayload} postData - Os novos dados do post.
    */
   public async update(postId: number, postData: PostDataPayload): Promise<void> {
+    const db = await getDBConnection();
+
+    if (postData.platformsSend || postData.platformsSuccess) {
+      try {
+        const [currentDataResult] = await db.executeSql(
+          'SELECT platforms_send, platforms_success FROM posts WHERE id = ?',
+          [postId],
+        );
+
+        if (currentDataResult.rows.length > 0) {
+          const currentData = currentDataResult.rows.item(0);
+
+          const mergePlatforms = (current: string | null, incoming: string | null | undefined): string | undefined => {
+            // prettier-ignore
+            if (incoming === undefined || incoming === null) 
+                return undefined;
+            // prettier-ignore
+            if (!current) 
+                return incoming;
+
+            const currentSet = new Set(current.split(',').map(p => p.trim()));
+            const incomingValues = incoming.split(',').map(p => p.trim());
+            incomingValues.forEach(p => currentSet.add(p));
+
+            return Array.from(currentSet).join(', ');
+          };
+
+          const newPlatformsSend = mergePlatforms(currentData.platforms_send, postData.platformsSend);
+          // prettier-ignore
+          if (newPlatformsSend !== undefined)
+            postData.platformsSend = newPlatformsSend;
+
+          const newPlatformsSuccess = mergePlatforms(currentData.platforms_success, postData.platformsSuccess);
+          // prettier-ignore
+          if (newPlatformsSuccess !== undefined)
+            postData.platformsSuccess = newPlatformsSuccess;
+        }
+      } catch (error) {
+        Logger.error(error as Error, {
+          message: `[Post Dao] Erro ao buscar dados existentes para o post ID ${postId}`,
+        });
+        throw error;
+      }
+    }
+
     const fields = Object.keys(postData) as (keyof PostDataPayload)[];
     if (fields.length === 0) {
       Logger.warn(`[Post Dao] Tentativa de update no post ID ${postId} sem nenhum dado.`);
@@ -149,8 +194,6 @@ class PostDao {
 
     const query = `UPDATE posts SET ${setClauses.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`;
     const queryParams = [...values, postId];
-
-    const db = await getDBConnection();
     try {
       await db.executeSql(query, queryParams);
       Logger.info(`[Post Dao] Post ID ${postId} atualizado com sucesso`);
