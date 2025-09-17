@@ -6,7 +6,6 @@ import { API_BASE_URL, API_USERNAME, API_PASSWORD, API_ACCESS_TOKEN } from '@env
 import AuthTokenDao, { TumblrBlogs, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import { io, Socket } from 'socket.io-client';
 import EventEmitter from 'eventemitter3';
-import { Alert } from 'react-native';
 import { PlatformType } from 'src/constants/platforms';
 
 const JWT_TOKEN_KEY = 'api_jwt_token';
@@ -67,6 +66,11 @@ class ApiService {
 
     this.axiosInstance.interceptors.request.use(async config => {
       const token = await AsyncStorage.getItem(JWT_TOKEN_KEY);
+      const expiration = await AsyncStorage.getItem(JWT_EXPIRES_AT_KEY);
+      // prettier-ignore
+      if (expiration && Date.now() + 60000 < new Date(expiration).getTime())
+        await this.refreshTokens();
+
       // prettier-ignore
       if (token) 
         config.headers.Authorization = `Bearer ${token}`;
@@ -129,7 +133,7 @@ class ApiService {
   /**
    * Renova o token JWT se estiver expirado. Deve ser chamado uma vez ao dia.
    */
-  async refreshTokens(): Promise<void> {
+  async refreshTokens(): Promise<string> {
     try {
       const expiration = await AsyncStorage.getItem(JWT_EXPIRES_AT_KEY);
       const oldToken = await AsyncStorage.getItem(JWT_TOKEN_KEY);
@@ -137,12 +141,12 @@ class ApiService {
       if (!expiration || !oldToken) {
         Logger.warn('[ApiService] Nenhum token encontrado. Realizando login...');
         this.login();
-        return;
+        return (await AsyncStorage.getItem(JWT_TOKEN_KEY)) || '';
       }
 
-      if (expiration && Date.now() < new Date(expiration).getTime()) {
+      if (expiration && Date.now() + 60000 < new Date(expiration).getTime()) {
         Logger.info('[ApiService] Token JWT ainda é válido.');
-        return;
+        return oldToken || '';
       }
 
       Logger.info('[ApiService] Token JWT expirado. Renovando...');
@@ -157,12 +161,15 @@ class ApiService {
         await AsyncStorage.setItem(JWT_TOKEN_KEY, token);
         await AsyncStorage.setItem(JWT_EXPIRES_AT_KEY, newExpiration);
         Logger.info('[ApiService] Token JWT renovado com sucesso.');
+        return token || '';
       }
     } catch (error) {
       Logger.error(error as Error, { message: '[ApiService] Falha ao renovar token. Um novo login será necessário.' });
       await AsyncStorage.removeItem(JWT_TOKEN_KEY);
       await AsyncStorage.removeItem(JWT_EXPIRES_AT_KEY);
     }
+
+    return '';
   }
 
   private isConnected(timeout = 3000): Promise<boolean> {

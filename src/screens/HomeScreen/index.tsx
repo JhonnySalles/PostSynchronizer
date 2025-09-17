@@ -425,8 +425,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         } else 
           Toast.show({
             type: 'error',
-            text1: 'Erro',
-            text2: `Falha ao enviar postagem: ${result.message}`,
+            text1: 'Falha ao enviar postagem',
+            text2: result.message,
             position: 'top',
             visibilityTime: 4000,
           });
@@ -444,6 +444,15 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
               setConnections(prev =>
                 prev.map(c => (c.platform === update.platform ? { ...c, postStatus: update.status! } : c)),
               );
+
+              if (update.status === 'error')
+                Toast.show({
+                  type: 'error',
+                  text1: `Falha na postagem (${update.platform})`,
+                  text2: update.error || 'Falha ao enviar postagem.',
+                  position: 'top',
+                  visibilityTime: 4000,
+                });
             }
           } else if (update.type === 'summary') {
             Logger.info('[Post Flow] Sumário final recebido:', update.summary);
@@ -480,8 +489,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         } else if (!result.success) {
           Toast.show({
             type: 'error',
-            text1: 'Erro',
-            text2: `Falha ao enviar postagem: ${result.message}`,
+            text1: 'Falha ao enviar postagem',
+            text2: result.message,
             position: 'top',
             visibilityTime: 4000,
           });
@@ -586,8 +595,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         setConnections(prev => prev.map(c => (c.platform === platform ? { ...c, postStatus: 'error' } : c)));
         Toast.show({
           type: 'error',
-          text1: 'Erro',
-          text2: `Falha ao enviar postagem: ${result.message}`,
+          text1: 'Falha ao enviar postagem',
+          text2: result.message,
           position: 'top',
           visibilityTime: 4000,
         });
@@ -597,7 +606,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     } catch (e: any) {
       Logger.error(e, { message: `[Single Post Flow] Erro ao postar em ${platform}` });
       setConnections(prev => prev.map(c => (c.platform === platform ? { ...c, postStatus: 'error' } : c)));
-      Toast.show({ type: 'error', text1: 'Erro', text2: `Falha ao enviar para ${platform}.` });
+      Toast.show({ type: 'error', text1: `Falha ao enviar (${platform})`, text2: e.message });
     }
   };
 
