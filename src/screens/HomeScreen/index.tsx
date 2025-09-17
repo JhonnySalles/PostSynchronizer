@@ -28,6 +28,7 @@ import { PlatformType, SOCIAL_PLATFORMS, UNKNOW, THREADS, TUMBLR, X, BLUESKY } f
 import AuthTokenDao, { TumblrCredentials } from '../../dao/AuthTokenDao';
 import { requestGalleryPermission } from 'src/utils/permissions';
 import Logger from 'src/services/LoggerService';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
 type Connections = {
   platform: PlatformType;
@@ -298,19 +299,34 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         tags: tagsText,
       };
 
+      let message = '';
       if (editingPostId) {
         await PostDao.update(editingPostId, draftData);
-        Alert.alert('Sucesso!', 'Seu rascunho foi atualizado.');
+        message = 'Seu rascunho foi atualizado.';
       } else {
         await PostDao.create(draftData);
-        Alert.alert('Sucesso!', 'Seu rascunho foi salvo.');
+        message = 'Seu rascunho foi salvo.';
       }
+
+      Toast.show({
+        type: 'success',
+        text1: 'Sucesso!',
+        text2: message,
+        position: 'top',
+        visibilityTime: 4000,
+      });
       handleCancel();
     } catch (e: Error | any) {
       Logger.error(e, {
         message: '[Home Screen] Não foi possível salvar o rascunho.',
       });
-      Alert.alert('Erro', 'Não foi possível salvar o rascunho.');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Não foi possível salvar o rascunho.',
+        position: 'top',
+        visibilityTime: 4000,
+      });
     }
   };
 
@@ -396,9 +412,21 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         const result = await apiService.post(payload, () => {}, { forceNoWebSocket: true });
         // prettier-ignore
         if (result.success)
-          Alert.alert('Sucesso', 'Postagem enviada para o servidor. Verifique o resultado nas redes sociais.');
+          Toast.show({
+            type: 'success',
+            text1: 'Sucesso!',
+            text2: 'Postagem enviada para o servidor. Verifique o resultado nas redes sociais.',
+            position: 'top',
+            visibilityTime: 4000,
+          });
         else 
-          Alert.alert('Erro', `Falha ao enviar postagem: ${result.message}`);
+          Toast.show({
+            type: 'error',
+            text1: 'Erro',
+            text2: `Falha ao enviar postagem: ${result.message}`,
+            position: 'top',
+            visibilityTime: 4000,
+          });
         setIsPosting(false);
       };
 
@@ -446,20 +474,35 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             ],
           );
         } else if (!result.success) {
-          Alert.alert('Erro', `Falha ao enviar postagem: ${result.message}`);
+          Toast.show({
+            type: 'error',
+            text1: 'Erro',
+            text2: `Falha ao enviar postagem: ${result.message}`,
+            position: 'top',
+            visibilityTime: 4000,
+          });
           setIsPosting(false);
         } else {
-          Alert.alert(
-            'Processo Finalizado',
-            'Postagem enviada com sucesso em breve estará disponível nas redes sociais.',
-          );
+          Toast.show({
+            type: 'success',
+            text1: 'Processo Finalizado',
+            text2: 'Postagem enviada com sucesso em breve estará disponível nas redes sociais.',
+            position: 'top',
+            visibilityTime: 4000,
+          });
         }
       };
 
       await postWithFeedback();
     } catch (e: Error | any) {
       Logger.error(e, { message: '[Post Flow] Erro ao postar:' });
-      Alert.alert('Erro', 'Ocorreu um erro ao processar sua postagem.');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Ocorreu um erro ao processar sua postagem.',
+        position: 'top',
+        visibilityTime: 4000,
+      });
     }
   };
 
@@ -487,7 +530,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         onPress={() => handleAdjustSingleImage(index)}
         disabled={isAdjustingImages}
       >
-        <Icon name="crop-outline" size={20} color={colors.card} />
+        <Icon name="crop-outline" size={20} color={colors.iconOverlay} />
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.removeIconOverlay}
@@ -581,11 +624,20 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           {SOCIAL_PLATFORMS.map(platform => {
             const platformInfo = connections.find(c => c.platform === platform.name);
             // prettier-ignore
-            if (!platformInfo) 
+            if (!platformInfo || !platformInfo.active) 
                 return null;
 
             const limit = platform.limits || 0;
-            const remaining = limit - postText.length;
+            let tagsLimit = 0;
+            if (tagsText && tagsText.trim().length > 0)
+                switch (platform.name) {
+                    case X:
+                    case BLUESKY:
+                        tagsLimit = tagsText.trim().split(',').filter(tag => tag.trim()).map(tag => `#${tag.replace(/ /g, '')}`).join(' ').length + (postText.length > 0 ? 1 : 0);
+                        break;
+                }
+
+            const remaining = limit - postText.length - tagsLimit;
 
             return (
               <View key={platform.name} style={[styles.counterCard, remaining < 0 && styles.counterCardError]}>

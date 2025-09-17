@@ -33,8 +33,8 @@
 19-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:10:5-90
 19-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:10:22-87
 20    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-20-->[com.facebook.flipper:flipper:0.273.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\be251c6ae33677200ea6553cc2f48c58\transformed\flipper-0.273.0\AndroidManifest.xml:14:5-76
-20-->[com.facebook.flipper:flipper:0.273.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\be251c6ae33677200ea6553cc2f48c58\transformed\flipper-0.273.0\AndroidManifest.xml:14:22-73
+20-->[com.facebook.flipper:flipper:0.273.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\2ae1aa5ba9ea6b567b45e9d15e087c63\transformed\flipper-0.273.0\AndroidManifest.xml:14:5-76
+20-->[com.facebook.flipper:flipper:0.273.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\2ae1aa5ba9ea6b567b45e9d15e087c63\transformed\flipper-0.273.0\AndroidManifest.xml:14:22-73
 21
 22    <queries>
 22-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:7:5-17:15
@@ -78,19 +78,19 @@
 43    for React Native Apps.
 44    -->
 45    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-45-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:5-78
-45-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:22-75
+45-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\6788d093451f3dcb115f8ad72d29378f\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:5-78
+45-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\6788d093451f3dcb115f8ad72d29378f\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:22-75
 46
 47    <permission
-47-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+47-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
 48        android:name="com.postsynchronizer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-48-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+48-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
 49        android:protectionLevel="signature" />
-49-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+49-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
 50
 51    <uses-permission android:name="com.postsynchronizer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-51-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
-51-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+51-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+51-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
 52
 53    <application
 53-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:12:5-39:19
@@ -99,7 +99,7 @@
 55        android:allowBackup="false"
 55-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:17:7-34
 56        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-56-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e3a1e4da1a87d5e45cf2c43741dd68b3\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+56-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
 57        android:debuggable="true"
 58        android:extractNativeLibs="false"
 59        android:icon="@mipmap/app_icon"
@@ -259,101 +259,101 @@
 141-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:13-37
 142        </activity>
 143        <activity
-143-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:19:9-21:40
+143-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\6788d093451f3dcb115f8ad72d29378f\transformed\react-android-0.75.5-debug\AndroidManifest.xml:19:9-21:40
 144            android:name="com.facebook.react.devsupport.DevSettingsActivity"
-144-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:20:13-77
+144-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\6788d093451f3dcb115f8ad72d29378f\transformed\react-android-0.75.5-debug\AndroidManifest.xml:20:13-77
 145            android:exported="false" /> <!-- 'android:authorities' must be unique in the device, across all apps -->
-145-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\58de6d55999b6ec5da9d831802447627\transformed\react-android-0.75.5-debug\AndroidManifest.xml:21:13-37
+145-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\6788d093451f3dcb115f8ad72d29378f\transformed\react-android-0.75.5-debug\AndroidManifest.xml:21:13-37
 146        <provider
-146-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:12:9-15:40
+146-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:12:9-15:40
 147            android:name="io.sentry.android.core.SentryInitProvider"
-147-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:13:13-69
+147-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:13:13-69
 148            android:authorities="com.postsynchronizer.SentryInitProvider"
-148-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:14:13-70
+148-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:14:13-70
 149            android:exported="false" />
-149-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:15:13-37
+149-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:15:13-37
 150        <provider
-150-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:16:9-20:39
+150-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:16:9-20:39
 151            android:name="io.sentry.android.core.SentryPerformanceProvider"
-151-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:17:13-76
+151-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:17:13-76
 152            android:authorities="com.postsynchronizer.SentryPerformanceProvider"
-152-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:18:13-77
+152-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:18:13-77
 153            android:exported="false"
-153-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:19:13-37
+153-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:19:13-37
 154            android:initOrder="200" />
-154-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\95ae76d5b3a223544ffca0e2b1d25c0d\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:20:13-36
+154-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:20:13-36
 155        <provider
-155-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+155-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
 156            android:name="androidx.startup.InitializationProvider"
-156-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+156-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
 157            android:authorities="com.postsynchronizer.androidx-startup"
-157-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+157-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
 158            android:exported="false" >
-158-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+158-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
 159            <meta-data
-159-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+159-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
 160                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-160-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+160-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
 161                android:value="androidx.startup" />
-161-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\c5b0189930e98944956e0686366385d9\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+161-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
 162            <meta-data
-162-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9637e0a0d91690bfcb8b849176c5cce0\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
+162-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\7eb774661bf13e69c3b0fa021b3e86e6\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
 163                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-163-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9637e0a0d91690bfcb8b849176c5cce0\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
+163-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\7eb774661bf13e69c3b0fa021b3e86e6\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
 164                android:value="androidx.startup" />
-164-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9637e0a0d91690bfcb8b849176c5cce0\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
+164-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\7eb774661bf13e69c3b0fa021b3e86e6\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
 165            <meta-data
-165-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:29:13-31:52
+165-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:29:13-31:52
 166                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-166-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:30:17-85
+166-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:30:17-85
 167                android:value="androidx.startup" />
-167-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:31:17-49
+167-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:31:17-49
 168        </provider>
 169
 170        <receiver
-170-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:34:9-52:20
+170-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:34:9-52:20
 171            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-171-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:35:13-76
+171-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:35:13-76
 172            android:directBootAware="false"
-172-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:36:13-44
+172-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:36:13-44
 173            android:enabled="true"
-173-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:37:13-35
+173-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:37:13-35
 174            android:exported="true"
-174-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:38:13-36
+174-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:38:13-36
 175            android:permission="android.permission.DUMP" >
-175-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:39:13-57
+175-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:39:13-57
 176            <intent-filter>
-176-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:40:13-42:29
+176-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:40:13-42:29
 177                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-177-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:17-91
-177-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:25-88
+177-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:17-91
+177-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:25-88
 178            </intent-filter>
 179            <intent-filter>
-179-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:43:13-45:29
+179-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:43:13-45:29
 180                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-180-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:17-85
-180-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:25-82
+180-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:17-85
+180-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:25-82
 181            </intent-filter>
 182            <intent-filter>
-182-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:46:13-48:29
+182-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:46:13-48:29
 183                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-183-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:17-88
-183-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:25-85
+183-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:17-88
+183-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:25-85
 184            </intent-filter>
 185            <intent-filter>
-185-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:49:13-51:29
+185-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:49:13-51:29
 186                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-186-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:17-95
-186-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\43c3dd5072a83b666044f1fc438c0e7f\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:25-92
+186-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:17-95
+186-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:25-92
 187            </intent-filter>
 188        </receiver>
 189
 190        <meta-data
-190-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9cd3ff9286b527118c99c83c826e649e\transformed\soloader-0.11.0\AndroidManifest.xml:12:9-14:37
+190-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\f783a7747481199177f9848d0563b95e\transformed\soloader-0.11.0\AndroidManifest.xml:12:9-14:37
 191            android:name="com.facebook.soloader.enabled"
-191-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9cd3ff9286b527118c99c83c826e649e\transformed\soloader-0.11.0\AndroidManifest.xml:13:13-57
+191-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\f783a7747481199177f9848d0563b95e\transformed\soloader-0.11.0\AndroidManifest.xml:13:13-57
 192            android:value="false" />
-192-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9cd3ff9286b527118c99c83c826e649e\transformed\soloader-0.11.0\AndroidManifest.xml:14:13-34
+192-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\f783a7747481199177f9848d0563b95e\transformed\soloader-0.11.0\AndroidManifest.xml:14:13-34
 193    </application>
 194
 195</manifest>

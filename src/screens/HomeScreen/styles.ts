@@ -166,7 +166,7 @@ export const getStyles = (colors: ColorsType) =>
       position: 'absolute',
       bottom: 5,
       left: 5,
-      backgroundColor: 'rgba(255, 255, 255, 0.4)',
+      backgroundColor: 'rgba(255, 255, 255, 0.6)',
       borderRadius: 8,
       paddingHorizontal: 5,
       paddingVertical: 3,
