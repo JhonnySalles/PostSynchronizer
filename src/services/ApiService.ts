@@ -7,6 +7,7 @@ import AuthTokenDao, { TumblrBlogs, TumblrCredentials } from 'src/dao/AuthTokenD
 import { io, Socket } from 'socket.io-client';
 import EventEmitter from 'eventemitter3';
 import { Alert } from 'react-native';
+import { PlatformType } from 'src/constants/platforms';
 
 const JWT_TOKEN_KEY = 'api_jwt_token';
 const JWT_EXPIRES_AT_KEY = 'api_jwt_expires_at';
@@ -27,6 +28,14 @@ export interface PostPayload {
       blogName: string;
     };
   };
+}
+
+export interface SinglePostPayload {
+  platform: string;
+  text: string;
+  images: ImagePayload[];
+  tags?: string[];
+  blogName: string | null;
 }
 
 export interface ProgressUpdate {
@@ -261,11 +270,41 @@ class ApiService {
     }
   }
 
-  async getTumblrBlogs(credentials: TumblrCredentials): Promise<TumblrBlogs[]> {
+  async postSingle(
+    platform: PlatformType,
+    payload: Omit<SinglePostPayload, 'platforms'>,
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      Logger.info(`[ApiService] Enviando post individual para: ${platform}`);
+
+      const imagesForBackend = await this.prepareImagesForBackend(payload.images);
+
+      const backendPayload = {
+        ...payload,
+        images: imagesForBackend,
+      };
+
+      const endpoint = `/${platform}/post`;
+      const response = await this.axiosInstance.post(endpoint, backendPayload);
+
+      if (response.status === 200 || response.status === 201) {
+        Logger.info(`[ApiService] Post individual para ${platform} bem-sucedido.`);
+        return { success: true };
+      } else {
+        const errorMsg = `Status inesperado ao postar em ${platform}: ${response.status}`;
+        Logger.warn(`[ApiService] ${errorMsg}`);
+        return { success: false, message: errorMsg };
+      }
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message || error.message;
+      Logger.error(error, { message: `[ApiService] Falha ao enviar post individual para ${platform}: ${errorMsg}` });
+      return { success: false, message: errorMsg };
+    }
+  }
+
+  async getTumblrBlogs(): Promise<TumblrBlogs[]> {
     try {
       const response = await this.axiosInstance.get<{ blogs: { name: string; title: string }[] }>('/tumblr/blogs');
-      const blogs = response.data.blogs || [];
-
       const apiBlogs = response.data.blogs || [];
 
       // prettier-ignore

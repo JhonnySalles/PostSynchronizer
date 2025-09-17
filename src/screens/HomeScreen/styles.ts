@@ -71,7 +71,6 @@ export const getStyles = (colors: ColorsType) =>
     // Ações no Rodapé
     actionsContainer: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
       alignItems: 'center',
       paddingVertical: 12,
       paddingHorizontal: 16,
@@ -80,6 +79,7 @@ export const getStyles = (colors: ColorsType) =>
       backgroundColor: colors.background,
     },
     actionButton: {
+      flex: 1,
       padding: 15,
       paddingHorizontal: 16,
       borderRadius: 8,

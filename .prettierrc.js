@@ -8,4 +8,5 @@ module.exports = {
   trailingComma: 'all', // Adiciona vírgula no final de objetos e arrays multi-linha
   tabWidth: 2, // Define o tamanho da tabulação como 2 espaços
   semi: true, // Adiciona ponto e vírgula no final das linhas
+  endOfLine: 'lf',
 };

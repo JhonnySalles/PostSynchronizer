@@ -108,11 +108,13 @@ const HistoryScreen = () => {
 
           <View style={styles.footer}>
             {item.tags && <Text style={styles.platformsText}>Tags: {item.tags}</Text>}
-            {item.status === 'posted' && (
+            {
               <View style={styles.footerIconsContainer}>
                 {platformsToSend.map(platformName => {
                   const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === platformName);
-                  if (!platformInfo) return null;
+                  // prettier-ignore
+                  if (!platformInfo) 
+                    return null;
 
                   const wasSuccessful = platformsWithSuccess.includes(platformName);
                   return (
@@ -120,13 +122,13 @@ const HistoryScreen = () => {
                       key={platformName}
                       name={platformInfo.icon}
                       size={22}
-                      color={wasSuccessful ? colors.success : colors.inactive}
+                      color={wasSuccessful ? colors.success : colors.error}
                       style={styles.footerIcon}
                     />
                   );
                 })}
               </View>
-            )}
+            }
           </View>
         </View>
       </TouchableOpacity>

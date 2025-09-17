@@ -52,7 +52,7 @@ const SettingsScreen = () => {
     setIsConsulting(credentials.platform);
     setConnections(connections.filter(c => c.platform !== credentials.platform).concat([credentials]));
     try {
-      const blogs = await apiService.getTumblrBlogs(credentials as TumblrCredentials);
+      const blogs = await apiService.getTumblrBlogs();
 
       // prettier-ignore
       if (blogs && blogs.length > 0) {
