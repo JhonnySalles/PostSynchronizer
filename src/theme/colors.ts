@@ -19,6 +19,7 @@ export interface ColorsType {
     error: string;
     inactive: string;
     shadown: string;
+    iconOverlay: string;
 
     tumblr: string;
     twitter: string;
@@ -47,6 +48,7 @@ const lightColors: ColorsType = {
     error: '#dc3545',
     inactive: '#808080',
     shadown: '#000000',
+    iconOverlay: '#ffffff',
 
     tumblr: '#35465c',
     twitter: '#1DA1F2',
@@ -75,6 +77,7 @@ const darkColors: ColorsType = {
     error: '#dc3545',
     inactive: '#bfbfbf',
     shadown: '#000000',
+    iconOverlay: '#ffffff',
 
     tumblr: '#A9B8C5',
     twitter: '#88C9F7',

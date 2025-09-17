@@ -10,6 +10,8 @@ import { SENTRY_DSN, SENTRY_ENVIRONMENT } from '@env';
 import { apiService } from './src/services/ApiService';
 import Logger from './src/services/LoggerService';
 import { ProgressProvider } from './src/contexts/ProgressContext';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import { BaseToast, ErrorToast } from 'react-native-toast-message';
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -27,11 +29,65 @@ const AppContent = () => {
 
   const navigationTheme = isDark ? AppDarkTheme : AppLightTheme;
 
+  const toastConfig = {
+    success: (props: any) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: colors.success, backgroundColor: colors.card }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: 'bold',
+          color: colors.text,
+        }}
+        text2Style={{
+          fontSize: 14,
+          color: colors.textSecondary,
+        }}
+      />
+    ),
+    error: (props: any) => (
+      <ErrorToast
+        {...props}
+        style={{ borderLeftColor: colors.error, backgroundColor: colors.card }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: 'bold',
+          color: colors.text,
+        }}
+        text2Style={{
+          fontSize: 14,
+          color: colors.textSecondary,
+        }}
+      />
+    ),
+    info: (props: any) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: colors.primary, backgroundColor: colors.card }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: 'bold',
+          color: colors.text,
+        }}
+        text2Style={{
+          fontSize: 14,
+          color: colors.textSecondary,
+        }}
+      />
+    ),
+  };
+
   return (
-    <NavigationContainer theme={navigationTheme}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={colors.background} />
-      <AppNavigator />
-    </NavigationContainer>
+    <>
+      <NavigationContainer theme={navigationTheme}>
+        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={colors.background} />
+        <AppNavigator />
+      </NavigationContainer>
+      <Toast config={toastConfig} />
+    </>
   );
 };
 
