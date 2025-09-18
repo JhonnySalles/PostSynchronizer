@@ -202,13 +202,13 @@ class ApiService {
     });
   }
 
-  private async prepareImagesForBackend(images: ImagePayload[]) {
+  private async prepareImagesForBackend(images: ImagePayload[], isSingle: boolean = false) {
     return Promise.all(
       images.map(async imageInfo => {
         const base64Data = await RNFS.readFile(imageInfo.path!, 'base64');
         const imageType = imageInfo.path!.endsWith('.png') ? 'png' : 'jpeg';
         const dataUrl = `data:image/${imageType};base64,${base64Data}`;
-        return { base64: dataUrl, platforms: imageInfo.platforms };
+        return isSingle ? dataUrl : { base64: dataUrl, platforms: imageInfo.platforms };
       }),
     );
   }
@@ -284,11 +284,9 @@ class ApiService {
     try {
       Logger.info(`[ApiService] Enviando post individual para: ${platform}`);
 
-      const imagesForBackend = await this.prepareImagesForBackend(payload.images);
-
       const backendPayload = {
         ...payload,
-        images: imagesForBackend,
+        images: await this.prepareImagesForBackend(payload.images, true),
       };
 
       const endpoint = `/${platform}/post`;
