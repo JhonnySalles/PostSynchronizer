@@ -12,46 +12,36 @@ import { useTheme } from 'src/theme/ThemeProvider';
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const AppNavigator = () => {
-    const { colors } = useTheme();
-    
-    return (
-        <Tab.Navigator
-            initialRouteName="Home"
-            screenOptions={({ route }) => ({
-                headerShown: true,
-                tabBarActiveTintColor: colors.primary,
-                tabBarInactiveTintColor: colors.inactive,
-                tabBarStyle: { backgroundColor: colors.background },
-                tabBarIcon: ({ focused, color, size }) => {
-                    let iconName = '';
+  const { colors } = useTheme();
 
-                    if (route.name === 'Home')
-                        iconName = focused ? 'create' : 'create-outline';
-                    else if (route.name === 'History')
-                        iconName = focused ? 'time' : 'time-outline';
-                    else if (route.name === 'Settings')
-                        iconName = focused ? 'settings' : 'settings-outline';
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        headerShown: true,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.inactive,
+        tabBarStyle: { backgroundColor: colors.background },
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName = '';
 
-                    return <Icon name={iconName} size={size} color={color} />;
-                },
-            })}>
-            <Tab.Screen
-                name="Home"
-                component={HomeScreen}
-                options={{ title: 'Postar' }}
-            />
-            <Tab.Screen
-                name="History"
-                component={HistoryScreen}
-                options={{ title: 'Histórico' }}
-            />
-            <Tab.Screen
-                name="Settings"
-                component={SettingsScreen}
-                options={{ title: 'Configurações' }}
-            />
-        </Tab.Navigator>
-    );
+          // prettier-ignore
+          if (route.name === 'Home') 
+            iconName = focused ? 'create' : 'create-outline';
+          else if (route.name === 'History') 
+            iconName = focused ? 'time' : 'time-outline';
+          else if (route.name === 'Settings') 
+            iconName = focused ? 'settings' : 'settings-outline';
+
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Postar' }} />
+      <Tab.Screen name="History" component={HistoryScreen} options={{ title: 'Histórico' }} />
+      <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'Configurações' }} />
+    </Tab.Navigator>
+  );
 };
 
 export default AppNavigator;

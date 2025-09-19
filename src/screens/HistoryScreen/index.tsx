@@ -31,8 +31,8 @@ const HistoryScreen = () => {
         try {
           const items = await PostDao.getAll();
           setHistory(items);
-        } catch (e: Error | any) {
-          Logger.error(e, { message: '[History Screen] Erro ao buscar histórico:' });
+        } catch (error: Error | any) {
+          Logger.error(error, { message: '[History Screen] Erro ao buscar histórico:' });
         } finally {
           setIsLoading(false);
         }
@@ -65,8 +65,8 @@ const HistoryScreen = () => {
             try {
               await PostDao.delete(postId);
               setHistory(prevHistory => prevHistory.filter(post => post.id !== postId));
-            } catch (e: Error | any) {
-              Logger.error(e, { message: '[History Screen] Não foi possível deletar o item.' });
+            } catch (error: Error | any) {
+              Logger.error(error, { message: '[History Screen] Não foi possível deletar o item.' });
               Alert.alert('Erro', 'Não foi possível deletar o item.');
             }
           },

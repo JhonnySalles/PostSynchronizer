@@ -29,11 +29,12 @@ import AuthTokenDao, { TumblrCredentials } from '../../dao/AuthTokenDao';
 import { requestGalleryPermission } from 'src/utils/permissions';
 import Logger from 'src/services/LoggerService';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import { DRAFT, ERROR, IDLE, PENDING, POSTED, PostStatusType, PostType, SUCCESS } from 'src/constants/app';
 
 type Connections = {
   platform: PlatformType;
   active: boolean;
-  postStatus: 'idle' | 'pending' | 'success' | 'error';
+  postStatus: PostStatusType;
 };
 
 type SelectedImage = {
@@ -46,7 +47,7 @@ type HomeScreenProps = BottomTabScreenProps<RootTabParamList, 'Home'>;
 const DEFAULT = {
   platform: UNKNOW,
   active: false,
-  postStatus: 'idle',
+  postStatus: IDLE as PostStatusType,
 } as Connections;
 
 const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
@@ -75,6 +76,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const [postProgress, setPostProgress] = useState(0);
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const postTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (route.params?.postToEdit) {
@@ -99,11 +101,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           const newStatus = allPlatforms.map(platform => ({
             platform,
             active: activePlatforms.includes(platform),
-            postStatus: 'idle' as const,
+            postStatus: IDLE as PostStatusType,
           }));
           setConnections(newStatus);
-        } catch (e: Error | any) {
-          Logger.error(e, {
+        } catch (error: Error | any) {
+          Logger.error(error, {
             message: '[Home Screen] Erro ao buscar conexões:',
           });
         }
@@ -112,6 +114,18 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       fetchConnections();
     }, []),
   );
+
+  useEffect(() => {
+    return () => {
+      // prettier-ignore
+      if (debounceTimeout.current)
+        clearTimeout(debounceTimeout.current);
+
+      // prettier-ignore
+      if (postTimeoutRef.current)
+        clearTimeout(postTimeoutRef.current);
+    };
+  }, []);
 
   const handleTextChange = (text: string) => {
     setPostText(text);
@@ -124,8 +138,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     try {
       const suggestions = await PostDao.getTagSuggestions(query);
       setTagSuggestions(suggestions);
-    } catch (e: Error | any) {
-      Logger.error(e, {
+    } catch (error: Error | any) {
+      Logger.error(error, {
         message: '[Home Screen] Falha ao buscar sugestões de tags na tela.',
       });
     }
@@ -227,7 +241,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                 setImagesProgress(p),
               );
               setSelectedImages(prev => prev.map((img, i) => ({ ...img, path: newImagePaths[i] })));
-            } catch (e: Error | any) {
+            } catch (error: Error | any) {
+              Logger.error(error, {
+                message: '[Home Screen] Ocorreu uma falha durante o processamento das imagens.',
+              });
               Alert.alert('Erro', 'Ocorreu uma falha durante o processamento das imagens.');
             } finally {
               setIsAdjustingImages(false);
@@ -255,12 +272,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       });
 
       setSelectedImages(prev => prev.map(img => (img.path === image.path ? { ...img, path: croppedImage.path } : img)));
-    } catch (e: Error | any) {
+    } catch (error: Error | any) {
       // prettier-ignore
-      if (e.message === 'User cancelled image selection')
+      if (error.message === 'User cancelled image selection')
         Logger.info('[Home Screen] Usuário cancelou a seleção/recorte de imagem.');
       else
-        Logger.error(e, { message: '[Home Screen] Erro ao recortar imagem existente:', });
+        Logger.error(error, { message: '[Home Screen] Erro ao recortar imagem existente:', });
     }
   };
 
@@ -295,7 +312,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       const draftData = {
         content: postText,
         images: selectedImages,
-        status: 'draft' as const,
+        status: DRAFT as PostType,
         tags: tagsText,
       };
 
@@ -316,8 +333,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         visibilityTime: 4000,
       });
       handleCancel();
-    } catch (e: Error | any) {
-      Logger.error(e, {
+    } catch (error: Error | any) {
+      Logger.error(error, {
         message: '[Home Screen] Não foi possível salvar o rascunho.',
       });
       Toast.show({
@@ -371,13 +388,13 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       setIsPosting(true);
       setPostProgress(0);
       setConnections(prev =>
-        prev.map(c => (platformsToPost.includes(c.platform) ? { ...c, postStatus: 'pending' } : c)),
+        prev.map(c => (platformsToPost.includes(c.platform) ? { ...c, postStatus: PENDING as PostStatusType } : c)),
       );
 
       const draftData = {
         content: currentPostText,
         images: currentSelectedImages,
-        status: 'draft' as const,
+        status: DRAFT as PostType,
         tags: currentTagsText,
         platformsSend: platformsToPost.join(', '),
       };
@@ -407,10 +424,19 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         },
       };
 
+      const handleTimeout = async () => {
+        Logger.info('[Post Flow] Timeout de 60s atingido. Feedback de progresso perdido.');
+        // prettier-ignore
+        if (connections.some(c => c.postStatus === SUCCESS)) 
+            PostDao.update(postId!, { status: POSTED as PostType });
+
+        setConnections(prev => prev.map(c => ({ ...c, postStatus: IDLE as PostStatusType })));
+      };
+
       const postWithoutFeedback = async () => {
-        setConnections(prev => prev.map(c => ({ ...c, postStatus: 'idle' })));
+        setConnections(prev => prev.map(c => ({ ...c, postStatus: IDLE as PostStatusType })));
         setIsPosting(true);
-        const result = await apiService.post(payload, () => {}, { forceNoWebSocket: true });
+        const result = await apiService.postAll(payload, () => {}, { forceNoWebSocket: true });
         // prettier-ignore
         if (result.success) {
           Toast.show({
@@ -421,7 +447,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             visibilityTime: 4000,
           });
 
-          PostDao.update(postId!, { platformsSuccess: UNKNOW, status: 'posted' });
+          PostDao.update(postId!, { platformsSuccess: UNKNOW, status: POSTED as PostType });
         } else 
           Toast.show({
             type: 'error',
@@ -438,6 +464,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         setPostProgress(0);
 
         const handleProgressUpdate = (update: ProgressUpdate) => {
+          // prettier-ignore
+          if (postTimeoutRef.current)
+            clearTimeout(postTimeoutRef.current);
+          postTimeoutRef.current = setTimeout(handleTimeout, 60000);
+
           if (update.type === 'progress' && update.progress) {
             setPostProgress(update.progress);
             if (update.platform && update.status) {
@@ -458,23 +489,34 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             Logger.info('[Post Flow] Sumário final recebido:', update.summary);
             setPostProgress(100);
 
+            if (postTimeoutRef.current) {
+              clearTimeout(postTimeoutRef.current);
+              postTimeoutRef.current = null;
+            }
+
             const finalResults = update.summary!;
             setConnections(prev =>
               prev.map(c => {
-                if (finalResults.successful.includes(c.platform)) return { ...c, postStatus: 'success' };
-                if (finalResults.failed.includes(c.platform)) return { ...c, postStatus: 'error' };
+                if (finalResults.successful.includes(c.platform))
+                  return { ...c, postStatus: SUCCESS as PostStatusType };
+                // prettier-ignore
+                if (finalResults.failed.includes(c.platform)) 
+                    return { ...c, postStatus: ERROR as PostStatusType };
                 return c;
               }),
             );
 
-            PostDao.update(postId!, { platformsSuccess: finalResults.successful.join(', '), status: 'posted' });
+            PostDao.update(postId!, {
+              platformsSuccess: finalResults.successful.join(', '),
+              status: POSTED as PostType,
+            });
             setTimeout(() => {
               setIsPosting(false);
             }, 1000);
           }
         };
 
-        const result = await apiService.post(payload, handleProgressUpdate);
+        const result = await apiService.postAll(payload, handleProgressUpdate);
 
         if (!result.success && result.isWebSocket) {
           setIsPosting(false);
@@ -506,9 +548,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         }
       };
 
+      postTimeoutRef.current = setTimeout(handleTimeout, 60000);
       await postWithFeedback();
-    } catch (e: Error | any) {
-      Logger.error(e, { message: '[Post Flow] Erro ao postar:' });
+    } catch (error: Error | any) {
+      Logger.error(error, { message: '[Post Flow] Erro ao postar:' });
       Toast.show({
         type: 'error',
         text1: 'Erro',
@@ -545,7 +588,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     const draftData = {
       content: postText,
       images: selectedImages,
-      status: 'draft' as const,
+      status: DRAFT as PostType,
       tags: tagsText,
       platformsSend: platform,
     };
@@ -561,7 +604,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       setEditingPostId(postId);
 
       setIsPosting(true);
-      setConnections(prev => prev.map(c => (c.platform === platform ? { ...c, postStatus: 'pending' } : c)));
+      setConnections(prev =>
+        prev.map(c => (c.platform === platform ? { ...c, postStatus: PENDING as PostStatusType } : c)),
+      );
 
       let blogName = null;
       if (platform === TUMBLR) {
@@ -589,10 +634,14 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           position: 'top',
           visibilityTime: 4000,
         });
-        PostDao.update(postId!, { platformsSuccess: platform, status: 'posted' });
-        setConnections(prev => prev.map(c => (c.platform === platform ? { ...c, postStatus: 'success' } : c)));
+        PostDao.update(postId!, { platformsSuccess: platform, status: POSTED as PostType });
+        setConnections(prev =>
+          prev.map(c => (c.platform === platform ? { ...c, postStatus: SUCCESS as PostStatusType } : c)),
+        );
       } else {
-        setConnections(prev => prev.map(c => (c.platform === platform ? { ...c, postStatus: 'error' } : c)));
+        setConnections(prev =>
+          prev.map(c => (c.platform === platform ? { ...c, postStatus: ERROR as PostStatusType } : c)),
+        );
         Toast.show({
           type: 'error',
           text1: 'Falha ao enviar postagem',
@@ -603,10 +652,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       }
 
       setIsPosting(false);
-    } catch (e: any) {
-      Logger.error(e, { message: `[Single Post Flow] Erro ao postar em ${platform}` });
-      setConnections(prev => prev.map(c => (c.platform === platform ? { ...c, postStatus: 'error' } : c)));
-      Toast.show({ type: 'error', text1: `Falha ao enviar (${platform})`, text2: e.message });
+    } catch (error: any) {
+      Logger.error(error, { message: `[Single Post Flow] Erro ao postar em ${platform}` });
+      setConnections(prev =>
+        prev.map(c => (c.platform === platform ? { ...c, postStatus: ERROR as PostStatusType } : c)),
+      );
+      Toast.show({ type: 'error', text1: `Falha ao enviar (${platform})`, text2: error.message });
     }
   };
 
@@ -692,19 +743,19 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         return colors.inactive;
 
     switch (connection.postStatus) {
-      case 'pending':
+      case PENDING:
         return colors.tertiary;
-      case 'success':
+      case SUCCESS:
         return colors.secondary;
-      case 'error':
+      case ERROR:
         return colors.error;
-      case 'idle':
+      case IDLE:
       default:
         return connection.active ? colors.primary : colors.inactive;
     }
   };
 
-  const renderStatusIcon = (platformInfo: (typeof SOCIAL_PLATFORMS)[0]) => {
+  const renderStatusIcon = (platformInfo: (typeof SOCIAL_PLATFORMS)[number]) => {
     return (
       <TouchableOpacity
         key={platformInfo.name}

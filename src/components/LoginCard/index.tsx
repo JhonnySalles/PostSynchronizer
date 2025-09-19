@@ -4,9 +4,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { getStyles } from './styles';
 import { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import Button from '../Button';
-import { BLUESKY, THREADS, TUMBLR, X } from 'src/constants/platforms';
+import { TUMBLR } from 'src/constants/platforms';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useTheme } from '../../theme/ThemeProvider';
+import { DARK, LIGHT } from 'src/constants/themes';
 
 interface LoginCardProps {
   credential: Credentials;
@@ -106,7 +107,7 @@ const LoginCard = ({
           }}
           setItems={setBlogItems}
           multiple={false}
-          theme={isDark ? 'DARK' : 'LIGHT'}
+          theme={isDark ? DARK : LIGHT}
           style={styles.pickerContainer}
           textStyle={styles.pickerTextStyle}
           placeholderStyle={styles.pickerPlaceholderStyle}
