@@ -1,3 +1,4 @@
+import { DRAFT, PostType } from 'src/constants/app';
 import { getDBConnection } from '../database';
 import Logger from 'src/services/LoggerService';
 
@@ -5,7 +6,7 @@ export interface Post {
   id: number;
   content: string | null;
   images: Image[];
-  status: 'draft' | 'posted';
+  status: PostType;
   platformsSend: string | null;
   platformsSuccess: string | null;
   created_at: string;
@@ -92,7 +93,7 @@ class PostDao {
     const {
       content = '',
       images = [],
-      status = 'draft',
+      status = DRAFT,
       platformsSend: platforms_send = '',
       platformsSuccess: platforms_success = '',
       tags = '',

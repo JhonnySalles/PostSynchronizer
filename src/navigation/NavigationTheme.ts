@@ -1,7 +1,6 @@
 import { DefaultTheme, DarkTheme, Theme } from '@react-navigation/native';
 import { palette } from '../theme/colors';
 
-
 export const AppLightTheme: Theme = {
   ...DefaultTheme,
   colors: {

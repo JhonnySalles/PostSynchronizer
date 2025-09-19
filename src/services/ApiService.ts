@@ -62,6 +62,7 @@ class ApiService {
     this.axiosInstance = axios.create({
       baseURL: API_BASE_URL,
       headers: { 'Content-Type': 'application/json' },
+      timeout: 60000,
     });
 
     this.axiosInstance.interceptors.request.use(async config => {
@@ -202,36 +203,42 @@ class ApiService {
     });
   }
 
-  private async prepareImagesForBackend(images: ImagePayload[], isSingle: boolean = false) {
+  private async prepareImagesAll(images: ImagePayload[]) {
     return Promise.all(
       images.map(async imageInfo => {
         const base64Data = await RNFS.readFile(imageInfo.path!, 'base64');
         const imageType = imageInfo.path!.endsWith('.png') ? 'png' : 'jpeg';
         const dataUrl = `data:image/${imageType};base64,${base64Data}`;
-        return isSingle ? dataUrl : { base64: dataUrl, platforms: imageInfo.platforms };
+        return { base64: dataUrl, platforms: imageInfo.platforms };
       }),
     );
   }
 
-  async post(
+  async postAll(
     payload: PostPayload,
     onProgress: ProgressCallback,
     options: { forceNoWebSocket?: boolean } = {},
   ): Promise<{ success: boolean; message?: string; isWebSocket?: boolean }> {
     if (options.forceNoWebSocket) {
-      Logger.warn('[ApiService] Forçando postagem sem WebSocket por solicitação do usuário.');
-      const { socketId, ...backendPayload } = {
-        ...payload,
-        images: await this.prepareImagesForBackend(payload.images),
-        socketId: undefined,
-      };
-      const response = await this.axiosInstance.post('/publish-all/post', backendPayload);
-      // prettier-ignore
-      if (response.status === 202) {
-        Logger.info('[ApiService] Requisição de postagem aceita pelo backend.');
-        return { success: true };
-      } else 
-        return { success: false, message: `Status inesperado: ${response.status}` };
+      try {
+        Logger.warn('[ApiService] Forçando postagem sem WebSocket por solicitação do usuário.');
+        const { ...backendPayload } = {
+          ...payload,
+          images: await this.prepareImagesAll(payload.images),
+          socketId: undefined,
+        };
+        const response = await this.axiosInstance.post('/publish-all/post', backendPayload);
+        // prettier-ignore
+        if (response.status === 202) {
+            Logger.info('[ApiService] Requisição de postagem aceita pelo backend.');
+            return { success: true };
+        } else
+            return { success: false, message: `Status inesperado: ${response.status}` };
+      } catch (error: Error | any) {
+        const errorMsg = error.response?.data?.message || error.message;
+        Logger.error(error, { message: `[ApiService] Falha ao enviar postagem: ${errorMsg}` });
+        return { success: false, message: errorMsg };
+      }
     }
 
     const isConnected = await this.isConnected(3000);
@@ -255,7 +262,7 @@ class ApiService {
         socketId: this.socket.id,
         platforms: payload.platforms,
         text: payload.text,
-        images: await this.prepareImagesForBackend(payload.images),
+        images: await this.prepareImagesAll(payload.images),
         tags: payload.tags,
         platformOptions: payload.platformOptions,
       };
@@ -277,6 +284,17 @@ class ApiService {
     }
   }
 
+  private async prepareImagesSingle(images: ImagePayload[]) {
+    return Promise.all(
+      images.map(async imageInfo => {
+        const base64Data = await RNFS.readFile(imageInfo.path!, 'base64');
+        const imageType = imageInfo.path!.endsWith('.png') ? 'png' : 'jpeg';
+        const dataUrl = `data:image/${imageType};base64,${base64Data}`;
+        return dataUrl;
+      }),
+    );
+  }
+
   async postSingle(
     platform: PlatformType,
     payload: Omit<SinglePostPayload, 'platforms'>,
@@ -286,7 +304,7 @@ class ApiService {
 
       const backendPayload = {
         ...payload,
-        images: await this.prepareImagesForBackend(payload.images, true),
+        images: await this.prepareImagesSingle(payload.images),
       };
 
       const endpoint = `/${platform}/post`;

@@ -5,7 +5,7 @@ import { getStyles } from './styles';
 import LoginCard from '../../components/LoginCard';
 import { apiService } from 'src/services/ApiService';
 import { BLUESKY, THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
-import AuthTokenDao, { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
+import AuthTokenDao, { Credentials } from 'src/dao/AuthTokenDao';
 import { useFocusEffect } from '@react-navigation/native';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import Logger from 'src/services/LoggerService';
@@ -34,8 +34,8 @@ const SettingsScreen = () => {
         setIsLoading(true);
         try {
           setConnections(await AuthTokenDao.getAllCredentials());
-        } catch (e: Error | any) {
-          Logger.error(e, {
+        } catch (error: Error | any) {
+          Logger.error(error, {
             msg: '[Settings Screen] Não foi possível carregar as configurações salvas.',
           });
           Alert.alert('Erro', 'Não foi possível carregar as configurações salvas.');
@@ -61,8 +61,8 @@ const SettingsScreen = () => {
           setConnections( connections.map(c => c.platform === TUMBLR ? { ...c, blogs: blogs } : c, ), );
       } else
         Alert.alert('Falha na Conexão', 'Erro ao realizar o recebimento dos dados do blog.');
-    } catch (e: Error | any) {
-      Logger.error(e, {
+    } catch (error: Error | any) {
+      Logger.error(error, {
         message: '[Settings Screen] Erro ao obter os dados do blog.',
       });
       Alert.alert('Erro', 'Ocorreu um erro inesperado ao tentar obter os dados do blog.');
@@ -76,8 +76,8 @@ const SettingsScreen = () => {
 
     try {
       await AuthTokenDao.updateActiveStatus(credentials);
-    } catch (e: Error | any) {
-      Logger.error(e, {
+    } catch (error: Error | any) {
+      Logger.error(error, {
         message: '[Settings Screen] Não foi possível atualizar o status da conexão.',
       });
       Alert.alert('Erro', 'Não foi possível atualizar o status da conexão.');
@@ -91,8 +91,8 @@ const SettingsScreen = () => {
 
     try {
       await AuthTokenDao.saveCredentials(credentials);
-    } catch (e: Error | any) {
-      Logger.error(e, {
+    } catch (error: Error | any) {
+      Logger.error(error, {
         message: '[Settings Screen] Não foi possível atualizar as credenciais.',
       });
       Alert.alert('Erro', 'Não foi possível atualizar as credenciais.');

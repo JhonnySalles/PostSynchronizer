@@ -34,8 +34,11 @@ export const runMigrations = async (db: SQLiteDatabase): Promise<void> => {
     let currentVersion = 0;
     const versionResult = await db.executeSql('SELECT version FROM db_version LIMIT 1;');
 
-    if (versionResult[0].rows.length > 0) currentVersion = versionResult[0].rows.item(0).version;
-    else await db.executeSql('INSERT INTO db_version (version) VALUES (0);');
+    // prettier-ignore
+    if (versionResult[0].rows.length > 0) 
+        currentVersion = versionResult[0].rows.item(0).version;
+    else 
+        await db.executeSql('INSERT INTO db_version (version) VALUES (0);');
 
     Logger.debug(`[Migrations] Versão atual do banco de dados: ${currentVersion}`);
 
