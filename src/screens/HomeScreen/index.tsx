@@ -226,34 +226,20 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     if (isAdjustingImages) 
         return;
 
-    Alert.alert(
-      'Ajustar Todas as Imagens',
-      'O processamento automático será aplicado em cada imagem, uma por uma. Isso pode levar um momento.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Continuar',
-          onPress: async () => {
-            setIsAdjustingImages(true);
-            try {
-              setImagesProgress(0);
-              const imagePaths = selectedImages.map(img => img.path);
-              const newImagePaths = await ImageProcessingService.processImageList(imagePaths, p =>
-                setImagesProgress(p),
-              );
-              setSelectedImages(prev => prev.map((img, i) => ({ ...img, path: newImagePaths[i] })));
-            } catch (error: Error | any) {
-              Logger.error(error, {
-                message: '[Home Screen] Ocorreu uma falha durante o processamento das imagens.',
-              });
-              Alert.alert('Erro', 'Ocorreu uma falha durante o processamento das imagens.');
-            } finally {
-              setIsAdjustingImages(false);
-            }
-          },
-        },
-      ],
-    );
+    setIsAdjustingImages(true);
+    try {
+      setImagesProgress(0);
+      const imagePaths = selectedImages.map(img => img.path);
+      const newImagePaths = await ImageProcessingService.processImageList(imagePaths, p => setImagesProgress(p));
+      setSelectedImages(prev => prev.map((img, i) => ({ ...img, path: newImagePaths[i] })));
+    } catch (error: Error | any) {
+      Logger.error(error, {
+        message: '[Home Screen] Ocorreu uma falha durante o processamento das imagens.',
+      });
+      Alert.alert('Erro', 'Ocorreu uma falha durante o processamento das imagens.');
+    } finally {
+      setIsAdjustingImages(false);
+    }
   };
 
   const handleImageClick = async (image: SelectedImage) => {
