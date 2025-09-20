@@ -7,7 +7,6 @@ import Button from '../Button';
 import { TUMBLR } from 'src/constants/platforms';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useTheme } from '../../theme/ThemeProvider';
-import { DARK, LIGHT } from 'src/constants/themes';
 
 interface LoginCardProps {
   credential: Credentials;
@@ -79,7 +78,9 @@ const LoginCard = ({
           onValueChange={() => {
             const credenciais = { ...credential, active: !credential.active };
             setCreds(credenciais);
-            if (onStatusChange) onStatusChange(credenciais);
+            // prettier-ignore
+            if (onStatusChange) 
+                onStatusChange(credenciais);
           }}
           value={creds.active}
         />
@@ -107,7 +108,7 @@ const LoginCard = ({
           }}
           setItems={setBlogItems}
           multiple={false}
-          theme={isDark ? DARK : LIGHT}
+          theme={isDark ? 'DARK' : 'LIGHT'}
           style={styles.pickerContainer}
           textStyle={styles.pickerTextStyle}
           placeholderStyle={styles.pickerPlaceholderStyle}

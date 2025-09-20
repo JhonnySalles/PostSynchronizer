@@ -58,7 +58,7 @@ const SettingsScreen = () => {
       if (blogs && blogs.length > 0) {
         // prettier-ignore
         if (credentials.platform === TUMBLR)
-          setConnections( connections.map(c => c.platform === TUMBLR ? { ...c, blogs: blogs } : c, ), );
+          setConnections(prevConnections => prevConnections.map(c => c.platform === TUMBLR ? { ...c, blogs: blogs } : c));
       } else
         Alert.alert('Falha na Conexão', 'Erro ao realizar o recebimento dos dados do blog.');
     } catch (error: Error | any) {
@@ -71,33 +71,39 @@ const SettingsScreen = () => {
     }
   };
 
-  const handleStatusChange = async (credentials: Credentials) => {
-    setConnections(connections.filter(c => c.platform !== credentials.platform).concat([credentials]));
+  const handleStatusChange = async (updatedCredentials: Credentials) => {
+    const originalConnections = connections;
+
+    setConnections(prevConnections =>
+      prevConnections.map(c => (c.platform === updatedCredentials.platform ? updatedCredentials : c)),
+    );
 
     try {
-      await AuthTokenDao.updateActiveStatus(credentials);
+      await AuthTokenDao.updateActiveStatus(updatedCredentials);
     } catch (error: Error | any) {
       Logger.error(error, {
         message: '[Settings Screen] Não foi possível atualizar o status da conexão.',
       });
       Alert.alert('Erro', 'Não foi possível atualizar o status da conexão.');
-      credentials.active = !credentials.active;
-      setConnections(connections.filter(c => c.platform !== credentials.platform).concat([credentials]));
+      setConnections(originalConnections);
     }
   };
 
-  const handleCredentialsChange = async (credentials: Credentials) => {
-    setConnections(connections.filter(c => c.platform !== credentials.platform).concat([credentials]));
+  const handleCredentialsChange = async (updatedCredentials: Credentials) => {
+    const originalConnections = connections;
+
+    setConnections(prevConnections =>
+      prevConnections.map(c => (c.platform === updatedCredentials.platform ? updatedCredentials : c)),
+    );
 
     try {
-      await AuthTokenDao.saveCredentials(credentials);
+      await AuthTokenDao.saveCredentials(updatedCredentials);
     } catch (error: Error | any) {
       Logger.error(error, {
         message: '[Settings Screen] Não foi possível atualizar as credenciais.',
       });
       Alert.alert('Erro', 'Não foi possível atualizar as credenciais.');
-      credentials.active = !credentials.active;
-      setConnections(connections.filter(c => c.platform !== credentials.platform).concat([credentials]));
+      setConnections(originalConnections);
     }
   };
 

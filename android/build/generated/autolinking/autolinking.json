@@ -197,7 +197,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@shopify\\react-native-skia\\react-native-skia.podspec",
-          "version": "2.2.14",
+          "version": "2.2.18",
           "configurations": [],
           "scriptPhases": []
         },

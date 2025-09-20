@@ -57,8 +57,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const [connections, setConnections] = useState<Connections[]>([
     { ...DEFAULT, platform: TUMBLR },
     { ...DEFAULT, platform: X },
-    { ...DEFAULT, platform: THREADS },
     { ...DEFAULT, platform: BLUESKY },
+    { ...DEFAULT, platform: THREADS },
   ]);
 
   const [postText, setPostText] = useState('');
@@ -112,6 +112,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       };
 
       fetchConnections();
+      setIsPosting(false);
     }, []),
   );
 
