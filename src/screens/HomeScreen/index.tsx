@@ -174,32 +174,40 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       return;
     }
 
-    const images = await ImagePicker.openPicker({
-      multiple: true,
-      mediaType: 'photo',
-      maxFiles: 50,
-      selectionLimit: 50,
-    });
-
-    const activePlatforms = connections.filter(c => c.active).map(c => c.platform);
-    const newImages: SelectedImage[] = images.map(img => ({
-      path: img.path,
-      platforms: activePlatforms,
-    }));
-
-    setSelectedImages(prevImages => {
-      const allImages = [...prevImages, ...newImages];
-      return allImages.map((img, index) => {
-        const platforms = img.platforms.filter(p => {
-          // prettier-ignore
-          if ((p === X || p === BLUESKY) && index >= 4)
-            return false;
-
-          return true;
-        });
-        return { ...img, platforms };
+    try {
+      const images = await ImagePicker.openPicker({
+        multiple: true,
+        mediaType: 'photo',
+        maxFiles: 50,
+        selectionLimit: 50,
       });
-    });
+
+      const activePlatforms = connections.filter(c => c.active).map(c => c.platform);
+      const newImages: SelectedImage[] = images.map(img => ({
+        path: img.path,
+        platforms: activePlatforms,
+      }));
+
+      setSelectedImages(prevImages => {
+        const allImages = [...prevImages, ...newImages];
+        return allImages.map((img, index) => {
+          const platforms = img.platforms.filter(p => {
+            // prettier-ignore
+            if ((p === X || p === BLUESKY) && index >= 4)
+                return false;
+
+            return true;
+          });
+          return { ...img, platforms };
+        });
+      });
+    } catch (error: Error | any) {
+      // prettier-ignore
+      if (error.message === 'User cancelled image selection')
+        Logger.info('[Home Screen] Usuário cancelou a seleção de imagem.');
+      else
+        Logger.error(error, { message: '[Home Screen] Erro ao selecionar imagem existente:', });
+    }
   };
 
   const handleAdjustSingleImage = async (index: number) => {
@@ -262,7 +270,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     } catch (error: Error | any) {
       // prettier-ignore
       if (error.message === 'User cancelled image selection')
-        Logger.info('[Home Screen] Usuário cancelou a seleção/recorte de imagem.');
+        Logger.info('[Home Screen] Usuário cancelou a recorte de imagem.');
       else
         Logger.error(error, { message: '[Home Screen] Erro ao recortar imagem existente:', });
     }
