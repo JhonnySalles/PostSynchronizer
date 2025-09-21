@@ -218,6 +218,7 @@ class ApiService {
     payload: PostPayload,
     onProgress: ProgressCallback,
     options: { forceNoWebSocket?: boolean } = {},
+    isFirst: boolean = true,
   ): Promise<{ success: boolean; message?: string; isWebSocket?: boolean }> {
     if (options.forceNoWebSocket) {
       try {
@@ -235,6 +236,12 @@ class ApiService {
         } else
             return { success: false, message: `Status inesperado: ${response.status}` };
       } catch (error: Error | any) {
+        if (error.response && error.response.status === 401 && isFirst) {
+          // prettier-ignore
+          if (await this.login()) 
+            return this.postAll(payload, onProgress, options, false);
+        }
+
         const errorMsg = error.response?.data?.message || error.message;
         Logger.error(error, { message: `[ApiService] Falha ao enviar postagem: ${errorMsg}` });
         return { success: false, message: errorMsg };
@@ -249,9 +256,9 @@ class ApiService {
 
     const progressListener = (update: ProgressUpdate) => {
       onProgress(update);
-      if (update.type === 'summary') {
+      // prettier-ignore
+      if (update.type === 'summary') 
         this.eventEmitter.removeListener('post_update', progressListener);
-      }
     };
     this.eventEmitter.addListener('post_update', progressListener);
 
@@ -278,6 +285,13 @@ class ApiService {
       }
     } catch (error: any) {
       this.eventEmitter.removeListener('post_update', progressListener);
+
+      if (error.response && error.response.status === 401 && isFirst) {
+        // prettier-ignore
+        if (await this.login()) 
+          return this.postAll(payload, onProgress, options, false);
+      }
+
       const errorMsg = error.response?.data?.message || error.message;
       Logger.error(error, { message: `[ApiService] Falha ao enviar postagem: ${errorMsg}` });
       return { success: false, message: errorMsg };
@@ -298,6 +312,7 @@ class ApiService {
   async postSingle(
     platform: PlatformType,
     payload: Omit<SinglePostPayload, 'platforms'>,
+    isFirst: boolean = true,
   ): Promise<{ success: boolean; message?: string }> {
     try {
       Logger.info(`[ApiService] Enviando post individual para: ${platform}`);
@@ -319,6 +334,12 @@ class ApiService {
         return { success: false, message: errorMsg };
       }
     } catch (error: any) {
+      if (error.response && error.response.status === 401 && isFirst) {
+        // prettier-ignore
+        if (await this.login()) 
+          return this.postSingle(platform, payload, false);
+      }
+
       const errorMsg = error.response?.data?.message || error.message;
       Logger.error(error, { message: `[ApiService] Falha ao enviar post individual para ${platform}: ${errorMsg}` });
       return { success: false, message: errorMsg };
