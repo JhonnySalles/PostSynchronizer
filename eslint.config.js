@@ -55,6 +55,14 @@ export default tseslint.config(
       'react/prop-types': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       curly: ['error', 'all'],
+      '@typescript-eslint/no-unused-vars': [
+        'warn', // Usa 'warn' (aviso amarelo) em vez de 'error' para não bloquear o desenvolvimento
+        {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+        }
+      ]
     },
     settings: {
       react: {

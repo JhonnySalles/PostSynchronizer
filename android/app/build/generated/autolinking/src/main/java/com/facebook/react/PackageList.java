@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 // @react-native-camera-roll/camera-roll
 import com.reactnativecommunity.cameraroll.CameraRollPackage;
+// @react-native-clipboard/clipboard
+import com.reactnativecommunity.clipboard.ClipboardPackage;
 // @react-native-community/image-editor
 import com.reactnativecommunity.imageeditor.ImageEditorPackage;
 // @react-native-firebase/app
@@ -97,6 +99,7 @@ public class PackageList {
       new MainReactPackage(mConfig),
       new AsyncStoragePackage(),
       new CameraRollPackage(),
+      new ClipboardPackage(),
       new ImageEditorPackage(),
       new ReactNativeFirebaseAppPackage(),
       new ReactNativeFirebaseAuthPackage(),

@@ -3,6 +3,9 @@ import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, Alert } fr
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
+import Clipboard from '@react-native-clipboard/clipboard';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+
 import { getStyles } from './styles';
 import { useTheme } from '../../theme/ThemeProvider';
 
@@ -75,6 +78,18 @@ const HistoryScreen = () => {
     );
   };
 
+  const handleCopyTags = (tags: string) => {
+    if (tags && tags.trim().length > 0) {
+      Clipboard.setString(tags);
+      Toast.show({
+        type: 'success',
+        text1: 'Copiado!',
+        text2: 'As tags foram copiadas para a área de transferência.',
+        position: 'top',
+      });
+    }
+  };
+
   const renderItem = ({ item }: { item: PostHistoryItem }) => {
     const platformsToSend = item.platformsSend?.split(',').map(p => p.trim()) || [];
     const platformsWithSuccess = item.platformsSuccess?.split(',').map(p => p.trim()) || [];
@@ -106,30 +121,37 @@ const HistoryScreen = () => {
             />
           )}
 
-          <View style={styles.footer}>
-            {item.tags && <Text style={styles.platformsText}>Tags: {item.tags}</Text>}
-            {
-              <View style={styles.footerIconsContainer}>
-                {platformsToSend.map(platformName => {
-                  const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === platformName);
-                  // prettier-ignore
-                  if (!platformInfo) 
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onLongPress={() => handleCopyTags(item.tags || '')}
+            onPress={() => {}}
+            delayLongPress={200}
+          >
+            <View style={styles.footer}>
+              {item.tags && <Text style={styles.platformsText}>Tags: {item.tags}</Text>}
+              {
+                <View style={styles.footerIconsContainer}>
+                  {platformsToSend.map(platformName => {
+                    const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === platformName);
+                    // prettier-ignore
+                    if (!platformInfo) 
                     return null;
 
-                  const wasSuccessful = platformsWithSuccess.includes(platformName);
-                  return (
-                    <Icon
-                      key={platformName}
-                      name={platformInfo.icon}
-                      size={22}
-                      color={wasSuccessful ? colors.success : colors.error}
-                      style={styles.footerIcon}
-                    />
-                  );
-                })}
-              </View>
-            }
-          </View>
+                    const wasSuccessful = platformsWithSuccess.includes(platformName);
+                    return (
+                      <Icon
+                        key={platformName}
+                        name={platformInfo.icon}
+                        size={22}
+                        color={wasSuccessful ? colors.success : colors.error}
+                        style={styles.footerIcon}
+                      />
+                    );
+                  })}
+                </View>
+              }
+            </View>
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );

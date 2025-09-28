@@ -15,6 +15,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 
+import { usePostStore } from '../../store/usePostStore';
+
 import { getStyles } from './styles';
 import { useTheme } from '../../theme/ThemeProvider';
 import Button from '../../components/Button';
@@ -22,7 +24,7 @@ import Button from '../../components/Button';
 import PostDao from '../../dao/PostDao';
 import { apiService, PostPayload, ProgressUpdate, SinglePostPayload } from '../../services/ApiService';
 import ImageProcessingService from '../../services/ImageService';
-import { FirebasePostUpdate, firebaseService } from '../../services/FirebaseService';
+import { firebaseService } from '../../services/FirebaseService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
 import { PlatformType, SOCIAL_PLATFORMS, UNKNOW, THREADS, TUMBLR, X, BLUESKY } from '../../constants/platforms';
@@ -32,12 +34,6 @@ import Logger from 'src/services/LoggerService';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { DRAFT, ERROR, IDLE, PENDING, POSTED, PostStatusType, PostType, SUCCESS } from 'src/constants/app';
 
-type Connections = {
-  platform: PlatformType;
-  active: boolean;
-  postStatus: PostStatusType;
-};
-
 type SelectedImage = {
   path: string;
   platforms: PlatformType[];
@@ -45,36 +41,39 @@ type SelectedImage = {
 
 type HomeScreenProps = BottomTabScreenProps<RootTabParamList, 'Home'>;
 
-const DEFAULT = {
-  platform: UNKNOW,
-  active: false,
-  postStatus: IDLE as PostStatusType,
-} as Connections;
-
 const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
-  const [connections, setConnections] = useState<Connections[]>([
-    { ...DEFAULT, platform: TUMBLR },
-    { ...DEFAULT, platform: X },
-    { ...DEFAULT, platform: BLUESKY },
-    { ...DEFAULT, platform: THREADS },
-  ]);
+  const {
+    postText,
+    tagsText,
+    selectedImages,
+    editingPostId,
+    connections,
+    isPosting,
+    postProgress,
 
-  const [postText, setPostText] = useState('');
-  const [tagsText, setTagsText] = useState('');
+    // Ações
+    setPostText,
+    setTagsText,
+    addImages,
+    toggleImagePlatform,
+    removeImage,
+    clearForm,
+    startPosting,
+    updatePostProgress,
+    finishPosting,
+    mergeConnections,
+    resetPostStatus,
+    resetPosting,
+    // Ação para inicializar conexões (precisa ser adicionada na store)
+    // setConnections: setConnectionsInStore,
+  } = usePostStore();
 
-  const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
   const [isAdjustingImages, setIsAdjustingImages] = useState(false);
   const [imagesProgress, setImagesProgress] = useState(0);
-
-  const [editingPostId, setEditingPostId] = useState<number | null>(null);
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
-  const [successfulPlatforms, setSuccessfulPlatforms] = useState<PlatformType[]>([]);
-
-  const [isPosting, setIsPosting] = useState(false);
-  const [postProgress, setPostProgress] = useState(0);
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const unsubscribeFirebase = useRef<(() => void) | null>(null);
@@ -83,10 +82,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     if (route.params?.postToEdit) {
       const { id, content, tags, images } = route.params.postToEdit;
 
-      setEditingPostId(id);
-      setPostText(content);
-      setTagsText(tags);
-      setSelectedImages(images as SelectedImage[]);
+      usePostStore.setState({
+        editingPostId: id,
+        postText: content,
+        tagsText: tags,
+        selectedImages: images as SelectedImage[],
+      });
 
       navigation.setParams({ postToEdit: undefined });
     }
@@ -98,13 +99,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         try {
           const activePlatforms = await AuthTokenDao.getActivePlatforms();
           const allPlatforms = SOCIAL_PLATFORMS.map(p => p.name);
-
-          const newStatus = allPlatforms.map(platform => ({
-            platform,
-            active: activePlatforms.includes(platform),
-            postStatus: IDLE as PostStatusType,
-          }));
-          setConnections(newStatus);
+          mergeConnections(allPlatforms, activePlatforms);
         } catch (error: Error | any) {
           Logger.error(error, {
             message: '[Home Screen] Erro ao buscar conexões:',
@@ -113,7 +108,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       };
 
       fetchConnections();
-      setIsPosting(false);
+      resetPosting();
     }, []),
   );
 
@@ -131,9 +126,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
   const handleTextChange = (text: string) => {
     setPostText(text);
-    // prettier-ignore
-    if (successfulPlatforms.length > 0) 
-        setSuccessfulPlatforms([]);
   };
 
   const fetchTagSuggestions = async (query: string) => {
@@ -149,9 +141,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
   const handleTagsChange = (text: string) => {
     setTagsText(text);
-    // prettier-ignore
-    if (successfulPlatforms.length > 0) 
-        setSuccessfulPlatforms([]);
 
     // prettier-ignore
     if (debounceTimeout.current) 
@@ -189,19 +178,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         platforms: activePlatforms,
       }));
 
-      setSelectedImages(prevImages => {
-        const allImages = [...prevImages, ...newImages];
-        return allImages.map((img, index) => {
-          const platforms = img.platforms.filter(p => {
-            // prettier-ignore
-            if ((p === X || p === BLUESKY) && index >= 4)
-                return false;
-
-            return true;
-          });
-          return { ...img, platforms };
-        });
-      });
+      addImages(newImages, activePlatforms);
     } catch (error: Error | any) {
       // prettier-ignore
       if (error.message === 'User cancelled image selection')
@@ -224,8 +201,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     setIsAdjustingImages(true);
     const newPath = await ImageProcessingService.processImage(originalPath);
 
-    if (newPath !== originalPath)
-      setSelectedImages(prev => prev.map((img, i) => (i === index ? { ...img, path: newPath } : img)));
+    if (newPath !== originalPath) {
+      const currentImages = usePostStore.getState().selectedImages;
+      const updatedImages = currentImages.map((img, i) => (i === index ? { ...img, path: newPath } : img));
+      usePostStore.setState({ selectedImages: updatedImages });
+    }
 
     setIsAdjustingImages(false);
   };
@@ -240,7 +220,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       setImagesProgress(0);
       const imagePaths = selectedImages.map(img => img.path);
       const newImagePaths = await ImageProcessingService.processImageList(imagePaths, p => setImagesProgress(p));
-      setSelectedImages(prev => prev.map((img, i) => ({ ...img, path: newImagePaths[i] })));
+      const currentImages = usePostStore.getState().selectedImages;
+      const updatedImages = currentImages.map((img, i) => ({ ...img, path: newImagePaths[i] }));
+      usePostStore.setState({ selectedImages: updatedImages });
     } catch (error: Error | any) {
       Logger.error(error, {
         message: '[Home Screen] Ocorreu uma falha durante o processamento das imagens.',
@@ -267,7 +249,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         forceJpg: true,
       });
 
-      setSelectedImages(prev => prev.map(img => (img.path === image.path ? { ...img, path: croppedImage.path } : img)));
+      const currentImages = usePostStore.getState().selectedImages;
+      const updatedImages = currentImages.map(img =>
+        img.path === image.path ? { ...img, path: croppedImage.path } : img,
+      );
+      usePostStore.setState({ selectedImages: updatedImages });
     } catch (error: Error | any) {
       // prettier-ignore
       if (error.message === 'User cancelled image selection')
@@ -281,58 +267,18 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     // prettier-ignore
     if (isAdjustingImages) 
         return;
-
-    const originalUri = selectedImages[index];
-
-    // prettier-ignore
-    if (!originalUri || isAdjustingImages) 
-        return;
-
-    setSelectedImages(prev => prev.filter(uri => uri !== originalUri));
+    removeImage(index);
   };
 
-  const handleFirebaseUpdate = (update: FirebasePostUpdate) => {
-    // prettier-ignore
-    if (!update) 
-        return;
-
-    Logger.info('[Firebase Update] ', JSON.stringify(update));
-
-    const platformsWithStatus = Object.keys(update.data).filter(k => k !== '_summary') as PlatformType[];
-    const totalPlatformsToPost = connections.filter(c => c.postStatus !== IDLE).length;
-
-    const newProgress = platformsWithStatus.length / totalPlatformsToPost;
-    setPostProgress(newProgress);
-
-    setConnections(prev =>
-      prev.map(conn => {
-        if (update.data[conn.platform]) {
-          return { ...conn, postStatus: update.data[conn.platform].status };
-        }
-        return conn;
-      }),
-    );
-
-    if (update.isFinish) {
-      setPostProgress(1);
-
-      if (unsubscribeFirebase.current) {
-        unsubscribeFirebase.current();
-        unsubscribeFirebase.current = null;
-      }
-
-      setTimeout(() => {
-        setIsPosting(false);
-        setConnections(prev => prev.map(c => ({ ...c, postStatus: IDLE as PostStatusType })));
-      }, 5000);
+  const handleFirebaseFinish = () => {
+    if (unsubscribeFirebase.current) {
+      unsubscribeFirebase.current();
+      unsubscribeFirebase.current = null;
     }
   };
 
   const handleCancel = () => {
-    setEditingPostId(null);
-    setPostText('');
-    setSelectedImages([]);
-    setSuccessfulPlatforms([]);
+    clearForm();
   };
 
   const handleSaveDraft = async () => {
@@ -422,11 +368,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       if (platformsToPost.includes(THREADS)) 
         sortedPlatformsToPost.push(THREADS);
 
-      setIsPosting(true);
-      setPostProgress(0);
-      setConnections(prev =>
-        prev.map(c => (platformsToPost.includes(c.platform) ? { ...c, postStatus: PENDING as PostStatusType } : c)),
-      );
+      startPosting(platformsToPost);
 
       const draftData = {
         content: currentPostText,
@@ -444,9 +386,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       else
         postId = await PostDao.create(draftData);
 
-      handleCancel();
+      clearForm();
 
-      unsubscribeFirebase.current = firebaseService.listenForPostUpdates(postId, handleFirebaseUpdate);
+      unsubscribeFirebase.current = firebaseService.listenForPostUpdates(postId, handleFirebaseFinish);
 
       const tumblrCreds = await AuthTokenDao.getCredentialsForPlatform<TumblrCredentials>(TUMBLR);
       const payload: PostPayload = {
@@ -466,8 +408,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       };
 
       const postWithoutFeedback = async () => {
-        setConnections(prev => prev.map(c => ({ ...c, postStatus: IDLE as PostStatusType })));
-        setIsPosting(true);
+        startPosting(platformsToPost);
         const result = await apiService.postAll(payload, () => {}, { forceNoWebSocket: true });
         // prettier-ignore
         if (result.success) {
@@ -488,20 +429,15 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-        setIsPosting(false);
+        resetPostStatus();
       };
 
       const postWithFeedback = async () => {
-        setIsPosting(true);
-        setPostProgress(0);
-
         const handleProgressUpdate = (update: ProgressUpdate) => {
           if (update.type === 'progress' && update.progress) {
-            setPostProgress(update.progress);
+            updatePostProgress({ progress: update.progress });
             if (update.platform && update.status) {
-              setConnections(prev =>
-                prev.map(c => (c.platform === update.platform ? { ...c, postStatus: update.status! } : c)),
-              );
+              updatePostProgress({ platform: update.platform as PlatformType, status: update.status });
 
               if (update.status === 'error')
                 Toast.show({
@@ -514,34 +450,21 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             }
           } else if (update.type === 'summary') {
             Logger.info('[Post Flow] Sumário final recebido:', update.summary);
-            setPostProgress(100);
-
-            const finalResults = update.summary!;
-            setConnections(prev =>
-              prev.map(c => {
-                if (finalResults.successful.includes(c.platform))
-                  return { ...c, postStatus: SUCCESS as PostStatusType };
-                // prettier-ignore
-                if (finalResults.failed.includes(c.platform)) 
-                    return { ...c, postStatus: ERROR as PostStatusType };
-                return c;
-              }),
-            );
+            const finalResults = update.summary! as { successful: PlatformType[]; failed: PlatformType[] };
+            finishPosting(finalResults);
 
             PostDao.update(postId!, {
               platformsSuccess: finalResults.successful.join(', '),
               status: POSTED as PostType,
             });
-            setTimeout(() => {
-              setIsPosting(false);
-            }, 1000);
+            resetPostStatus();
           }
         };
 
         const result = await apiService.postAll(payload, handleProgressUpdate);
 
         if (!result.success && result.isWebSocket) {
-          setIsPosting(false);
+          resetPostStatus();
           Alert.alert(
             'Servidor de Progresso Indisponível',
             'Não foi possível conectar para receber o feedback em tempo real. Deseja continuar com o envio mesmo assim?',
@@ -563,7 +486,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-          setIsPosting(false);
+          resetPostStatus();
         } else {
           Toast.show({
             type: 'success',
@@ -632,12 +555,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       else 
         postId = await PostDao.create(draftData);
 
-      setEditingPostId(postId);
+      usePostStore.setState({ editingPostId: postId });
 
-      setIsPosting(true);
-      setConnections(prev =>
-        prev.map(c => (c.platform === platform ? { ...c, postStatus: PENDING as PostStatusType } : c)),
-      );
+      startPosting([platform]);
 
       let blogName = null;
       if (platform === TUMBLR) {
@@ -666,13 +586,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           visibilityTime: 4000,
         });
         PostDao.update(postId!, { platformsSuccess: platform, status: POSTED as PostType });
-        setConnections(prev =>
-          prev.map(c => (c.platform === platform ? { ...c, postStatus: SUCCESS as PostStatusType } : c)),
-        );
+        updatePostProgress({ platform, status: SUCCESS });
       } else {
-        setConnections(prev =>
-          prev.map(c => (c.platform === platform ? { ...c, postStatus: ERROR as PostStatusType } : c)),
-        );
+        updatePostProgress({ platform, status: ERROR });
         Toast.show({
           type: 'error',
           text1: 'Falha ao enviar postagem',
@@ -682,30 +598,16 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         });
       }
 
-      setIsPosting(false);
+      resetPostStatus();
     } catch (error: any) {
       Logger.error(error, { message: `[Single Post Flow] Erro ao postar em ${platform}` });
-      setConnections(prev =>
-        prev.map(c => (c.platform === platform ? { ...c, postStatus: ERROR as PostStatusType } : c)),
-      );
+      updatePostProgress({ platform, status: ERROR });
       Toast.show({ type: 'error', text1: `Falha ao enviar (${platform})`, text2: error.message });
     }
   };
 
   const handleToggleImagePlatform = (imageIndex: number, platform: PlatformType) => {
-    setSelectedImages(prevImages => {
-      const newImages = [...prevImages];
-      const image = newImages[imageIndex];
-      const platformIndex = image.platforms.indexOf(platform);
-
-      // prettier-ignore
-      if (platformIndex > -1) 
-        image.platforms.splice(platformIndex, 1);
-      else 
-        image.platforms.push(platform);
-
-      return newImages;
-    });
+    toggleImagePlatform(imageIndex, platform);
   };
 
   const renderImageItem = ({ item, index }: { item: SelectedImage; index: number }) => (
