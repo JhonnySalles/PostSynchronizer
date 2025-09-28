@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:ns1="http://schemas.android.com/tools">
     <color name="primary_dark">#121212</color>
     <integer name="react_native_dev_server_port">8081</integer>
     <string name="app_name">Post Synchronizer</string>
+    <string name="com.google.firebase.crashlytics.mapping_file_id" ns1:ignore="UnusedResources,TypographyDashes" translatable="false">00000000000000000000000000000000</string>
+    <string name="firebase_database_url" translatable="false">https://post-synchronizer-default-rtdb.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">800176313344</string>
+    <string name="google_api_key" translatable="false">AIzaSyDQcn3lPYyWBdBxvZyNGjxCBtMzSlrAE9w</string>
+    <string name="google_app_id" translatable="false">1:800176313344:android:a38a0d0ae604939d41f4e5</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDQcn3lPYyWBdBxvZyNGjxCBtMzSlrAE9w</string>
+    <string name="google_storage_bucket" translatable="false">post-synchronizer.firebasestorage.app</string>
+    <string name="project_id" translatable="false">post-synchronizer</string>
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <item name="android:statusBarColor">@color/primary_dark</item>

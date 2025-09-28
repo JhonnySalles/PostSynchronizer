@@ -12,6 +12,7 @@ import Logger from './src/services/LoggerService';
 import { ProgressProvider } from './src/contexts/ProgressContext';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { BaseToast, ErrorToast } from 'react-native-toast-message';
+import { firebaseService } from './src/services/FirebaseService';
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -102,6 +103,7 @@ const App = () => {
       }
     };
     initializeDB();
+    firebaseService.initialize();
   }, []);
 
   useEffect(() => {

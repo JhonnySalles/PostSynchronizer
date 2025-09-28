@@ -22,6 +22,7 @@ import Button from '../../components/Button';
 import PostDao from '../../dao/PostDao';
 import { apiService, PostPayload, ProgressUpdate, SinglePostPayload } from '../../services/ApiService';
 import ImageProcessingService from '../../services/ImageService';
+import { FirebasePostUpdate, firebaseService } from '../../services/FirebaseService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
 import { PlatformType, SOCIAL_PLATFORMS, UNKNOW, THREADS, TUMBLR, X, BLUESKY } from '../../constants/platforms';
@@ -76,7 +77,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const [postProgress, setPostProgress] = useState(0);
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
-  const postTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const unsubscribeFirebase = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (route.params?.postToEdit) {
@@ -123,8 +124,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         clearTimeout(debounceTimeout.current);
 
       // prettier-ignore
-      if (postTimeoutRef.current)
-        clearTimeout(postTimeoutRef.current);
+      if (unsubscribeFirebase.current)
+        unsubscribeFirebase.current();
     };
   }, []);
 
@@ -290,6 +291,43 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     setSelectedImages(prev => prev.filter(uri => uri !== originalUri));
   };
 
+  const handleFirebaseUpdate = (update: FirebasePostUpdate) => {
+    // prettier-ignore
+    if (!update) 
+        return;
+
+    Logger.info('[Firebase Update] ', JSON.stringify(update));
+
+    const platformsWithStatus = Object.keys(update.data).filter(k => k !== '_summary') as PlatformType[];
+    const totalPlatformsToPost = connections.filter(c => c.postStatus !== IDLE).length;
+
+    const newProgress = platformsWithStatus.length / totalPlatformsToPost;
+    setPostProgress(newProgress);
+
+    setConnections(prev =>
+      prev.map(conn => {
+        if (update.data[conn.platform]) {
+          return { ...conn, postStatus: update.data[conn.platform].status };
+        }
+        return conn;
+      }),
+    );
+
+    if (update.isFinish) {
+      setPostProgress(1);
+
+      if (unsubscribeFirebase.current) {
+        unsubscribeFirebase.current();
+        unsubscribeFirebase.current = null;
+      }
+
+      setTimeout(() => {
+        setIsPosting(false);
+        setConnections(prev => prev.map(c => ({ ...c, postStatus: IDLE as PostStatusType })));
+      }, 5000);
+    }
+  };
+
   const handleCancel = () => {
     setEditingPostId(null);
     setPostText('');
@@ -379,6 +417,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       const currentSelectedImages = [...selectedImages];
 
       const platformsToPost = connections.filter(c => c.active).map(c => c.platform);
+      const sortedPlatformsToPost: PlatformType[] = platformsToPost.filter(p => p !== THREADS);
+      // prettier-ignore
+      if (platformsToPost.includes(THREADS)) 
+        sortedPlatformsToPost.push(THREADS);
 
       setIsPosting(true);
       setPostProgress(0);
@@ -392,6 +434,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         status: DRAFT as PostType,
         tags: currentTagsText,
         platformsSend: platformsToPost.join(', '),
+        pending: true,
       };
 
       let postId = editingPostId;
@@ -403,9 +446,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
       handleCancel();
 
+      unsubscribeFirebase.current = firebaseService.listenForPostUpdates(postId, handleFirebaseUpdate);
+
       const tumblrCreds = await AuthTokenDao.getCredentialsForPlatform<TumblrCredentials>(TUMBLR);
       const payload: PostPayload = {
-        platforms: platformsToPost,
+        postId,
+        platforms: sortedPlatformsToPost,
         text: currentPostText,
         images: currentSelectedImages,
         tags: currentTagsText
@@ -417,15 +463,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             blogName: tumblrCreds?.blogName || '',
           },
         },
-      };
-
-      const handleTimeout = async () => {
-        Logger.info('[Post Flow] Timeout de 60s atingido. Feedback de progresso perdido.');
-        // prettier-ignore
-        if (connections.some(c => c.postStatus === SUCCESS)) 
-            PostDao.update(postId!, { status: POSTED as PostType });
-
-        setConnections(prev => prev.map(c => ({ ...c, postStatus: IDLE as PostStatusType })));
       };
 
       const postWithoutFeedback = async () => {
@@ -459,11 +496,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         setPostProgress(0);
 
         const handleProgressUpdate = (update: ProgressUpdate) => {
-          // prettier-ignore
-          if (postTimeoutRef.current)
-            clearTimeout(postTimeoutRef.current);
-          postTimeoutRef.current = setTimeout(handleTimeout, 60000);
-
           if (update.type === 'progress' && update.progress) {
             setPostProgress(update.progress);
             if (update.platform && update.status) {
@@ -483,11 +515,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           } else if (update.type === 'summary') {
             Logger.info('[Post Flow] Sumário final recebido:', update.summary);
             setPostProgress(100);
-
-            if (postTimeoutRef.current) {
-              clearTimeout(postTimeoutRef.current);
-              postTimeoutRef.current = null;
-            }
 
             const finalResults = update.summary!;
             setConnections(prev =>
@@ -524,6 +551,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             ],
           );
         } else if (!result.success) {
+          if (unsubscribeFirebase.current) {
+            unsubscribeFirebase.current();
+            unsubscribeFirebase.current = null;
+          }
+
           Toast.show({
             type: 'error',
             text1: 'Falha ao enviar postagem',
@@ -543,7 +575,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         }
       };
 
-      postTimeoutRef.current = setTimeout(handleTimeout, 60000);
       await postWithFeedback();
     } catch (error: Error | any) {
       Logger.error(error, { message: '[Post Flow] Erro ao postar:' });
@@ -554,6 +585,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         position: 'top',
         visibilityTime: 4000,
       });
+
+      if (unsubscribeFirebase.current) {
+        unsubscribeFirebase.current();
+        unsubscribeFirebase.current = null;
+      }
     }
   };
 

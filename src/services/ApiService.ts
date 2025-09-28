@@ -7,6 +7,7 @@ import AuthTokenDao, { TumblrBlogs, TumblrCredentials } from 'src/dao/AuthTokenD
 import { io, Socket } from 'socket.io-client';
 import EventEmitter from 'eventemitter3';
 import { PlatformType } from 'src/constants/platforms';
+import { firebaseService } from 'src/services/FirebaseService';
 
 const JWT_TOKEN_KEY = 'api_jwt_token';
 const JWT_EXPIRES_AT_KEY = 'api_jwt_expires_at';
@@ -18,6 +19,7 @@ export interface ImagePayload {
 }
 
 export interface PostPayload {
+  postId: number;
   platforms: string[];
   text: string;
   images: ImagePayload[];
@@ -32,6 +34,7 @@ export interface PostPayload {
 export interface SinglePostPayload {
   platform: string;
   text: string;
+  postId?: string;
   images: ImagePayload[];
   tags?: string[];
   blogName: string | null;
@@ -90,12 +93,12 @@ class ApiService {
     });
 
     this.socket.on('progressUpdate', (data: ProgressUpdate) => {
-      Logger.info('[ApiService] Progresso recebido via WebSocket:', data);
+      Logger.info('[ApiService] Progresso recebido via WebSocket:', data.toString());
       this.eventEmitter.emit('post_update', data);
     });
 
     this.socket.on('taskCompleted', (data: ProgressUpdate) => {
-      Logger.info('[ApiService] Tarefa concluída recebida via WebSocket:', data);
+      Logger.info('[ApiService] Tarefa concluída recebida via WebSocket:', data.toString());
       this.eventEmitter.emit('post_update', { ...data, type: 'summary' });
     });
 
@@ -226,6 +229,8 @@ class ApiService {
         const { ...backendPayload } = {
           ...payload,
           images: await this.prepareImagesAll(payload.images),
+          instanceId: firebaseService.getAppInstanceId(),
+          postId: payload.postId,
           socketId: undefined,
         };
         const response = await this.axiosInstance.post('/publish-all/post', backendPayload);
@@ -272,6 +277,8 @@ class ApiService {
         images: await this.prepareImagesAll(payload.images),
         tags: payload.tags,
         platformOptions: payload.platformOptions,
+        instanceId: firebaseService.getAppInstanceId(),
+        postId: payload.postId,
       };
 
       const response = await this.axiosInstance.post('/publish-all/post', backendPayload);

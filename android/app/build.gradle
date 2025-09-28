@@ -2,6 +2,7 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: 'com.google.firebase.appdistribution'
+apply plugin: 'com.google.firebase.crashlytics'
 
 project.ext.envConfigFiles = [
     debug: ".env",
@@ -99,8 +100,8 @@ android {
         applicationId "com.postsynchronizer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
     }
     signingConfigs {
         debug {
@@ -163,6 +164,11 @@ dependencies {
         implementation jscFlavor
     }
 
+    implementation 'com.google.firebase:firebase-auth-ktx:23.0.0'
+    implementation 'com.google.firebase:firebase-database-ktx:20.3.0'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.5.0'
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.3.0'
+
     debugImplementation('com.facebook.flipper:flipper:0.273.0') {
         exclude group:'com.facebook.fbjni'
     }
@@ -181,3 +187,5 @@ apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 firebaseAppDistribution {
     appId = "1:800176313344:android:a38a0d0ae604939d41f4e5"
 }
+
+apply plugin: 'com.google.gms.google-services'

@@ -9,5 +9,13 @@ mipmap app_icon_foreground
 mipmap app_icon_monochrome
 mipmap app_icon_round
 string app_name
+string com.google.firebase.crashlytics.mapping_file_id
+string firebase_database_url
+string gcm_defaultSenderId
+string google_api_key
+string google_app_id
+string google_crash_reporting_api_key
+string google_storage_bucket
+string project_id
 style AppTheme
 xml network_security_config

@@ -13,6 +13,7 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
 import java.lang.reflect.InvocationTargetException
+import com.google.firebase.FirebaseApp
 
 
 class MainApplication : Application(), ReactApplication {
@@ -38,6 +39,7 @@ class MainApplication : Application(), ReactApplication {
 
     override fun onCreate() {
         super.onCreate()
+        FirebaseApp.initializeApp(this)
         SoLoader.init(this, false)
         initializeFlipper(this, reactNativeHost.reactInstanceManager)
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
