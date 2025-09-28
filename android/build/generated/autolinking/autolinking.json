@@ -81,6 +81,58 @@
         "windows": null
       }
     },
+    "@react-native-clipboard/clipboard": {
+      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-clipboard\\clipboard",
+      "name": "@react-native-clipboard/clipboard",
+      "platforms": {
+        "ios": {
+          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-clipboard\\clipboard\\RNCClipboard.podspec",
+          "version": "1.16.3",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-clipboard\\clipboard\\android",
+          "packageImportPath": "import com.reactnativecommunity.clipboard.ClipboardPackage;",
+          "packageInstance": "new ClipboardPackage()",
+          "buildTypes": [],
+          "libraryName": "rnclipboard",
+          "componentDescriptors": [],
+          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/@react-native-clipboard/clipboard/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": {
+          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-clipboard\\clipboard",
+          "projects": [
+            {
+              "projectFile": "Clipboard\\Clipboard.vcxproj",
+              "projectName": "Clipboard",
+              "projectLang": "cpp",
+              "projectGuid": "{90BFF18B-474B-445D-9847-B065853288D8}",
+              "directDependency": true,
+              "cppHeaders": [
+                "winrt/Clipboard.h"
+              ],
+              "cppPackageProviders": [
+                "Clipboard::ReactPackageProvider"
+              ],
+              "csNamespaces": [
+                "Clipboard"
+              ],
+              "csPackageProviders": [
+                "Clipboard.ReactPackageProvider"
+              ]
+            }
+          ],
+          "solutionFile": "Clipboard.sln",
+          "nugetPackages": [],
+          "sourceDir": "windows"
+        }
+      }
+    },
     "@react-native-community/image-editor": {
       "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\image-editor",
       "name": "@react-native-community/image-editor",

@@ -3,7 +3,8 @@ import auth from '@react-native-firebase/auth';
 import Logger from './LoggerService';
 import PostDao from 'src/dao/PostDao';
 import { PlatformType } from 'src/constants/platforms';
-import { POSTED, PostType } from 'src/constants/app';
+import { IDLE, POSTED, PostType } from 'src/constants/app';
+import { usePostStore } from 'src/store/usePostStore';
 
 export type FirebasePostUpdate = {
   isFinish: boolean;
@@ -45,7 +46,7 @@ class FirebaseService {
     return this.appInstanceId;
   }
 
-  public listenForPostUpdates(postId: number, onUpdate: (processedPlatforms: FirebasePostUpdate) => void): () => void {
+  public listenForPostUpdates(postId: number, onFinish: () => void): () => void {
     if (!this.appInstanceId) {
       Logger.warn('[FirebaseService] Não é possível ouvir updates sem um appInstanceId.');
       return () => {};
@@ -58,26 +59,27 @@ class FirebaseService {
       if (!snapshot.exists())
         return;
 
-      const rawData = snapshot.val();
-      const isFinish = !!rawData._summary;
-      const updatePayload: FirebasePostUpdate = {
-        isFinish,
-        data: rawData,
-        summary: isFinish ? rawData._summary : undefined,
-      };
+      const data = snapshot.val();
+      const state = usePostStore.getState();
 
-      onUpdate(updatePayload);
+      const platformsWithStatus = Object.keys(data).filter(k => k !== '_summary');
+      const totalPlatformsToPost = state.connections.filter(c => c.postStatus !== IDLE).length;
+      const newProgress = platformsWithStatus.length / (totalPlatformsToPost || 1);
+      state.updatePostProgress({ progress: newProgress });
+
+      const isFinish = !!data._summary;
 
       if (isFinish) {
         Logger.info(`[FirebaseService] Sumário final recebido para o post ${postId}. Finalizando.`);
-        this.finalizePostSync(postId, rawData._summary.successful);
+        this.finalizePostSync(postId, data._summary.successful);
         dbRef.off('value', onValueChange);
         dbRef.remove();
 
         PostDao.update(postId, {
-          platformsSuccess: rawData._summary.successful.join(', '),
+          platformsSuccess: data._summary.successful.join(', '),
           status: POSTED as PostType,
         });
+        onFinish();
       }
     };
 
