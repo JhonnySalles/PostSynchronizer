@@ -25,6 +25,8 @@ const MIGRATIONS = [
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`,
+  `ALTER TABLE posts ADD COLUMN pending INTEGER DEFAULT 0 NOT NULL;`,
+  `UPDATE posts SET pending = 0;`,
 ];
 
 export const runMigrations = async (db: SQLiteDatabase): Promise<void> => {

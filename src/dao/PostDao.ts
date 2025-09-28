@@ -9,9 +9,10 @@ export interface Post {
   status: PostType;
   platformsSend: string | null;
   platformsSuccess: string | null;
+  tags: string | null;
+  pending: boolean;
   created_at: string;
   updated_at: string;
-  tags: string | null;
 }
 
 export type Image = {
@@ -97,6 +98,7 @@ class PostDao {
       platformsSend: platforms_send = '',
       platformsSuccess: platforms_success = '',
       tags = '',
+      pending = false,
     } = postData;
 
     const imagesJson = JSON.stringify(images);
@@ -104,11 +106,13 @@ class PostDao {
 
     try {
       const [result] = await db.executeSql(
-        'INSERT INTO posts (content, images, status, platforms_send, platforms_success, tags) VALUES (?, ?, ?, ?, ?, ?)',
-        [content, imagesJson, status, platforms_send, platforms_success, tags],
+        'INSERT INTO posts (content, images, status, platforms_send, platforms_success, tags, pending) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [content, imagesJson, status, platforms_send, platforms_success, tags, pending],
       );
       const insertId = result.insertId;
-      if (insertId === undefined || insertId < 0) throw new Error('Falha ao obter o ID do post inserido.');
+      // prettier-ignore
+      if (insertId === undefined || insertId < 0) 
+        throw new Error('Falha ao obter o ID do post inserido.');
 
       Logger.info('[Post Dao] Post criado com sucesso');
       return insertId;
@@ -215,6 +219,28 @@ class PostDao {
       Logger.info(`[Post Dao] Post ID ${postId} deletado com sucesso`);
     } catch (error) {
       Logger.error(error as Error, { message: `[Post Dao] Erro ao deletar post ID ${postId}` });
+      throw error;
+    }
+  }
+
+  /**
+   * Busca todos os posts que ainda têm callbacks pendentes de sincronização.
+   * @returns {Promise<Post[]>} Uma lista de posts com synchronized = 0.
+   */
+  public async getPendingPosts(): Promise<Post[]> {
+    const db = await getDBConnection();
+    try {
+      const results = await db.executeSql('SELECT * FROM posts WHERE pending = 1');
+      const posts: Post[] = [];
+      results.forEach(result => {
+        for (let i = 0; i < result.rows.length; i++) {
+          const row = result.rows.item(i);
+          posts.push({ ...row });
+        }
+      });
+      return posts;
+    } catch (error) {
+      Logger.error(error as Error, { message: '[Post Dao] Erro ao buscar posts pendentes.' });
       throw error;
     }
   }

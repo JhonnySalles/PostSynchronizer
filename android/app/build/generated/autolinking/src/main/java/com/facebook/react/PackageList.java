@@ -16,12 +16,22 @@ import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.cameraroll.CameraRollPackage;
 // @react-native-community/image-editor
 import com.reactnativecommunity.imageeditor.ImageEditorPackage;
+// @react-native-firebase/app
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+// @react-native-firebase/auth
+import io.invertase.firebase.auth.ReactNativeFirebaseAuthPackage;
+// @react-native-firebase/crashlytics
+import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
+// @react-native-firebase/database
+import io.invertase.firebase.database.ReactNativeFirebaseDatabasePackage;
 // @react-native-picker/picker
 import com.reactnativecommunity.picker.RNCPickerPackage;
 // @sentry/react-native
 import io.sentry.react.RNSentryPackage;
 // @shopify/react-native-skia
 import com.shopify.reactnative.skia.RNSkiaPackage;
+// react-native-device-info
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 // react-native-fs
 import com.rnfs.RNFSPackage;
 // react-native-image-crop-picker
@@ -88,9 +98,14 @@ public class PackageList {
       new AsyncStoragePackage(),
       new CameraRollPackage(),
       new ImageEditorPackage(),
+      new ReactNativeFirebaseAppPackage(),
+      new ReactNativeFirebaseAuthPackage(),
+      new ReactNativeFirebaseCrashlyticsPackage(),
+      new ReactNativeFirebaseDatabasePackage(),
       new RNCPickerPackage(),
       new RNSentryPackage(),
       new RNSkiaPackage(),
+      new RNDeviceInfo(),
       new RNFSPackage(),
       new PickerPackage(),
       new ImagePickerPackage(),

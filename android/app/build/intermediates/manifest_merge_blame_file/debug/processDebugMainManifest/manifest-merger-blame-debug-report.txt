@@ -33,8 +33,8 @@
 19-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:10:5-90
 19-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:10:22-87
 20    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-20-->[com.facebook.flipper:flipper:0.273.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\2ae1aa5ba9ea6b567b45e9d15e087c63\transformed\flipper-0.273.0\AndroidManifest.xml:14:5-76
-20-->[com.facebook.flipper:flipper:0.273.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\2ae1aa5ba9ea6b567b45e9d15e087c63\transformed\flipper-0.273.0\AndroidManifest.xml:14:22-73
+20-->[com.facebook.flipper:flipper:0.273.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d0e7cdae28df1c8f2dd350ebe081fd53\transformed\flipper-0.273.0\AndroidManifest.xml:14:5-76
+20-->[com.facebook.flipper:flipper:0.273.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d0e7cdae28df1c8f2dd350ebe081fd53\transformed\flipper-0.273.0\AndroidManifest.xml:14:22-73
 21
 22    <queries>
 22-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:7:5-17:15
@@ -70,290 +70,662 @@
 37        </intent>
 38    </queries>
 39
-40    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-40-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:5-79
-40-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:22-76
-41    <!--
-42    This manifest file is used only by Gradle to configure debug-only capabilities
-43    for React Native Apps.
-44    -->
-45    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-45-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\6788d093451f3dcb115f8ad72d29378f\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:5-78
-45-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\6788d093451f3dcb115f8ad72d29378f\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:22-75
-46
-47    <permission
-47-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
-48        android:name="com.postsynchronizer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-48-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
-49        android:protectionLevel="signature" />
-49-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
-50
-51    <uses-permission android:name="com.postsynchronizer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-51-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
-51-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+40    <uses-permission android:name="android.permission.WAKE_LOCK" />
+40-->[:react-native-firebase_auth] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\auth\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:5-68
+40-->[:react-native-firebase_auth] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\auth\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:22-65
+41    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+41-->[:react-native-firebase_auth] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\auth\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:5-79
+41-->[:react-native-firebase_auth] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\auth\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:22-76
+42    <!--
+43    This manifest file is used only by Gradle to configure debug-only capabilities
+44    for React Native Apps.
+45    -->
+46    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+46-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\transforms-4\d835737f67cfa8c4ebe0e7ed2dcc3128\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:5-78
+46-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\transforms-4\d835737f67cfa8c4ebe0e7ed2dcc3128\transformed\react-android-0.75.5-debug\AndroidManifest.xml:16:22-75
+47    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+47-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:25:5-79
+47-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:25:22-76
+48    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION" />
+48-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:26:5-88
+48-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:26:22-85
+49    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID" />
+49-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:27:5-82
+49-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:27:22-79
+50    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+50-->[com.google.android.recaptcha:recaptcha:18.4.0] C:\Users\Jhonny\.gradle\caches\transforms-4\b6e5efce94be063989bd97c2c0489029\transformed\recaptcha-18.4.0\AndroidManifest.xml:9:5-98
+50-->[com.google.android.recaptcha:recaptcha:18.4.0] C:\Users\Jhonny\.gradle\caches\transforms-4\b6e5efce94be063989bd97c2c0489029\transformed\recaptcha-18.4.0\AndroidManifest.xml:9:22-95
+51    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+51-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:26:5-110
+51-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:26:22-107
 52
-53    <application
-53-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:12:5-39:19
-54        android:name="com.postsynchronizer.MainApplication"
-54-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:13:7-38
-55        android:allowBackup="false"
-55-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:17:7-34
-56        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-56-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\9655c0bfaef91d095cf4f6fb963c3b47\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
-57        android:debuggable="true"
-58        android:extractNativeLibs="false"
-59        android:icon="@mipmap/app_icon"
-59-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:15:7-38
-60        android:label="@string/app_name"
-60-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:14:7-39
-61        android:networkSecurityConfig="@xml/network_security_config"
-61-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:20:7-67
-62        android:roundIcon="@mipmap/app_icon_round"
-62-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:16:7-49
-63        android:supportsRtl="true"
-63-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:19:7-33
-64        android:theme="@style/AppTheme"
-64-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:18:7-38
-65        android:usesCleartextTraffic="true" >
-65-->F:\Projetos\PostSynchronizer\android\app\src\debug\AndroidManifest.xml:6:9-44
-66        <activity
-66-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:21:7-38:18
-67            android:name="com.postsynchronizer.MainActivity"
-67-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:22:9-37
-68            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-68-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:24:9-118
-69            android:exported="true"
-69-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:27:9-32
-70            android:label="@string/app_name"
-70-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:23:9-41
-71            android:launchMode="singleTask"
-71-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:25:9-40
-72            android:windowSoftInputMode="adjustResize" >
-72-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:26:9-51
-73            <intent-filter>
-73-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:28:9-31:25
-74                <action android:name="android.intent.action.MAIN" />
-74-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:29:13-65
-74-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:29:21-62
-75
-76                <category android:name="android.intent.category.LAUNCHER" />
-76-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:30:13-73
-76-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:30:23-70
-77            </intent-filter>
-78            <intent-filter>
-78-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:32:9-37:25
-79                <action android:name="android.intent.action.VIEW" />
-79-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:33:13-65
-79-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:33:21-62
-80
-81                <category android:name="android.intent.category.DEFAULT" />
-81-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:34:13-72
-81-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:34:23-69
-82                <category android:name="android.intent.category.BROWSABLE" />
-82-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:35:13-74
-82-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:35:23-71
-83
-84                <data android:scheme="postsync" />
-84-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:36:13-47
-84-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:36:19-44
-85            </intent-filter>
-86        </activity>
-87
-88        <provider
-88-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:20:9-28:20
-89            android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
-89-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:21:13-83
-90            android:authorities="com.postsynchronizer.fileprovider"
-90-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:22:13-64
-91            android:exported="false"
-91-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:23:13-37
-92            android:grantUriPermissions="true" >
-92-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:24:13-47
-93            <meta-data
-93-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
-94                android:name="android.support.FILE_PROVIDER_PATHS"
-94-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
-95                android:resource="@xml/file_provider_paths" />
-95-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
-96        </provider>
-97
-98        <meta-data
-98-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:9-13:37
-99            android:name="io.sentry.auto-init"
-99-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-47
-100            android:value="false" />
-100-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:13:13-34
-101
-102        <provider
-102-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:9-26:20
-103            android:name="com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider"
-103-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:19:13-94
-104            android:authorities="com.postsynchronizer.provider"
-104-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:20:13-60
-105            android:exported="false"
-105-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:21:13-37
-106            android:grantUriPermissions="true" >
-106-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:22:13-47
-107            <meta-data
-107-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
-108                android:name="android.support.FILE_PROVIDER_PATHS"
-108-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
-109                android:resource="@xml/ivpusic_imagepicker_provider_paths" />
-109-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
-110        </provider>
-111
-112        <activity
-112-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:28:9-31:72
-113            android:name="com.yalantis.ucrop.UCropActivity"
-113-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:29:13-60
-114            android:exported="false"
-114-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:30:13-37
-115            android:theme="@style/Theme.AppCompat.Light.NoActionBar" /> <!-- Prompt Google Play services to install the backported photo picker module -->
-115-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:31:13-69
-116        <service
-116-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:34:9-45:19
-117            android:name="com.google.android.gms.metadata.ModuleDependencies"
-117-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:35:13-78
-118            android:enabled="false"
-118-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:36:13-36
-119            android:exported="false" >
-119-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:37:13-37
-120            <intent-filter>
-120-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:38:13-40:29
-121                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
-121-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:39:17-94
-121-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:39:25-91
-122            </intent-filter>
-123
+53    <permission
+53-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\transforms-4\2d0c6bd131bbe04cc80ba1a09c22dcd0\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+54        android:name="com.postsynchronizer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+54-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\transforms-4\2d0c6bd131bbe04cc80ba1a09c22dcd0\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+55        android:protectionLevel="signature" />
+55-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\transforms-4\2d0c6bd131bbe04cc80ba1a09c22dcd0\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+56
+57    <uses-permission android:name="com.postsynchronizer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+57-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\transforms-4\2d0c6bd131bbe04cc80ba1a09c22dcd0\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+57-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\transforms-4\2d0c6bd131bbe04cc80ba1a09c22dcd0\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+58
+59    <application
+59-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:12:5-39:19
+60        android:name="com.postsynchronizer.MainApplication"
+60-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:13:7-38
+61        android:allowBackup="false"
+61-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:17:7-34
+62        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+62-->[androidx.core:core:1.13.1] C:\Users\Jhonny\.gradle\caches\transforms-4\2d0c6bd131bbe04cc80ba1a09c22dcd0\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+63        android:debuggable="true"
+64        android:extractNativeLibs="false"
+65        android:icon="@mipmap/app_icon"
+65-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:15:7-38
+66        android:label="@string/app_name"
+66-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:14:7-39
+67        android:networkSecurityConfig="@xml/network_security_config"
+67-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:20:7-67
+68        android:roundIcon="@mipmap/app_icon_round"
+68-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:16:7-49
+69        android:supportsRtl="true"
+69-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:19:7-33
+70        android:theme="@style/AppTheme"
+70-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:18:7-38
+71        android:usesCleartextTraffic="true" >
+71-->F:\Projetos\PostSynchronizer\android\app\src\debug\AndroidManifest.xml:6:9-44
+72        <activity
+72-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:21:7-38:18
+73            android:name="com.postsynchronizer.MainActivity"
+73-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:22:9-37
+74            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+74-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:24:9-118
+75            android:exported="true"
+75-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:27:9-32
+76            android:label="@string/app_name"
+76-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:23:9-41
+77            android:launchMode="singleTask"
+77-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:25:9-40
+78            android:windowSoftInputMode="adjustResize" >
+78-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:26:9-51
+79            <intent-filter>
+79-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:28:9-31:25
+80                <action android:name="android.intent.action.MAIN" />
+80-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:29:13-65
+80-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:29:21-62
+81
+82                <category android:name="android.intent.category.LAUNCHER" />
+82-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:30:13-73
+82-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:30:23-70
+83            </intent-filter>
+84            <intent-filter>
+84-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:32:9-37:25
+85                <action android:name="android.intent.action.VIEW" />
+85-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:33:13-65
+85-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:33:21-62
+86
+87                <category android:name="android.intent.category.DEFAULT" />
+87-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:34:13-72
+87-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:34:23-69
+88                <category android:name="android.intent.category.BROWSABLE" />
+88-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:35:13-74
+88-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:35:23-71
+89
+90                <data android:scheme="postsync" />
+90-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:36:13-47
+90-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:36:19-44
+91            </intent-filter>
+92        </activity>
+93
+94        <provider
+94-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:20:9-28:20
+95            android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
+95-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:21:13-83
+96            android:authorities="com.postsynchronizer.fileprovider"
+96-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:22:13-64
+97            android:exported="false"
+97-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:23:13-37
+98            android:grantUriPermissions="true" >
+98-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:24:13-47
+99            <meta-data
+99-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
+100                android:name="android.support.FILE_PROVIDER_PATHS"
+100-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
+101                android:resource="@xml/file_provider_paths" />
+101-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
+102        </provider> <!-- Disable crashlytics by default so we can custom init with CrashlyticsNdk support -->
+103        <meta-data
+103-->[:react-native-firebase_crashlytics] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\crashlytics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:10:9-12:37
+104            android:name="firebase_crashlytics_collection_enabled"
+104-->[:react-native-firebase_crashlytics] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\crashlytics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:13-67
+105            android:value="false" />
+105-->[:react-native-firebase_crashlytics] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\crashlytics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-34
+106
+107        <provider
+107-->[:react-native-firebase_crashlytics] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\crashlytics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:14:9-18:38
+108            android:name="io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsInitProvider"
+108-->[:react-native-firebase_crashlytics] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\crashlytics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:13-104
+109            android:authorities="com.postsynchronizer.reactnativefirebasecrashlyticsinitprovider"
+109-->[:react-native-firebase_crashlytics] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\crashlytics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:16:13-94
+110            android:exported="false"
+110-->[:react-native-firebase_crashlytics] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\crashlytics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:17:13-37
+111            android:initOrder="98" />
+111-->[:react-native-firebase_crashlytics] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\crashlytics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:13-35
+112
+113        <meta-data
+113-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:9-11:36
+114            android:name="app_data_collection_default_enabled"
+114-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:10:13-63
+115            android:value="true" />
+115-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:13-33
+116
+117        <service
+117-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:13:9-21:19
+118            android:name="com.google.firebase.components.ComponentDiscoveryService"
+118-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:14:13-84
+119            android:directBootAware="true"
+119-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:13-43
+120            android:exported="false" >
+120-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:16:13-37
+121            <meta-data
+121-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:13-20:85
+122                android:name="com.google.firebase.components:io.invertase.firebase.app.ReactNativeFirebaseAppRegistrar"
+122-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:19:17-120
+123                android:value="com.google.firebase.components.ComponentRegistrar" />
+123-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:20:17-82
 124            <meta-data
-124-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:42:13-44:36
-125                android:name="photopicker_activity:0:required"
-125-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:43:17-63
-126                android:value="" />
-126-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:44:17-33
-127        </service>
-128
-129        <provider
-129-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:9-16:20
-130            android:name="com.imagepicker.ImagePickerProvider"
-130-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:13-63
-131            android:authorities="com.postsynchronizer.imagepickerprovider"
-131-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:10:13-71
-132            android:exported="false"
-132-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:13-37
-133            android:grantUriPermissions="true" >
-133-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-47
-134            <meta-data
-134-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
-135                android:name="android.support.FILE_PROVIDER_PATHS"
-135-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
-136                android:resource="@xml/imagepicker_provider_paths" />
-136-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
-137        </provider>
-138
-139        <activity
-139-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:16:9-19:20
-140            android:name="com.proyecto26.inappbrowser.ChromeTabsManagerActivity"
-140-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:17:13-81
-141            android:exported="false" >
-141-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:13-37
-142        </activity>
-143        <activity
-143-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\6788d093451f3dcb115f8ad72d29378f\transformed\react-android-0.75.5-debug\AndroidManifest.xml:19:9-21:40
-144            android:name="com.facebook.react.devsupport.DevSettingsActivity"
-144-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\6788d093451f3dcb115f8ad72d29378f\transformed\react-android-0.75.5-debug\AndroidManifest.xml:20:13-77
-145            android:exported="false" /> <!-- 'android:authorities' must be unique in the device, across all apps -->
-145-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\8.8\transforms\6788d093451f3dcb115f8ad72d29378f\transformed\react-android-0.75.5-debug\AndroidManifest.xml:21:13-37
-146        <provider
-146-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:12:9-15:40
-147            android:name="io.sentry.android.core.SentryInitProvider"
-147-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:13:13-69
-148            android:authorities="com.postsynchronizer.SentryInitProvider"
-148-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:14:13-70
-149            android:exported="false" />
-149-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:15:13-37
-150        <provider
-150-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:16:9-20:39
-151            android:name="io.sentry.android.core.SentryPerformanceProvider"
-151-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:17:13-76
-152            android:authorities="com.postsynchronizer.SentryPerformanceProvider"
-152-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:18:13-77
-153            android:exported="false"
-153-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:19:13-37
-154            android:initOrder="200" />
-154-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\8.8\transforms\b0cd6c5893c35f028fdd551181c2887f\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:20:13-36
-155        <provider
-155-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
-156            android:name="androidx.startup.InitializationProvider"
-156-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
-157            android:authorities="com.postsynchronizer.androidx-startup"
-157-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
-158            android:exported="false" >
-158-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
-159            <meta-data
-159-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
-160                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-160-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
-161                android:value="androidx.startup" />
-161-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\dfd02eb4c34f66a7d48f24e8fda32f09\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
-162            <meta-data
-162-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\7eb774661bf13e69c3b0fa021b3e86e6\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
-163                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-163-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\7eb774661bf13e69c3b0fa021b3e86e6\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
-164                android:value="androidx.startup" />
-164-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\8.8\transforms\7eb774661bf13e69c3b0fa021b3e86e6\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
-165            <meta-data
-165-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:29:13-31:52
-166                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-166-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:30:17-85
-167                android:value="androidx.startup" />
-167-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:31:17-49
-168        </provider>
-169
-170        <receiver
-170-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:34:9-52:20
-171            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-171-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:35:13-76
-172            android:directBootAware="false"
-172-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:36:13-44
-173            android:enabled="true"
-173-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:37:13-35
-174            android:exported="true"
-174-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:38:13-36
-175            android:permission="android.permission.DUMP" >
-175-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:39:13-57
-176            <intent-filter>
-176-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:40:13-42:29
-177                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-177-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:17-91
-177-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:25-88
-178            </intent-filter>
-179            <intent-filter>
-179-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:43:13-45:29
-180                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-180-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:17-85
-180-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:25-82
-181            </intent-filter>
-182            <intent-filter>
-182-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:46:13-48:29
-183                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-183-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:17-88
-183-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:25-85
-184            </intent-filter>
-185            <intent-filter>
-185-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:49:13-51:29
-186                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-186-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:17-95
-186-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\8.8\transforms\e6bbbdf1f76b1de866671cdc4661ea59\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:25-92
-187            </intent-filter>
-188        </receiver>
-189
-190        <meta-data
-190-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\f783a7747481199177f9848d0563b95e\transformed\soloader-0.11.0\AndroidManifest.xml:12:9-14:37
-191            android:name="com.facebook.soloader.enabled"
-191-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\f783a7747481199177f9848d0563b95e\transformed\soloader-0.11.0\AndroidManifest.xml:13:13-57
-192            android:value="false" />
-192-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\8.8\transforms\f783a7747481199177f9848d0563b95e\transformed\soloader-0.11.0\AndroidManifest.xml:14:13-34
-193    </application>
-194
-195</manifest>
+124-->[com.google.firebase:firebase-auth-ktx:23.2.0] C:\Users\Jhonny\.gradle\caches\transforms-4\6d194db8451bc546352d741185cff5c2\transformed\firebase-auth-ktx-23.2.0\AndroidManifest.xml:11:13-13:85
+125                android:name="com.google.firebase.components:com.google.firebase.auth.ktx.FirebaseAuthLegacyRegistrar"
+125-->[com.google.firebase:firebase-auth-ktx:23.2.0] C:\Users\Jhonny\.gradle\caches\transforms-4\6d194db8451bc546352d741185cff5c2\transformed\firebase-auth-ktx-23.2.0\AndroidManifest.xml:12:17-119
+126                android:value="com.google.firebase.components.ComponentRegistrar" />
+126-->[com.google.firebase:firebase-auth-ktx:23.2.0] C:\Users\Jhonny\.gradle\caches\transforms-4\6d194db8451bc546352d741185cff5c2\transformed\firebase-auth-ktx-23.2.0\AndroidManifest.xml:13:17-82
+127            <meta-data
+127-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:69:13-71:85
+128                android:name="com.google.firebase.components:com.google.firebase.auth.FirebaseAuthRegistrar"
+128-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:70:17-109
+129                android:value="com.google.firebase.components.ComponentRegistrar" />
+129-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:71:17-82
+130            <meta-data
+130-->[com.google.firebase:firebase-database-ktx:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\9563a90a1f2a8b55740db7e88fe86d5a\transformed\firebase-database-ktx-21.0.0\AndroidManifest.xml:12:13-14:85
+131                android:name="com.google.firebase.components:com.google.firebase.database.ktx.FirebaseDatabaseLegacyRegistrar"
+131-->[com.google.firebase:firebase-database-ktx:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\9563a90a1f2a8b55740db7e88fe86d5a\transformed\firebase-database-ktx-21.0.0\AndroidManifest.xml:13:17-127
+132                android:value="com.google.firebase.components.ComponentRegistrar" />
+132-->[com.google.firebase:firebase-database-ktx:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\9563a90a1f2a8b55740db7e88fe86d5a\transformed\firebase-database-ktx-21.0.0\AndroidManifest.xml:14:17-82
+133            <meta-data
+133-->[com.google.firebase:firebase-database:20.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\c00156c1b52273add1fe09db764e2475\transformed\firebase-database-20.3.1\AndroidManifest.xml:29:13-31:85
+134                android:name="com.google.firebase.components:com.google.firebase.database.FirebaseDatabaseKtxRegistrar"
+134-->[com.google.firebase:firebase-database:20.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\c00156c1b52273add1fe09db764e2475\transformed\firebase-database-20.3.1\AndroidManifest.xml:30:17-120
+135                android:value="com.google.firebase.components.ComponentRegistrar" />
+135-->[com.google.firebase:firebase-database:20.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\c00156c1b52273add1fe09db764e2475\transformed\firebase-database-20.3.1\AndroidManifest.xml:31:17-82
+136            <meta-data
+136-->[com.google.firebase:firebase-database:20.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\c00156c1b52273add1fe09db764e2475\transformed\firebase-database-20.3.1\AndroidManifest.xml:32:13-34:85
+137                android:name="com.google.firebase.components:com.google.firebase.database.DatabaseRegistrar"
+137-->[com.google.firebase:firebase-database:20.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\c00156c1b52273add1fe09db764e2475\transformed\firebase-database-20.3.1\AndroidManifest.xml:33:17-109
+138                android:value="com.google.firebase.components.ComponentRegistrar" />
+138-->[com.google.firebase:firebase-database:20.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\c00156c1b52273add1fe09db764e2475\transformed\firebase-database-20.3.1\AndroidManifest.xml:34:17-82
+139            <meta-data
+139-->[com.google.firebase:firebase-crashlytics-ktx:19.4.3] C:\Users\Jhonny\.gradle\caches\transforms-4\60c7621bc08cae607e53c1e5a7b16f92\transformed\firebase-crashlytics-ktx-19.4.3\AndroidManifest.xml:24:13-26:85
+140                android:name="com.google.firebase.components:com.google.firebase.crashlytics.ktx.FirebaseCrashlyticsKtxRegistrar"
+140-->[com.google.firebase:firebase-crashlytics-ktx:19.4.3] C:\Users\Jhonny\.gradle\caches\transforms-4\60c7621bc08cae607e53c1e5a7b16f92\transformed\firebase-crashlytics-ktx-19.4.3\AndroidManifest.xml:25:17-130
+141                android:value="com.google.firebase.components.ComponentRegistrar" />
+141-->[com.google.firebase:firebase-crashlytics-ktx:19.4.3] C:\Users\Jhonny\.gradle\caches\transforms-4\60c7621bc08cae607e53c1e5a7b16f92\transformed\firebase-crashlytics-ktx-19.4.3\AndroidManifest.xml:26:17-82
+142            <meta-data
+142-->[com.google.firebase:firebase-crashlytics-ndk:19.4.3] C:\Users\Jhonny\.gradle\caches\transforms-4\9bee68f1dd86a98eca03e7426d82c329\transformed\firebase-crashlytics-ndk-19.4.3\AndroidManifest.xml:32:13-34:85
+143                android:name="com.google.firebase.components:com.google.firebase.crashlytics.ndk.CrashlyticsNdkRegistrar"
+143-->[com.google.firebase:firebase-crashlytics-ndk:19.4.3] C:\Users\Jhonny\.gradle\caches\transforms-4\9bee68f1dd86a98eca03e7426d82c329\transformed\firebase-crashlytics-ndk-19.4.3\AndroidManifest.xml:33:17-122
+144                android:value="com.google.firebase.components.ComponentRegistrar" />
+144-->[com.google.firebase:firebase-crashlytics-ndk:19.4.3] C:\Users\Jhonny\.gradle\caches\transforms-4\9bee68f1dd86a98eca03e7426d82c329\transformed\firebase-crashlytics-ndk-19.4.3\AndroidManifest.xml:34:17-82
+145            <meta-data
+145-->[com.google.firebase:firebase-crashlytics:18.6.4] C:\Users\Jhonny\.gradle\caches\transforms-4\fe9b474a1ff5d17ff8dbc7dff76255de\transformed\firebase-crashlytics-18.6.4\AndroidManifest.xml:15:13-17:85
+146                android:name="com.google.firebase.components:com.google.firebase.crashlytics.FirebaseCrashlyticsKtxRegistrar"
+146-->[com.google.firebase:firebase-crashlytics:18.6.4] C:\Users\Jhonny\.gradle\caches\transforms-4\fe9b474a1ff5d17ff8dbc7dff76255de\transformed\firebase-crashlytics-18.6.4\AndroidManifest.xml:16:17-126
+147                android:value="com.google.firebase.components.ComponentRegistrar" />
+147-->[com.google.firebase:firebase-crashlytics:18.6.4] C:\Users\Jhonny\.gradle\caches\transforms-4\fe9b474a1ff5d17ff8dbc7dff76255de\transformed\firebase-crashlytics-18.6.4\AndroidManifest.xml:17:17-82
+148            <meta-data
+148-->[com.google.firebase:firebase-crashlytics:18.6.4] C:\Users\Jhonny\.gradle\caches\transforms-4\fe9b474a1ff5d17ff8dbc7dff76255de\transformed\firebase-crashlytics-18.6.4\AndroidManifest.xml:18:13-20:85
+149                android:name="com.google.firebase.components:com.google.firebase.crashlytics.CrashlyticsRegistrar"
+149-->[com.google.firebase:firebase-crashlytics:18.6.4] C:\Users\Jhonny\.gradle\caches\transforms-4\fe9b474a1ff5d17ff8dbc7dff76255de\transformed\firebase-crashlytics-18.6.4\AndroidManifest.xml:19:17-115
+150                android:value="com.google.firebase.components.ComponentRegistrar" />
+150-->[com.google.firebase:firebase-crashlytics:18.6.4] C:\Users\Jhonny\.gradle\caches\transforms-4\fe9b474a1ff5d17ff8dbc7dff76255de\transformed\firebase-crashlytics-18.6.4\AndroidManifest.xml:20:17-82
+151            <meta-data
+151-->[com.google.firebase:firebase-analytics-ktx:22.4.0] C:\Users\Jhonny\.gradle\caches\transforms-4\32f78563af4c8f5eef4cd9056857d981\transformed\firebase-analytics-ktx-22.4.0\AndroidManifest.xml:11:13-13:85
+152                android:name="com.google.firebase.components:com.google.firebase.analytics.ktx.FirebaseAnalyticsLegacyRegistrar"
+152-->[com.google.firebase:firebase-analytics-ktx:22.4.0] C:\Users\Jhonny\.gradle\caches\transforms-4\32f78563af4c8f5eef4cd9056857d981\transformed\firebase-analytics-ktx-22.4.0\AndroidManifest.xml:12:17-129
+153                android:value="com.google.firebase.components.ComponentRegistrar" />
+153-->[com.google.firebase:firebase-analytics-ktx:22.4.0] C:\Users\Jhonny\.gradle\caches\transforms-4\32f78563af4c8f5eef4cd9056857d981\transformed\firebase-analytics-ktx-22.4.0\AndroidManifest.xml:13:17-82
+154            <meta-data
+154-->[com.google.firebase:firebase-sessions:1.2.4] C:\Users\Jhonny\.gradle\caches\transforms-4\ed75824e61065860d74d3f09630efe4d\transformed\firebase-sessions-1.2.4\AndroidManifest.xml:29:13-31:85
+155                android:name="com.google.firebase.components:com.google.firebase.sessions.FirebaseSessionsRegistrar"
+155-->[com.google.firebase:firebase-sessions:1.2.4] C:\Users\Jhonny\.gradle\caches\transforms-4\ed75824e61065860d74d3f09630efe4d\transformed\firebase-sessions-1.2.4\AndroidManifest.xml:30:17-117
+156                android:value="com.google.firebase.components.ComponentRegistrar" />
+156-->[com.google.firebase:firebase-sessions:1.2.4] C:\Users\Jhonny\.gradle\caches\transforms-4\ed75824e61065860d74d3f09630efe4d\transformed\firebase-sessions-1.2.4\AndroidManifest.xml:31:17-82
+157            <meta-data
+157-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:37:13-39:85
+158                android:name="com.google.firebase.components:com.google.firebase.analytics.connector.internal.AnalyticsConnectorRegistrar"
+158-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:38:17-139
+159                android:value="com.google.firebase.components.ComponentRegistrar" />
+159-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:39:17-82
+160            <meta-data
+160-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\cd64ecb77860e8789396651a9ae42486\transformed\firebase-installations-18.0.0\AndroidManifest.xml:15:13-17:85
+161                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar"
+161-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\cd64ecb77860e8789396651a9ae42486\transformed\firebase-installations-18.0.0\AndroidManifest.xml:16:17-130
+162                android:value="com.google.firebase.components.ComponentRegistrar" />
+162-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\cd64ecb77860e8789396651a9ae42486\transformed\firebase-installations-18.0.0\AndroidManifest.xml:17:17-82
+163            <meta-data
+163-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\cd64ecb77860e8789396651a9ae42486\transformed\firebase-installations-18.0.0\AndroidManifest.xml:18:13-20:85
+164                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+164-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\cd64ecb77860e8789396651a9ae42486\transformed\firebase-installations-18.0.0\AndroidManifest.xml:19:17-127
+165                android:value="com.google.firebase.components.ComponentRegistrar" />
+165-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\cd64ecb77860e8789396651a9ae42486\transformed\firebase-installations-18.0.0\AndroidManifest.xml:20:17-82
+166            <meta-data
+166-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\40c0e60072b38fb3b30d38262e996e29\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:12:13-14:85
+167                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
+167-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\40c0e60072b38fb3b30d38262e996e29\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:13:17-116
+168                android:value="com.google.firebase.components.ComponentRegistrar" />
+168-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\40c0e60072b38fb3b30d38262e996e29\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:14:17-82
+169            <meta-data
+169-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\f282ae8ca7e748bcfda4205a94547c8a\transformed\firebase-common-21.0.0\AndroidManifest.xml:35:13-37:85
+170                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
+170-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\f282ae8ca7e748bcfda4205a94547c8a\transformed\firebase-common-21.0.0\AndroidManifest.xml:36:17-109
+171                android:value="com.google.firebase.components.ComponentRegistrar" />
+171-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\f282ae8ca7e748bcfda4205a94547c8a\transformed\firebase-common-21.0.0\AndroidManifest.xml:37:17-82
+172            <meta-data
+172-->[com.google.firebase:firebase-datatransport:18.1.8] C:\Users\Jhonny\.gradle\caches\transforms-4\3c0ae11cf8c3390a7d8346149595fa4f\transformed\firebase-datatransport-18.1.8\AndroidManifest.xml:27:13-29:85
+173                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+173-->[com.google.firebase:firebase-datatransport:18.1.8] C:\Users\Jhonny\.gradle\caches\transforms-4\3c0ae11cf8c3390a7d8346149595fa4f\transformed\firebase-datatransport-18.1.8\AndroidManifest.xml:28:17-115
+174                android:value="com.google.firebase.components.ComponentRegistrar" />
+174-->[com.google.firebase:firebase-datatransport:18.1.8] C:\Users\Jhonny\.gradle\caches\transforms-4\3c0ae11cf8c3390a7d8346149595fa4f\transformed\firebase-datatransport-18.1.8\AndroidManifest.xml:29:17-82
+175        </service>
+176
+177        <provider
+177-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:23:9-27:38
+178            android:name="io.invertase.firebase.app.ReactNativeFirebaseAppInitProvider"
+178-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:24:13-88
+179            android:authorities="com.postsynchronizer.reactnativefirebaseappinitprovider"
+179-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-86
+180            android:exported="false"
+180-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:13-37
+181            android:initOrder="99" />
+181-->[:react-native-firebase_app] F:\Projetos\PostSynchronizer\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:13-35
+182
+183        <meta-data
+183-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:9-13:37
+184            android:name="io.sentry.auto-init"
+184-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-47
+185            android:value="false" />
+185-->[:sentry_react-native] F:\Projetos\PostSynchronizer\node_modules\@sentry\react-native\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:13:13-34
+186
+187        <provider
+187-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:9-26:20
+188            android:name="com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider"
+188-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:19:13-94
+189            android:authorities="com.postsynchronizer.provider"
+189-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:20:13-60
+190            android:exported="false"
+190-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:21:13-37
+191            android:grantUriPermissions="true" >
+191-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:22:13-47
+192            <meta-data
+192-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
+193                android:name="android.support.FILE_PROVIDER_PATHS"
+193-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
+194                android:resource="@xml/ivpusic_imagepicker_provider_paths" />
+194-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
+195        </provider>
+196
+197        <activity
+197-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:28:9-31:72
+198            android:name="com.yalantis.ucrop.UCropActivity"
+198-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:29:13-60
+199            android:exported="false"
+199-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:30:13-37
+200            android:theme="@style/Theme.AppCompat.Light.NoActionBar" /> <!-- Prompt Google Play services to install the backported photo picker module -->
+200-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:31:13-69
+201        <service
+201-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:34:9-45:19
+202            android:name="com.google.android.gms.metadata.ModuleDependencies"
+202-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:35:13-78
+203            android:enabled="false"
+203-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:36:13-36
+204            android:exported="false" >
+204-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:37:13-37
+205            <intent-filter>
+205-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:38:13-40:29
+206                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+206-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:39:17-94
+206-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:39:25-91
+207            </intent-filter>
+208
+209            <meta-data
+209-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:42:13-44:36
+210                android:name="photopicker_activity:0:required"
+210-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:43:17-63
+211                android:value="" />
+211-->[:react-native-image-crop-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-crop-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:44:17-33
+212        </service>
+213
+214        <provider
+214-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:9-16:20
+215            android:name="com.imagepicker.ImagePickerProvider"
+215-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:13-63
+216            android:authorities="com.postsynchronizer.imagepickerprovider"
+216-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:10:13-71
+217            android:exported="false"
+217-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:13-37
+218            android:grantUriPermissions="true" >
+218-->[:react-native-image-picker] F:\Projetos\PostSynchronizer\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-47
+219            <meta-data
+219-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-27:63
+220                android:name="android.support.FILE_PROVIDER_PATHS"
+220-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:17-67
+221                android:resource="@xml/imagepicker_provider_paths" />
+221-->[:react-native-webview] F:\Projetos\PostSynchronizer\node_modules\react-native-webview\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:17-60
+222        </provider>
+223
+224        <activity
+224-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:16:9-19:20
+225            android:name="com.proyecto26.inappbrowser.ChromeTabsManagerActivity"
+225-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:17:13-81
+226            android:exported="false" >
+226-->[:react-native-inappbrowser-reborn] F:\Projetos\PostSynchronizer\node_modules\react-native-inappbrowser-reborn\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:13-37
+227        </activity>
+228        <activity
+228-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\transforms-4\d835737f67cfa8c4ebe0e7ed2dcc3128\transformed\react-android-0.75.5-debug\AndroidManifest.xml:19:9-21:40
+229            android:name="com.facebook.react.devsupport.DevSettingsActivity"
+229-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\transforms-4\d835737f67cfa8c4ebe0e7ed2dcc3128\transformed\react-android-0.75.5-debug\AndroidManifest.xml:20:13-77
+230            android:exported="false" />
+230-->[com.facebook.react:react-android:0.75.5] C:\Users\Jhonny\.gradle\caches\transforms-4\d835737f67cfa8c4ebe0e7ed2dcc3128\transformed\react-android-0.75.5-debug\AndroidManifest.xml:21:13-37
+231        <activity
+231-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:29:9-46:20
+232            android:name="com.google.firebase.auth.internal.GenericIdpActivity"
+232-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:30:13-80
+233            android:excludeFromRecents="true"
+233-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:31:13-46
+234            android:exported="true"
+234-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:32:13-36
+235            android:launchMode="singleTask"
+235-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:33:13-44
+236            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+236-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:34:13-72
+237            <intent-filter>
+237-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:35:13-45:29
+238                <action android:name="android.intent.action.VIEW" />
+238-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:33:13-65
+238-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:33:21-62
+239
+240                <category android:name="android.intent.category.DEFAULT" />
+240-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:34:13-72
+240-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:34:23-69
+241                <category android:name="android.intent.category.BROWSABLE" />
+241-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:35:13-74
+241-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:35:23-71
+242
+243                <data
+243-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:36:13-47
+244                    android:host="firebase.auth"
+245                    android:path="/"
+246                    android:scheme="genericidp" />
+246-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:36:19-44
+247            </intent-filter>
+248        </activity>
+249        <activity
+249-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:47:9-64:20
+250            android:name="com.google.firebase.auth.internal.RecaptchaActivity"
+250-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:48:13-79
+251            android:excludeFromRecents="true"
+251-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:49:13-46
+252            android:exported="true"
+252-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:50:13-36
+253            android:launchMode="singleTask"
+253-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:51:13-44
+254            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+254-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:52:13-72
+255            <intent-filter>
+255-->[com.google.firebase:firebase-auth:22.3.1] C:\Users\Jhonny\.gradle\caches\transforms-4\917a3be6fd2b1ee1727640dde511ee14\transformed\firebase-auth-22.3.1\AndroidManifest.xml:53:13-63:29
+256                <action android:name="android.intent.action.VIEW" />
+256-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:33:13-65
+256-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:33:21-62
+257
+258                <category android:name="android.intent.category.DEFAULT" />
+258-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:34:13-72
+258-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:34:23-69
+259                <category android:name="android.intent.category.BROWSABLE" />
+259-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:35:13-74
+259-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:35:23-71
+260
+261                <data
+261-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:36:13-47
+262                    android:host="firebase.auth"
+263                    android:path="/"
+264                    android:scheme="recaptcha" />
+264-->F:\Projetos\PostSynchronizer\android\app\src\main\AndroidManifest.xml:36:19-44
+265            </intent-filter>
+266        </activity>
+267        <activity
+267-->[com.google.android.gms:play-services-auth:21.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2f64ffa2dedf93fa6add3248512e5c9\transformed\play-services-auth-21.3.0\AndroidManifest.xml:23:9-27:75
+268            android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
+268-->[com.google.android.gms:play-services-auth:21.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2f64ffa2dedf93fa6add3248512e5c9\transformed\play-services-auth-21.3.0\AndroidManifest.xml:24:13-93
+269            android:excludeFromRecents="true"
+269-->[com.google.android.gms:play-services-auth:21.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2f64ffa2dedf93fa6add3248512e5c9\transformed\play-services-auth-21.3.0\AndroidManifest.xml:25:13-46
+270            android:exported="false"
+270-->[com.google.android.gms:play-services-auth:21.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2f64ffa2dedf93fa6add3248512e5c9\transformed\play-services-auth-21.3.0\AndroidManifest.xml:26:13-37
+271            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+271-->[com.google.android.gms:play-services-auth:21.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2f64ffa2dedf93fa6add3248512e5c9\transformed\play-services-auth-21.3.0\AndroidManifest.xml:27:13-72
+272        <!--
+273            Service handling Google Sign-In user revocation. For apps that do not integrate with
+274            Google Sign-In, this service will never be started.
+275        -->
+276        <service
+276-->[com.google.android.gms:play-services-auth:21.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2f64ffa2dedf93fa6add3248512e5c9\transformed\play-services-auth-21.3.0\AndroidManifest.xml:33:9-37:51
+277            android:name="com.google.android.gms.auth.api.signin.RevocationBoundService"
+277-->[com.google.android.gms:play-services-auth:21.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2f64ffa2dedf93fa6add3248512e5c9\transformed\play-services-auth-21.3.0\AndroidManifest.xml:34:13-89
+278            android:exported="true"
+278-->[com.google.android.gms:play-services-auth:21.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2f64ffa2dedf93fa6add3248512e5c9\transformed\play-services-auth-21.3.0\AndroidManifest.xml:35:13-36
+279            android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION"
+279-->[com.google.android.gms:play-services-auth:21.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2f64ffa2dedf93fa6add3248512e5c9\transformed\play-services-auth-21.3.0\AndroidManifest.xml:36:13-107
+280            android:visibleToInstantApps="true" />
+280-->[com.google.android.gms:play-services-auth:21.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2f64ffa2dedf93fa6add3248512e5c9\transformed\play-services-auth-21.3.0\AndroidManifest.xml:37:13-48
+281
+282        <activity
+282-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Jhonny\.gradle\caches\transforms-4\055ee18c109b6fc6a9aecbeeb8de7278\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:9-173
+283            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+283-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Jhonny\.gradle\caches\transforms-4\055ee18c109b6fc6a9aecbeeb8de7278\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:19-85
+284            android:exported="false"
+284-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Jhonny\.gradle\caches\transforms-4\055ee18c109b6fc6a9aecbeeb8de7278\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:146-170
+285            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+285-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Jhonny\.gradle\caches\transforms-4\055ee18c109b6fc6a9aecbeeb8de7278\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:86-145
+286
+287        <service
+287-->[com.google.firebase:firebase-sessions:1.2.4] C:\Users\Jhonny\.gradle\caches\transforms-4\ed75824e61065860d74d3f09630efe4d\transformed\firebase-sessions-1.2.4\AndroidManifest.xml:22:9-25:40
+288            android:name="com.google.firebase.sessions.SessionLifecycleService"
+288-->[com.google.firebase:firebase-sessions:1.2.4] C:\Users\Jhonny\.gradle\caches\transforms-4\ed75824e61065860d74d3f09630efe4d\transformed\firebase-sessions-1.2.4\AndroidManifest.xml:23:13-80
+289            android:enabled="true"
+289-->[com.google.firebase:firebase-sessions:1.2.4] C:\Users\Jhonny\.gradle\caches\transforms-4\ed75824e61065860d74d3f09630efe4d\transformed\firebase-sessions-1.2.4\AndroidManifest.xml:24:13-35
+290            android:exported="false" />
+290-->[com.google.firebase:firebase-sessions:1.2.4] C:\Users\Jhonny\.gradle\caches\transforms-4\ed75824e61065860d74d3f09630efe4d\transformed\firebase-sessions-1.2.4\AndroidManifest.xml:25:13-37
+291
+292        <property
+292-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:30:9-32:61
+293            android:name="android.adservices.AD_SERVICES_CONFIG"
+293-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:31:13-65
+294            android:resource="@xml/ga_ad_services_config" />
+294-->[com.google.android.gms:play-services-measurement-api:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\780ad6a685603044ca78ffcbf5207cf9\transformed\play-services-measurement-api-22.0.0\AndroidManifest.xml:32:13-58
+295
+296        <provider
+296-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\f282ae8ca7e748bcfda4205a94547c8a\transformed\firebase-common-21.0.0\AndroidManifest.xml:23:9-28:39
+297            android:name="com.google.firebase.provider.FirebaseInitProvider"
+297-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\f282ae8ca7e748bcfda4205a94547c8a\transformed\firebase-common-21.0.0\AndroidManifest.xml:24:13-77
+298            android:authorities="com.postsynchronizer.firebaseinitprovider"
+298-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\f282ae8ca7e748bcfda4205a94547c8a\transformed\firebase-common-21.0.0\AndroidManifest.xml:25:13-72
+299            android:directBootAware="true"
+299-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\f282ae8ca7e748bcfda4205a94547c8a\transformed\firebase-common-21.0.0\AndroidManifest.xml:26:13-43
+300            android:exported="false"
+300-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\f282ae8ca7e748bcfda4205a94547c8a\transformed\firebase-common-21.0.0\AndroidManifest.xml:27:13-37
+301            android:initOrder="100" />
+301-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\f282ae8ca7e748bcfda4205a94547c8a\transformed\firebase-common-21.0.0\AndroidManifest.xml:28:13-36
+302
+303        <receiver
+303-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:29:9-33:20
+304            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
+304-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:30:13-85
+305            android:enabled="true"
+305-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:31:13-35
+306            android:exported="false" >
+306-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:32:13-37
+307        </receiver>
+308
+309        <service
+309-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:35:9-38:40
+310            android:name="com.google.android.gms.measurement.AppMeasurementService"
+310-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:36:13-84
+311            android:enabled="true"
+311-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:37:13-35
+312            android:exported="false" />
+312-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:38:13-37
+313        <service
+313-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:39:9-43:72
+314            android:name="com.google.android.gms.measurement.AppMeasurementJobService"
+314-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:40:13-87
+315            android:enabled="true"
+315-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:41:13-35
+316            android:exported="false"
+316-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:42:13-37
+317            android:permission="android.permission.BIND_JOB_SERVICE" />
+317-->[com.google.android.gms:play-services-measurement:22.0.0] C:\Users\Jhonny\.gradle\caches\transforms-4\0d0cbb05469c3780c63c2acaaea33b99\transformed\play-services-measurement-22.0.0\AndroidManifest.xml:43:13-69
+318
+319        <uses-library
+319-->[androidx.privacysandbox.ads:ads-adservices:1.0.0-beta05] C:\Users\Jhonny\.gradle\caches\transforms-4\f39f6b9da407e5bd3a9c9ec9255d8778\transformed\ads-adservices-1.0.0-beta05\AndroidManifest.xml:23:9-25:40
+320            android:name="android.ext.adservices"
+320-->[androidx.privacysandbox.ads:ads-adservices:1.0.0-beta05] C:\Users\Jhonny\.gradle\caches\transforms-4\f39f6b9da407e5bd3a9c9ec9255d8778\transformed\ads-adservices-1.0.0-beta05\AndroidManifest.xml:24:13-50
+321            android:required="false" /> <!-- 'android:authorities' must be unique in the device, across all apps -->
+321-->[androidx.privacysandbox.ads:ads-adservices:1.0.0-beta05] C:\Users\Jhonny\.gradle\caches\transforms-4\f39f6b9da407e5bd3a9c9ec9255d8778\transformed\ads-adservices-1.0.0-beta05\AndroidManifest.xml:25:13-37
+322        <provider
+322-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\f6bb1b12e52e2d757aa3594702a65ae4\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:12:9-15:40
+323            android:name="io.sentry.android.core.SentryInitProvider"
+323-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\f6bb1b12e52e2d757aa3594702a65ae4\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:13:13-69
+324            android:authorities="com.postsynchronizer.SentryInitProvider"
+324-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\f6bb1b12e52e2d757aa3594702a65ae4\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:14:13-70
+325            android:exported="false" />
+325-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\f6bb1b12e52e2d757aa3594702a65ae4\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:15:13-37
+326        <provider
+326-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\f6bb1b12e52e2d757aa3594702a65ae4\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:16:9-20:39
+327            android:name="io.sentry.android.core.SentryPerformanceProvider"
+327-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\f6bb1b12e52e2d757aa3594702a65ae4\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:17:13-76
+328            android:authorities="com.postsynchronizer.SentryPerformanceProvider"
+328-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\f6bb1b12e52e2d757aa3594702a65ae4\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:18:13-77
+329            android:exported="false"
+329-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\f6bb1b12e52e2d757aa3594702a65ae4\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:19:13-37
+330            android:initOrder="200" />
+330-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\f6bb1b12e52e2d757aa3594702a65ae4\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:20:13-36
+331        <provider
+331-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd55b3a8662d50654cc71d7d6ed5adb1\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+332            android:name="androidx.startup.InitializationProvider"
+332-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd55b3a8662d50654cc71d7d6ed5adb1\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+333            android:authorities="com.postsynchronizer.androidx-startup"
+333-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd55b3a8662d50654cc71d7d6ed5adb1\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+334            android:exported="false" >
+334-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd55b3a8662d50654cc71d7d6ed5adb1\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+335            <meta-data
+335-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd55b3a8662d50654cc71d7d6ed5adb1\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+336                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+336-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd55b3a8662d50654cc71d7d6ed5adb1\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+337                android:value="androidx.startup" />
+337-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd55b3a8662d50654cc71d7d6ed5adb1\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+338            <meta-data
+338-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\transforms-4\61d4ba97b4c9b869545ec3dd52cf8548\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
+339                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+339-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\transforms-4\61d4ba97b4c9b869545ec3dd52cf8548\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
+340                android:value="androidx.startup" />
+340-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\transforms-4\61d4ba97b4c9b869545ec3dd52cf8548\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
+341            <meta-data
+341-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:29:13-31:52
+342                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+342-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:30:17-85
+343                android:value="androidx.startup" />
+343-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:31:17-49
+344        </provider>
+345
+346        <meta-data
+346-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\Jhonny\.gradle\caches\transforms-4\bddb2c83f714456eb388ca59f93ac34d\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:9-122
+347            android:name="com.google.android.gms.version"
+347-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\Jhonny\.gradle\caches\transforms-4\bddb2c83f714456eb388ca59f93ac34d\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:20-65
+348            android:value="@integer/google_play_services_version" />
+348-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\Jhonny\.gradle\caches\transforms-4\bddb2c83f714456eb388ca59f93ac34d\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:66-119
+349
+350        <receiver
+350-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:34:9-52:20
+351            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+351-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:35:13-76
+352            android:directBootAware="false"
+352-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:36:13-44
+353            android:enabled="true"
+353-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:37:13-35
+354            android:exported="true"
+354-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:38:13-36
+355            android:permission="android.permission.DUMP" >
+355-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:39:13-57
+356            <intent-filter>
+356-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:40:13-42:29
+357                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+357-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:17-91
+357-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:25-88
+358            </intent-filter>
+359            <intent-filter>
+359-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:43:13-45:29
+360                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+360-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:17-85
+360-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:25-82
+361            </intent-filter>
+362            <intent-filter>
+362-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:46:13-48:29
+363                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+363-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:17-88
+363-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:25-85
+364            </intent-filter>
+365            <intent-filter>
+365-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:49:13-51:29
+366                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+366-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:17-95
+366-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\d49f002bf32b8e98d35cb9c55f7d8814\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:25-92
+367            </intent-filter>
+368        </receiver>
+369
+370        <service
+370-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\9ff1bb0ee853d9e90c0b44ba62f2bb58\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:28:9-34:19
+371            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+371-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\9ff1bb0ee853d9e90c0b44ba62f2bb58\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:29:13-103
+372            android:exported="false" >
+372-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\9ff1bb0ee853d9e90c0b44ba62f2bb58\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:30:13-37
+373            <meta-data
+373-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\9ff1bb0ee853d9e90c0b44ba62f2bb58\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:31:13-33:39
+374                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+374-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\9ff1bb0ee853d9e90c0b44ba62f2bb58\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:32:17-94
+375                android:value="cct" />
+375-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\9ff1bb0ee853d9e90c0b44ba62f2bb58\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:33:17-36
+376        </service>
+377        <service
+377-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\7059419531ea6ec43f25dfd0f815bdfc\transformed\transport-runtime-3.1.9\AndroidManifest.xml:26:9-30:19
+378            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+378-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\7059419531ea6ec43f25dfd0f815bdfc\transformed\transport-runtime-3.1.9\AndroidManifest.xml:27:13-117
+379            android:exported="false"
+379-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\7059419531ea6ec43f25dfd0f815bdfc\transformed\transport-runtime-3.1.9\AndroidManifest.xml:28:13-37
+380            android:permission="android.permission.BIND_JOB_SERVICE" >
+380-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\7059419531ea6ec43f25dfd0f815bdfc\transformed\transport-runtime-3.1.9\AndroidManifest.xml:29:13-69
+381        </service>
+382
+383        <receiver
+383-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\7059419531ea6ec43f25dfd0f815bdfc\transformed\transport-runtime-3.1.9\AndroidManifest.xml:32:9-34:40
+384            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+384-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\7059419531ea6ec43f25dfd0f815bdfc\transformed\transport-runtime-3.1.9\AndroidManifest.xml:33:13-132
+385            android:exported="false" />
+385-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Jhonny\.gradle\caches\transforms-4\7059419531ea6ec43f25dfd0f815bdfc\transformed\transport-runtime-3.1.9\AndroidManifest.xml:34:13-37
+386
+387        <meta-data
+387-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\transforms-4\102443bed827d90a4f92fdd6a63346c8\transformed\soloader-0.11.0\AndroidManifest.xml:12:9-14:37
+388            android:name="com.facebook.soloader.enabled"
+388-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\transforms-4\102443bed827d90a4f92fdd6a63346c8\transformed\soloader-0.11.0\AndroidManifest.xml:13:13-57
+389            android:value="false" />
+389-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Jhonny\.gradle\caches\transforms-4\102443bed827d90a4f92fdd6a63346c8\transformed\soloader-0.11.0\AndroidManifest.xml:14:13-34
+390    </application>
+391
+392</manifest>
