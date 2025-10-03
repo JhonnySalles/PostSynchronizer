@@ -32,7 +32,7 @@ import AuthTokenDao, { TumblrCredentials } from '../../dao/AuthTokenDao';
 import { requestGalleryPermission } from 'src/utils/permissions';
 import Logger from 'src/services/LoggerService';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import { DRAFT, ERROR, IDLE, PENDING, POSTED, PostStatusType, PostType, SUCCESS } from 'src/constants/app';
+import { DRAFT, ERROR, IDLE, PENDING, POSTED, PostType, SUCCESS } from 'src/constants/app';
 
 type SelectedImage = {
   path: string;
@@ -67,8 +67,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     mergeConnections,
     resetPostStatus,
     resetPosting,
-    // Ação para inicializar conexões (precisa ser adicionada na store)
-    // setConnections: setConnectionsInStore,
   } = usePostStore();
 
   const [isAdjustingImages, setIsAdjustingImages] = useState(false);
@@ -429,6 +427,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
+        resetPosting();
         resetPostStatus();
       };
 
@@ -457,6 +456,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
               platformsSuccess: finalResults.successful.join(', '),
               status: POSTED as PostType,
             });
+            resetPosting();
             resetPostStatus();
           }
         };
@@ -486,6 +486,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
+          resetPosting();
           resetPostStatus();
         } else {
           Toast.show({
@@ -598,6 +599,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         });
       }
 
+      resetPosting();
       resetPostStatus();
     } catch (error: any) {
       Logger.error(error, { message: `[Single Post Flow] Erro ao postar em ${platform}` });
