@@ -2,10 +2,10 @@ import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView, ScrollView, Text, Alert } from 'react-native';
 import { getStyles } from './styles';
-import LoginCard from '../../components/LoginCard';
+import PlatformCard from '../../components/PlatformCard';
 import { apiService } from 'src/services/ApiService';
 import { BLUESKY, THREADS, TUMBLR, UNKNOW, X } from 'src/constants/platforms';
-import AuthTokenDao, { Credentials } from 'src/dao/AuthTokenDao';
+import AuthTokenDao, { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import { useFocusEffect } from '@react-navigation/native';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import Logger from 'src/services/LoggerService';
@@ -146,12 +146,15 @@ const SettingsScreen = () => {
           </View>
         </View>
 
-        <LoginCard
+        <PlatformCard
           credential={
-            connections.find(c => c.platform === TUMBLR) || {
+            connections.find(c => c.platform === TUMBLR) ||
+            ({
               ...DEFAULT,
               platform: TUMBLR,
-            }
+              blogs: [],
+              blogName: '',
+            } as TumblrCredentials)
           }
           iconName="logo-tumblr"
           iconColor={colors.tumblr}
@@ -162,7 +165,7 @@ const SettingsScreen = () => {
           isConsulting={isConsulting === TUMBLR}
         />
 
-        <LoginCard
+        <PlatformCard
           credential={
             connections.find(c => c.platform === X) || {
               ...DEFAULT,
@@ -175,7 +178,7 @@ const SettingsScreen = () => {
           onStatusChange={credentials => handleStatusChange(credentials)}
         />
 
-        <LoginCard
+        <PlatformCard
           credential={
             connections.find(c => c.platform === THREADS) || {
               ...DEFAULT,
@@ -188,7 +191,7 @@ const SettingsScreen = () => {
           onStatusChange={credentials => handleStatusChange(credentials)}
         />
 
-        <LoginCard
+        <PlatformCard
           credential={
             connections.find(c => c.platform === BLUESKY) || {
               ...DEFAULT,
