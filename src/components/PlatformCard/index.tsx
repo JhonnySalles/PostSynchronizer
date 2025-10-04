@@ -8,7 +8,7 @@ import { TUMBLR } from 'src/constants/platforms';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useTheme } from '../../theme/ThemeProvider';
 
-interface LoginCardProps {
+interface PlatformCardProps {
   credential: Credentials;
   iconName: string;
   iconColor: string;
@@ -20,7 +20,7 @@ interface LoginCardProps {
   onCredentialsChange?: (credentials: Credentials) => void;
 }
 
-const LoginCard = ({
+const PlatformCard = ({
   credential,
   iconName,
   iconColor,
@@ -28,8 +28,7 @@ const LoginCard = ({
   isConsulting = false,
   onStatusChange,
   onCredentialsChange,
-}: LoginCardProps) => {
-  const [creds, setCreds] = useState<Credentials>(credential);
+}: PlatformCardProps) => {
   const [isOpening, setIsOpening] = useState(false);
   const [blogItems, setBlogItems] = useState<{ label: string; value: string }[]>([]);
 
@@ -37,30 +36,24 @@ const LoginCard = ({
   const styles = getStyles(colors);
 
   useEffect(() => {
-    setCreds(credential);
-    if (
-      credential.platform === TUMBLR &&
-      (creds as TumblrCredentials).blogs &&
-      (creds as TumblrCredentials).blogs.length > 0
-    )
-      setBlogItems(
-        (creds as TumblrCredentials).blogs.map<{ label: string; value: string }>(b => ({
-          label: b.title,
-          value: b.name,
-        })),
-      );
-    else setBlogItems([]);
+    // prettier-ignore
+    if (credential.platform === TUMBLR && (credential as TumblrCredentials).blogs.length > 0)
+        setBlogItems((credential as TumblrCredentials).blogs.map<{ label: string; value: string }>(b => ({label: b.title, value: b.name, })),);
+    else 
+        setBlogItems([]);
   }, [credential]);
 
   const handleConsultPress = () => {
-    if (onConsult) onConsult(creds);
+    // prettier-ignore
+    if (onConsult) 
+        onConsult(credential);
   };
 
   return (
     <View style={styles.cardContainer}>
       <View style={styles.header}>
         <Icon name={iconName} size={30} color={iconColor} />
-        <Text style={[styles.title, { color: iconColor }]}>{creds.platform}</Text>
+        <Text style={[styles.title, { color: iconColor }]}>{credential.platform}</Text>
 
         {isConsulting && (
           <View style={styles.activityIndicatorContainer}>
@@ -73,23 +66,22 @@ const LoginCard = ({
         <Text style={styles.switchLabel}>Ativo para postagem</Text>
         <Switch
           trackColor={{ false: colors.primaryOutherAccent, true: colors.primaryAccent }}
-          thumbColor={creds.active ? colors.primary : colors.primaryOuther}
+          thumbColor={credential.active ? colors.primary : colors.primaryOuther}
           ios_backgroundColor={colors.inactive}
           onValueChange={() => {
             const credenciais = { ...credential, active: !credential.active };
-            setCreds(credenciais);
             // prettier-ignore
             if (onStatusChange) 
                 onStatusChange(credenciais);
           }}
-          value={creds.active}
+          value={credential.active}
         />
       </View>
 
-      {creds.platform === TUMBLR && (
+      {credential.platform === TUMBLR && (
         <DropDownPicker
           open={isOpening}
-          value={(creds as TumblrCredentials).blogName}
+          value={(credential as TumblrCredentials).blogName}
           items={blogItems}
           setOpen={setIsOpening}
           setValue={callback => {
@@ -101,7 +93,6 @@ const LoginCard = ({
                 selected: b.name === callback((credential as TumblrCredentials).blogName),
               })),
             };
-            setCreds(credenciais);
             // prettier-ignore
             if (onCredentialsChange)
                 onCredentialsChange(credenciais);
@@ -121,7 +112,7 @@ const LoginCard = ({
         />
       )}
 
-      {creds.platform === TUMBLR && (
+      {credential.platform === TUMBLR && (
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
           <Button
             title={isConsulting ? 'Consultando...' : 'Consultar blogs'}
@@ -137,4 +128,4 @@ const LoginCard = ({
   );
 };
 
-export default LoginCard;
+export default PlatformCard;
