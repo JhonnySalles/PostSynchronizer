@@ -14,9 +14,10 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
 import java.lang.reflect.InvocationTargetException
 import com.google.firebase.FirebaseApp
+import cl.json.ShareApplication
 
 
-class MainApplication : Application(), ReactApplication {
+class MainApplication : Application(), ReactApplication, ShareApplication {
 
     override val reactNativeHost: ReactNativeHost =
         object : DefaultReactNativeHost(this) {
@@ -46,6 +47,10 @@ class MainApplication : Application(), ReactApplication {
             // If you opted-in for the New Architecture, we load the native entry point for this app.
             load()
         }
+    }
+
+    override fun getFileProviderAuthority(): String {
+        return "$packageName.provider"
     }
 
     private fun initializeFlipper(context: Context?, reactInstanceManager: ReactInstanceManager?) {

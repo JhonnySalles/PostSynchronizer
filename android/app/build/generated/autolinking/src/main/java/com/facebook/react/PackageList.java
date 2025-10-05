@@ -46,6 +46,8 @@ import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 // react-native-screens
 import com.swmansion.rnscreens.RNScreensPackage;
+// react-native-share
+import cl.json.RNSharePackage;
 // react-native-sqlite-storage
 import org.pgsqlite.SQLitePluginPackage;
 // react-native-vector-icons
@@ -115,6 +117,7 @@ public class PackageList {
       new RNInAppBrowserPackage(),
       new SafeAreaContextPackage(),
       new RNScreensPackage(),
+      new RNSharePackage(),
       new SQLitePluginPackage(),
       new VectorIconsPackage(),
       new RNCWebViewPackage()

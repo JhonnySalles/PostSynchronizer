@@ -18,4 +18,5 @@ string google_crash_reporting_api_key
 string google_storage_bucket
 string project_id
 style AppTheme
+xml filepaths
 xml network_security_config
