@@ -19,3 +19,17 @@ export const requestGalleryPermission = async (): Promise<boolean> => {
     return false;
   }
 };
+
+export const requestReadPermission = async (): Promise<boolean> => {
+  // prettier-ignore
+  if (Platform.OS !== 'android') 
+    return true;
+
+  if (Platform.Version >= 33) {
+    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES);
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+  } else {
+    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+  }
+};

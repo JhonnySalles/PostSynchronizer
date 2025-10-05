@@ -17,9 +17,22 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+
+            <data android:mimeType="*/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND_MULTIPLE" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+
+            <data android:mimeType="*/*" />
+        </intent>
         <intent>
             <action android:name="org.chromium.intent.action.PAY" />
         </intent>
@@ -37,6 +50,7 @@
         </intent>
     </queries>
 
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!--
@@ -91,6 +105,15 @@
             </intent-filter>
         </activity>
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.postsynchronizer.rnshare.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
         <provider
             android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
             android:authorities="com.postsynchronizer.fileprovider"
@@ -225,6 +248,17 @@
             android:name="com.proyecto26.inappbrowser.ChromeTabsManagerActivity"
             android:exported="false" >
         </activity>
+
+        <provider
+            android:name="cl.json.RNShareFileProvider"
+            android:authorities="com.postsynchronizer.rnshare.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/share_download_paths" />
+        </provider>
+
         <activity
             android:name="com.facebook.react.devsupport.DevSettingsActivity"
             android:exported="false" />

@@ -643,6 +643,58 @@
         }
       }
     },
+    "react-native-share": {
+      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-share",
+      "name": "react-native-share",
+      "platforms": {
+        "ios": {
+          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-share\\RNShare.podspec",
+          "version": "12.2.0",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-share\\android",
+          "packageImportPath": "import cl.json.RNSharePackage;",
+          "packageInstance": "new RNSharePackage()",
+          "buildTypes": [],
+          "libraryName": "RNShareSpec",
+          "componentDescriptors": [],
+          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-share/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": {
+          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-share",
+          "projects": [
+            {
+              "projectFile": "ReactNativeShare\\ReactNativeShare.vcxproj",
+              "projectName": "ReactNativeShare",
+              "projectLang": "cpp",
+              "projectGuid": "{bd58576e-3205-4762-8b1b-ea33774079b7}",
+              "directDependency": true,
+              "cppHeaders": [
+                "winrt/ReactNativeShare.h"
+              ],
+              "cppPackageProviders": [
+                "ReactNativeShare::ReactPackageProvider"
+              ],
+              "csNamespaces": [
+                "ReactNativeShare"
+              ],
+              "csPackageProviders": [
+                "ReactNativeShare.ReactPackageProvider"
+              ]
+            }
+          ],
+          "solutionFile": "ReactNativeShare.sln",
+          "nugetPackages": [],
+          "sourceDir": "windows"
+        }
+      }
+    },
     "react-native-sqlite-storage": {
       "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-sqlite-storage",
       "name": "react-native-sqlite-storage",
