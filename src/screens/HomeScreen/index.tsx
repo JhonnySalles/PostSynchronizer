@@ -14,6 +14,8 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
+import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { usePostStore } from '../../store/usePostStore';
 
@@ -67,6 +69,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     mergeConnections,
     resetPostStatus,
     resetPosting,
+    setSelectedImages,
   } = usePostStore();
 
   const [isAdjustingImages, setIsAdjustingImages] = useState(false);
@@ -147,6 +150,16 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     debounceTimeout.current = setTimeout(() => {
       fetchTagSuggestions(text);
     }, 500);
+  };
+
+  const handleTagsBlur = () => {
+    const currentTags = usePostStore.getState().tagsText;
+    const cleanedTags = currentTags.trim().replace(/,$/, '').trim();
+    // prettier-ignore
+    if (cleanedTags !== currentTags)
+      setTagsText(cleanedTags);
+
+    setTagSuggestions([]);
   };
 
   const handleSelectSuggestion = (tag: string) => {
@@ -397,7 +410,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         tags: currentTagsText
           .split(',')
           .map(t => t.trim())
-          .filter(t => t),
+          .filter(t => t)
+          .filter(Boolean),
         platformOptions: {
           tumblr: {
             blogName: tumblrCreds?.blogName || '',
@@ -573,7 +587,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         tags: tagsText
           .split(',')
           .map(t => t.trim())
-          .filter(t => t),
+          .filter(t => t)
+          .filter(Boolean),
         blogName: blogName,
       };
 
@@ -612,49 +627,60 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     toggleImagePlatform(imageIndex, platform);
   };
 
-  const renderImageItem = ({ item, index }: { item: SelectedImage; index: number }) => (
-    <TouchableOpacity onPress={() => handleImageClick(item)} style={styles.imageItemContainer}>
-      <Image source={{ uri: item.path }} style={styles.imageItem} />
-      <TouchableOpacity
-        style={styles.editIconOverlay}
-        onPress={() => handleAdjustSingleImage(index)}
-        disabled={isAdjustingImages}
-      >
-        <Icon name="crop-outline" size={20} color={colors.iconOverlay} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.removeIconOverlay}
-        onPress={() => handleRemoveImage(index)}
-        disabled={isAdjustingImages}
-      >
-        <Icon name="close-circle" size={20} color={colors.cancel} />
-      </TouchableOpacity>
+  const renderImageItem = ({ item, getIndex, drag, isActive }: RenderItemParams<SelectedImage>) => {
+    const index = getIndex();
+    // prettier-ignore
+    if (index === undefined)
+      return null;
 
-      <View style={styles.platformIconsOverlay}>
-        {connections
-          .filter(c => c.active)
-          .map(connection => {
-            const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === connection.platform);
-            // prettier-ignore
-            if (!platformInfo) 
+    return (
+      <TouchableOpacity
+        onLongPress={drag}
+        onPress={() => handleImageClick(item)}
+        style={[styles.imageItemContainer, { opacity: isActive ? 0.5 : 1 }]}
+      >
+        <Image source={{ uri: item.path }} style={styles.imageItem} />
+        <TouchableOpacity
+          style={styles.editIconOverlay}
+          onPress={() => handleAdjustSingleImage(index)}
+          disabled={isAdjustingImages}
+        >
+          <Icon name="crop-outline" size={20} color={colors.iconOverlay} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.removeIconOverlay}
+          onPress={() => handleRemoveImage(index)}
+          disabled={isAdjustingImages}
+        >
+          <Icon name="close-circle" size={20} color={colors.cancel} />
+        </TouchableOpacity>
+
+        <View style={styles.platformIconsOverlay}>
+          {connections
+            .filter(c => c.active)
+            .map(connection => {
+              const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === connection.platform);
+              // prettier-ignore
+              if (!platformInfo) 
                 return null;
 
-            const isSelected = item.platforms.includes(connection.platform);
-            const iconColor = isSelected ? getPlatformColor(connection.platform) : '#505050';
+              const isSelected = item.platforms.includes(connection.platform);
+              const iconColor = isSelected ? getPlatformColor(connection.platform) : '#505050';
 
-            return (
-              <TouchableOpacity
-                key={connection.platform}
-                onPress={() => handleToggleImagePlatform(index, connection.platform)}
-                style={styles.platformIconWrapper}
-              >
-                <Icon name={platformInfo.icon} size={22} color={iconColor} />
-              </TouchableOpacity>
-            );
-          })}
-      </View>
-    </TouchableOpacity>
-  );
+              return (
+                <TouchableOpacity
+                  key={connection.platform}
+                  onPress={() => handleToggleImagePlatform(index, connection.platform)}
+                  style={styles.platformIconWrapper}
+                >
+                  <Icon name={platformInfo.icon} size={22} color={iconColor} />
+                </TouchableOpacity>
+              );
+            })}
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const getPlatformColor = (platform: PlatformType): string => {
     switch (platform) {
@@ -704,143 +730,146 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView style={styles.container}>
+          <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
 
-        <TextInput
-          style={styles.textArea}
-          placeholder="O que você deseja postar?"
-          placeholderTextColor={colors.textSecondary}
-          multiline
-          value={postText}
-          onChangeText={handleTextChange}
-        />
+          <TextInput
+            style={styles.textArea}
+            placeholder="O que você deseja postar?"
+            placeholderTextColor={colors.textSecondary}
+            multiline
+            value={postText}
+            onChangeText={handleTextChange}
+          />
 
-        <View style={styles.countersContainer}>
-          {SOCIAL_PLATFORMS.map(platform => {
-            const platformInfo = connections.find(c => c.platform === platform.name);
-            // prettier-ignore
-            if (!platformInfo || !platformInfo.active) 
+          <View style={styles.countersContainer}>
+            {SOCIAL_PLATFORMS.map(platform => {
+              const platformInfo = connections.find(c => c.platform === platform.name);
+              // prettier-ignore
+              if (!platformInfo || !platformInfo.active) 
                 return null;
 
-            const limit = platform.limits || 0;
-            let tagsLimit = 0;
-            if (tagsText && tagsText.trim().length > 0)
-              switch (platform.name) {
-                case X:
-                case BLUESKY:
-                  tagsLimit =
-                    tagsText
-                      .trim()
-                      .split(',')
-                      .filter(tag => tag.trim())
-                      .map(tag => `#${tag.replace(/ /g, '')}`)
-                      .join(' ').length + (postText.length > 0 ? 1 : 0);
-                  break;
-              }
+              const limit = platform.limits || 0;
+              let tagsLimit = 0;
+              if (tagsText && tagsText.trim().length > 0)
+                switch (platform.name) {
+                  case X:
+                  case BLUESKY:
+                    tagsLimit =
+                      tagsText
+                        .trim()
+                        .split(',')
+                        .filter(tag => tag.trim())
+                        .map(tag => `#${tag.replace(/ /g, '')}`)
+                        .join(' ').length + (postText.length > 0 ? 1 : 0);
+                    break;
+                }
 
-            const remaining = limit - postText.length - tagsLimit;
+              const remaining = limit - postText.length - tagsLimit;
 
-            return (
-              <View key={platform.name} style={[styles.counterCard, remaining < 0 && styles.counterCardError]}>
-                <Icon name={platform.icon} size={16} style={styles.counterIcon} />
-                <Text style={styles.counterText}>{remaining}</Text>
-              </View>
-            );
-          })}
-        </View>
-
-        <TextInput
-          style={styles.tagsInput}
-          placeholder="Adicione tags separadas por vírgula"
-          placeholderTextColor={colors.textSecondary}
-          value={tagsText}
-          onChangeText={handleTagsChange}
-          onBlur={() => setTagSuggestions([])}
-        />
-
-        {tagSuggestions.length > 0 && (
-          <View style={styles.suggestionsContainer}>
-            <FlatList
-              data={tagSuggestions}
-              keyExtractor={(item, index) => item + index}
-              renderItem={({ item }) => (
-                <TouchableOpacity style={styles.suggestionItem} onPress={() => handleSelectSuggestion(item)}>
-                  <Text style={styles.suggestionText}>{item}</Text>
-                </TouchableOpacity>
-              )}
-            />
+              return (
+                <View key={platform.name} style={[styles.counterCard, remaining < 0 && styles.counterCardError]}>
+                  <Icon name={platform.icon} size={16} style={styles.counterIcon} />
+                  <Text style={styles.counterText}>{remaining}</Text>
+                </View>
+              );
+            })}
           </View>
-        )}
 
-        <Button
-          title={'Anexar Imagens'}
-          onPress={handleImagePicker}
-          style={styles.attachButton}
-          textStyle={styles.attachButtonText}
-          icon={'image-outline'}
-        />
+          <TextInput
+            style={styles.tagsInput}
+            placeholder="Adicione tags separadas por vírgula"
+            placeholderTextColor={colors.textSecondary}
+            value={tagsText}
+            onChangeText={handleTagsChange}
+            onBlur={handleTagsBlur}
+          />
 
-        {selectedImages.length > 0 && (
-          <>
-            <View style={styles.carouselContainer}>
+          {tagSuggestions.length > 0 && (
+            <View style={styles.suggestionsContainer}>
               <FlatList
-                data={selectedImages}
-                renderItem={renderImageItem}
-                keyExtractor={(item, index) => `${item.path}-${index}`}
-                horizontal
-                showsHorizontalScrollIndicator={false}
+                data={tagSuggestions}
+                keyExtractor={(item, index) => item + index}
+                renderItem={({ item }) => (
+                  <TouchableOpacity style={styles.suggestionItem} onPress={() => handleSelectSuggestion(item)}>
+                    <Text style={styles.suggestionText}>{item}</Text>
+                  </TouchableOpacity>
+                )}
               />
             </View>
+          )}
 
-            {isAdjustingImages && (
-              <View style={styles.progressContainer}>
-                <View style={[styles.progressBar, { width: `${imagesProgress * 100}%` }]} />
+          <Button
+            title={'Anexar Imagens'}
+            onPress={handleImagePicker}
+            style={styles.attachButton}
+            textStyle={styles.attachButtonText}
+            icon={'image-outline'}
+          />
+
+          {selectedImages.length > 0 && (
+            <>
+              <View style={styles.carouselContainer}>
+                <DraggableFlatList
+                  data={selectedImages}
+                  onDragEnd={({ data }) => setSelectedImages(data)}
+                  renderItem={renderImageItem}
+                  keyExtractor={(item, index) => `${item.path}-${index}`}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                />
               </View>
-            )}
-            <Button
-              title={'Corrigir Bordas de Todas Imagens'}
-              onPress={handleAdjustAllImages}
-              style={styles.adjustButton}
-              textStyle={styles.adjustButtonText}
-              disabled={isAdjustingImages}
-              icon="crop-outline"
-            />
-          </>
+
+              {isAdjustingImages && (
+                <View style={styles.progressContainer}>
+                  <View style={[styles.progressBar, { width: `${imagesProgress * 100}%` }]} />
+                </View>
+              )}
+              <Button
+                title={'Corrigir Bordas de Todas Imagens'}
+                onPress={handleAdjustAllImages}
+                style={styles.adjustButton}
+                textStyle={styles.adjustButtonText}
+                disabled={isAdjustingImages}
+                icon="crop-outline"
+              />
+            </>
+          )}
+        </ScrollView>
+
+        {isPosting && (
+          <View style={styles.progressContainer}>
+            <View style={[styles.progressBar, { width: `${postProgress}%` }]} />
+          </View>
         )}
-      </ScrollView>
+        <View style={styles.actionsContainer}>
+          <Button
+            title={'Cancelar'}
+            onPress={handleCancel}
+            style={[styles.actionButton, styles.cancelButton]}
+            textStyle={styles.cancelButtonText}
+            disabled={isPosting}
+          />
 
-      {isPosting && (
-        <View style={styles.progressContainer}>
-          <View style={[styles.progressBar, { width: `${postProgress}%` }]} />
+          <Button
+            title={'Rascunho'}
+            onPress={handleSaveDraft}
+            style={[styles.actionButton, styles.draftButton]}
+            textStyle={styles.draftButtonText}
+          />
+
+          <Button
+            title={'Postar'}
+            onPress={handlePost}
+            style={[styles.actionButton, styles.postButton]}
+            textStyle={styles.postButtonText}
+            disabled={isPosting}
+          />
         </View>
-      )}
-      <View style={styles.actionsContainer}>
-        <Button
-          title={'Cancelar'}
-          onPress={handleCancel}
-          style={[styles.actionButton, styles.cancelButton]}
-          textStyle={styles.cancelButtonText}
-          disabled={isPosting}
-        />
-
-        <Button
-          title={'Rascunho'}
-          onPress={handleSaveDraft}
-          style={[styles.actionButton, styles.draftButton]}
-          textStyle={styles.draftButtonText}
-        />
-
-        <Button
-          title={'Postar'}
-          onPress={handlePost}
-          style={[styles.actionButton, styles.postButton]}
-          textStyle={styles.postButtonText}
-          disabled={isPosting}
-        />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 };
 

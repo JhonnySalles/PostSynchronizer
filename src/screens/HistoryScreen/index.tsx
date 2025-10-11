@@ -100,12 +100,35 @@ const HistoryScreen = () => {
       Alert.alert('Permissão necessária', 'É preciso permitir o acesso às imagens para compartilhar.');
       return;
     }
+
     try {
-      // prettier-ignore
-      const formattedTags = item.tags ? item.tags.split(',').map(tag => `#${tag.trim().replace(/\s/g, '')}`).join(' ') : '';
+      let formattedTags = '';
+
+      if (item.tags) {
+        formattedTags = item.tags
+          .split(',')
+          .map(tag => tag.trim())
+          .filter(Boolean)
+          .map(tag =>
+            tag
+              .split(' ')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+              .join(''),
+          )
+          .map(tag => `#${tag}`)
+          .join(' ');
+      }
 
       // prettier-ignore
       const message = item.tags && formattedTags ? `${item.content || ''}\n\n${formattedTags}`.trim() : item.content || '';
+
+      Clipboard.setString(message);
+      Toast.show({
+        type: 'success',
+        text1: 'Copiado!',
+        text2: 'O texto da mensagem foi copiadas para a área de transferência.',
+        position: 'top',
+      });
 
       const imageFilenames: string[] = [];
       const base64Images =

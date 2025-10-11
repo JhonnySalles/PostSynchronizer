@@ -22,6 +22,7 @@ interface PostState {
   toggleImagePlatform: (imageIndex: number, platform: PlatformType) => void;
   removeImage: (index: number) => void;
   clearForm: () => void;
+  setSelectedImages: (images: SelectedImage[]) => void;
 
   // Ações para o fluxo de postagem
   startPosting: (platformsToPost: PlatformType[]) => void;
@@ -71,6 +72,7 @@ export const usePostStore = create<PostState>((set, get) => ({
       selectedImages: state.selectedImages.filter((_, index) => index !== indexToRemove),
     })),
   clearForm: () => set({ postText: '', selectedImages: [], editingPostId: null }),
+  setSelectedImages: images => set({ selectedImages: images }),
 
   startPosting: platformsToPost =>
     set(state => ({
