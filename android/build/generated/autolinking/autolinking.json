@@ -165,7 +165,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-firebase\\app\\RNFBApp.podspec",
-          "version": "21.6.1",
+          "version": "22.0.0",
           "configurations": [],
           "scriptPhases": [
             {
@@ -199,7 +199,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-firebase\\auth\\RNFBAuth.podspec",
-          "version": "21.6.1",
+          "version": "22.0.0",
           "configurations": [],
           "scriptPhases": []
         },

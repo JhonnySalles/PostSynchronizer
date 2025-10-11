@@ -3117,6 +3117,9 @@ drawable ic_mtrl_checked_circle
 drawable ic_mtrl_chip_checked_black
 drawable ic_mtrl_chip_checked_circle
 drawable ic_mtrl_chip_close_circle
+drawable ic_other_sign_in
+drawable ic_passkey
+drawable ic_password
 drawable ic_resume
 drawable ic_search_black_24
 drawable indeterminate_static
@@ -3982,6 +3985,7 @@ mipmap app_icon_monochrome
 mipmap app_icon_round
 plurals mtrl_badge_content_description
 raw firebase_common_keep
+raw firebase_crashlytics_keep
 string abc_action_bar_home_description
 string abc_action_bar_up_description
 string abc_action_menu_overflow_description
@@ -4010,6 +4014,8 @@ string abc_shareactionprovider_share_with
 string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
 string alert_description
+string android_credentials_TYPE_PASSWORD_CREDENTIAL
+string androidx_credentials_TYPE_PUBLIC_KEY_CREDENTIAL
 string androidx_startup
 string app_name
 string appbar_scrolling_view_behavior
@@ -4806,6 +4812,7 @@ style Theme_Design_NoActionBar
 style Theme_FullScreenDialog
 style Theme_FullScreenDialogAnimatedFade
 style Theme_FullScreenDialogAnimatedSlide
+style Theme_Hidden
 style Theme_Material3_Dark
 style Theme_Material3_Dark_BottomSheetDialog
 style Theme_Material3_Dark_Dialog
@@ -4883,6 +4890,7 @@ style Theme_MaterialComponents_Light_NoActionBar
 style Theme_MaterialComponents_Light_NoActionBar_Bridge
 style Theme_MaterialComponents_NoActionBar
 style Theme_MaterialComponents_NoActionBar_Bridge
+style Theme_PlayCore_Transparent
 style Theme_ReactNative_AppCompat_Light
 style Theme_ReactNative_AppCompat_Light_NoActionBar_FullScreen
 style Theme_ReactNative_TextInput_DefaultBackground
@@ -5555,7 +5563,6 @@ styleable ucrop_AspectRatioTextView ucrop_artv_ratio_title ucrop_artv_ratio_x uc
 styleable ucrop_UCropView ucrop_aspect_ratio_x ucrop_aspect_ratio_y ucrop_circle_dimmed_layer ucrop_dimmed_color ucrop_frame_color ucrop_frame_stroke_size ucrop_grid_color ucrop_grid_column_count ucrop_grid_row_count ucrop_grid_stroke_size ucrop_show_frame ucrop_show_grid ucrop_show_oval_crop_frame
 xml file_provider_paths
 xml filepaths
-xml ga_ad_services_config
 xml image_share_filepaths
 xml imagepicker_provider_paths
 xml ivpusic_imagepicker_provider_paths
