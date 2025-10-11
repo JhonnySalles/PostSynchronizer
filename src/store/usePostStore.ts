@@ -60,11 +60,13 @@ export const usePostStore = create<PostState>((set, get) => ({
       const newImages = [...state.selectedImages];
       const image = newImages[imageIndex];
       const platformIndex = image.platforms.indexOf(platform);
-      if (platformIndex > -1) {
+
+      // prettier-ignore
+      if (platformIndex > -1)
         image.platforms.splice(platformIndex, 1);
-      } else {
+      else
         image.platforms.push(platform);
-      }
+
       return { selectedImages: newImages };
     }),
   removeImage: indexToRemove =>
@@ -84,14 +86,20 @@ export const usePostStore = create<PostState>((set, get) => ({
     })),
   updatePostProgress: update =>
     set(state => {
-      if ('progress' in update) {
+      // prettier-ignore
+      if ('progress' in update) 
         return { postProgress: update.progress };
-      }
+
       if ('platform' in update && 'status' in update) {
+        const newConnections = state.connections.map(c =>
+          c.platform === update.platform ? { ...c, postStatus: update.status } : c,
+        );
+
+        const completedPlatforms = newConnections.filter(c => c.postStatus !== IDLE && c.postStatus !== PENDING).length;
+        const newProgress = newConnections.length > 0 ? (completedPlatforms / newConnections.length) * 100 : 0;
         return {
-          connections: state.connections.map(c =>
-            c.platform === update.platform ? { ...c, postStatus: update.status } : c,
-          ),
+          connections: newConnections,
+          postProgress: newProgress,
         };
       }
       return {};
@@ -99,8 +107,14 @@ export const usePostStore = create<PostState>((set, get) => ({
   finishPosting: summary =>
     set(state => {
       const finalConnections = state.connections.map(c => {
-        if (summary.successful.includes(c.platform)) return { ...c, postStatus: SUCCESS as PostStatusType };
-        if (summary.failed.includes(c.platform)) return { ...c, postStatus: ERROR as PostStatusType };
+        // prettier-ignore
+        if (summary.successful.includes(c.platform)) 
+            return { ...c, postStatus: SUCCESS as PostStatusType };
+
+        // prettier-ignore
+        if (summary.failed.includes(c.platform)) 
+            return { ...c, postStatus: ERROR as PostStatusType };
+
         return c;
       });
       return { postProgress: 1, connections: finalConnections };

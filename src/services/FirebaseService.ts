@@ -60,12 +60,20 @@ class FirebaseService {
         return;
 
       const data = snapshot.val();
-      const state = usePostStore.getState();
+      const { updatePostProgress } = usePostStore.getState();
 
-      const platformsWithStatus = Object.keys(data).filter(k => k !== '_summary');
-      const totalPlatformsToPost = state.connections.filter(c => c.postStatus !== IDLE).length;
-      const newProgress = platformsWithStatus.length / (totalPlatformsToPost || 1);
-      state.updatePostProgress({ progress: newProgress });
+      for (const platformKey in data) {
+        // prettier-ignore
+        if (platformKey == '_summary') 
+            continue;
+
+        const platformUpdate = data[platformKey];
+        if (platformUpdate && platformUpdate.status)
+          updatePostProgress({
+            platform: platformKey as PlatformType,
+            status: platformUpdate.status,
+          });
+      }
 
       const isFinish = !!data._summary;
 
