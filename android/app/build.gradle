@@ -164,10 +164,8 @@ dependencies {
         implementation jscFlavor
     }
 
-    implementation 'com.google.firebase:firebase-auth-ktx:23.0.0'
-    implementation 'com.google.firebase:firebase-database-ktx:20.3.0'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.5.0'
-    implementation 'com.google.firebase:firebase-analytics-ktx:21.3.0'
+    implementation platform('com.google.firebase:firebase-bom:33.5.1')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     debugImplementation('com.facebook.flipper:flipper:0.273.0') {
         exclude group:'com.facebook.fbjni'

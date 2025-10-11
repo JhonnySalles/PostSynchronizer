@@ -5,8 +5,8 @@ buildscript {
         compileSdkVersion = 34
         targetSdkVersion = 34
         ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.25"
-        kotlin_version = '1.9.25'
+        kotlinVersion = "2.0.0"
+        kotlin_version = '2.0.0'
     }
     repositories {
         google()
@@ -15,10 +15,10 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:8.4.1")
         classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0")
         classpath("com.google.firebase:firebase-appdistribution-gradle:5.1.1")
         classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.2")
-        classpath("com.google.gms:google-services:4.4.1")
+        classpath("com.google.gms:google-services:4.4.2")
     }
 }
 
@@ -26,21 +26,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-    }
-
-    configurations.all {
-        resolutionStrategy {
-            force 'com.google.firebase:firebase-auth:22.3.1'
-            force 'com.google.firebase:firebase-database:20.3.1'
-            force 'com.google.firebase:firebase-crashlytics:18.6.4'
-
-            force 'com.google.android.gms:play-services-measurement:22.0.0'
-            force 'com.google.android.gms:play-services-measurement-sdk:22.0.0'
-            force 'com.google.android.gms:play-services-measurement-api:22.0.0'
-            force 'com.google.android.gms:play-services-measurement-base:22.0.0'
-            force 'com.google.android.gms:play-services-measurement-impl:22.0.0'
-            force 'com.google.android.gms:play-services-measurement-sdk-api:22.0.0'
-        }
     }
 }
 
