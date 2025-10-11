@@ -653,60 +653,60 @@
 354-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2a4fcc0e29508b131d48d05e4051912\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:19-85
 355            android:exported="false"
 355-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2a4fcc0e29508b131d48d05e4051912\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:146-170
-356            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+356            android:theme="@android:style/Theme.Translucent.NoTitleBar" /> <!-- 'android:authorities' must be unique in the device, across all apps -->
 356-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Jhonny\.gradle\caches\transforms-4\d2a4fcc0e29508b131d48d05e4051912\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:86-145
-357
-358        <uses-library
-358-->[androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\Jhonny\.gradle\caches\transforms-4\969e9108ace8a84d938e731069f3c217\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:23:9-25:40
-359            android:name="android.ext.adservices"
-359-->[androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\Jhonny\.gradle\caches\transforms-4\969e9108ace8a84d938e731069f3c217\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:24:13-50
-360            android:required="false" /> <!-- 'android:authorities' must be unique in the device, across all apps -->
-360-->[androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\Jhonny\.gradle\caches\transforms-4\969e9108ace8a84d938e731069f3c217\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:25:13-37
+357        <provider
+357-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:12:9-15:40
+358            android:name="io.sentry.android.core.SentryInitProvider"
+358-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:13:13-69
+359            android:authorities="com.postsynchronizer.SentryInitProvider"
+359-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:14:13-70
+360            android:exported="false" />
+360-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:15:13-37
 361        <provider
-361-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:12:9-15:40
-362            android:name="io.sentry.android.core.SentryInitProvider"
-362-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:13:13-69
-363            android:authorities="com.postsynchronizer.SentryInitProvider"
-363-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:14:13-70
-364            android:exported="false" />
-364-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:15:13-37
-365        <provider
-365-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:16:9-20:39
-366            android:name="io.sentry.android.core.SentryPerformanceProvider"
-366-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:17:13-76
-367            android:authorities="com.postsynchronizer.SentryPerformanceProvider"
-367-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:18:13-77
-368            android:exported="false"
-368-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:19:13-37
-369            android:initOrder="200" />
-369-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:20:13-36
-370        <provider
-370-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
-371            android:name="androidx.startup.InitializationProvider"
-371-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
-372            android:authorities="com.postsynchronizer.androidx-startup"
-372-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
-373            android:exported="false" >
-373-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
-374            <meta-data
-374-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
-375                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-375-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
-376                android:value="androidx.startup" />
-376-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
-377            <meta-data
-377-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\transforms-4\510bba228e645061fba5a61ed7ca076c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
-378                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-378-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\transforms-4\510bba228e645061fba5a61ed7ca076c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
-379                android:value="androidx.startup" />
-379-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\transforms-4\510bba228e645061fba5a61ed7ca076c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
-380            <meta-data
-380-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\a8b2b59af62f70ecc880a646fa4dcfda\transformed\profileinstaller-1.4.1\AndroidManifest.xml:29:13-31:52
-381                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-381-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\a8b2b59af62f70ecc880a646fa4dcfda\transformed\profileinstaller-1.4.1\AndroidManifest.xml:30:17-85
-382                android:value="androidx.startup" />
-382-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\a8b2b59af62f70ecc880a646fa4dcfda\transformed\profileinstaller-1.4.1\AndroidManifest.xml:31:17-49
-383        </provider>
+361-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:16:9-20:39
+362            android:name="io.sentry.android.core.SentryPerformanceProvider"
+362-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:17:13-76
+363            android:authorities="com.postsynchronizer.SentryPerformanceProvider"
+363-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:18:13-77
+364            android:exported="false"
+364-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:19:13-37
+365            android:initOrder="200" />
+365-->[io.sentry:sentry-android-core:7.22.6] C:\Users\Jhonny\.gradle\caches\transforms-4\1e170ba94af376897bc220d00e54cb76\transformed\sentry-android-core-7.22.6\AndroidManifest.xml:20:13-36
+366        <provider
+366-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+367            android:name="androidx.startup.InitializationProvider"
+367-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+368            android:authorities="com.postsynchronizer.androidx-startup"
+368-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+369            android:exported="false" >
+369-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+370            <meta-data
+370-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+371                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+371-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+372                android:value="androidx.startup" />
+372-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Jhonny\.gradle\caches\transforms-4\fd7466f5236c1409559a94bef9cc90bf\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+373            <meta-data
+373-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\transforms-4\510bba228e645061fba5a61ed7ca076c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
+374                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+374-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\transforms-4\510bba228e645061fba5a61ed7ca076c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
+375                android:value="androidx.startup" />
+375-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Jhonny\.gradle\caches\transforms-4\510bba228e645061fba5a61ed7ca076c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
+376            <meta-data
+376-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\a8b2b59af62f70ecc880a646fa4dcfda\transformed\profileinstaller-1.4.1\AndroidManifest.xml:29:13-31:52
+377                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+377-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\a8b2b59af62f70ecc880a646fa4dcfda\transformed\profileinstaller-1.4.1\AndroidManifest.xml:30:17-85
+378                android:value="androidx.startup" />
+378-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Jhonny\.gradle\caches\transforms-4\a8b2b59af62f70ecc880a646fa4dcfda\transformed\profileinstaller-1.4.1\AndroidManifest.xml:31:17-49
+379        </provider>
+380
+381        <uses-library
+381-->[androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\Jhonny\.gradle\caches\transforms-4\969e9108ace8a84d938e731069f3c217\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:23:9-25:40
+382            android:name="android.ext.adservices"
+382-->[androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\Jhonny\.gradle\caches\transforms-4\969e9108ace8a84d938e731069f3c217\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:24:13-50
+383            android:required="false" />
+383-->[androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\Jhonny\.gradle\caches\transforms-4\969e9108ace8a84d938e731069f3c217\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:25:13-37
 384
 385        <meta-data
 385-->[com.google.android.gms:play-services-basement:18.5.0] C:\Users\Jhonny\.gradle\caches\transforms-4\486c5909e495d4051f22e67249c1bfc0\transformed\play-services-basement-18.5.0\AndroidManifest.xml:21:9-23:69
