@@ -36,12 +36,16 @@ import com.shopify.reactnative.skia.RNSkiaPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 // react-native-fs
 import com.rnfs.RNFSPackage;
+// react-native-gesture-handler
+import com.swmansion.gesturehandler.RNGestureHandlerPackage;
 // react-native-image-crop-picker
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 // react-native-image-picker
 import com.imagepicker.ImagePickerPackage;
 // react-native-inappbrowser-reborn
 import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
+// react-native-reanimated
+import com.swmansion.reanimated.ReanimatedPackage;
 // react-native-safe-area-context
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 // react-native-screens
@@ -112,9 +116,11 @@ public class PackageList {
       new RNSkiaPackage(),
       new RNDeviceInfo(),
       new RNFSPackage(),
+      new RNGestureHandlerPackage(),
       new PickerPackage(),
       new ImagePickerPackage(),
       new RNInAppBrowserPackage(),
+      new ReanimatedPackage(),
       new SafeAreaContextPackage(),
       new RNScreensPackage(),
       new RNSharePackage(),

@@ -353,11 +353,7 @@
         <activity
             android:name="com.google.android.gms.common.api.GoogleApiActivity"
             android:exported="false"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
-        <uses-library
-            android:name="android.ext.adservices"
-            android:required="false" /> <!-- 'android:authorities' must be unique in the device, across all apps -->
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" /> <!-- 'android:authorities' must be unique in the device, across all apps -->
         <provider
             android:name="io.sentry.android.core.SentryInitProvider"
             android:authorities="com.postsynchronizer.SentryInitProvider"
@@ -381,6 +377,10 @@
                 android:name="androidx.profileinstaller.ProfileInstallerInitializer"
                 android:value="androidx.startup" />
         </provider>
+
+        <uses-library
+            android:name="android.ext.adservices"
+            android:required="false" />
 
         <meta-data
             android:name="com.google.android.gms.version"
