@@ -120,7 +120,7 @@ export const getStyles = (colors: ColorsType) =>
     },
     // Container para as sugestões
     suggestionsContainer: {
-      maxHeight: 120,
+      maxHeight: 160,
       backgroundColor: colors.card,
       borderRadius: 8,
       borderWidth: 1,
@@ -128,8 +128,6 @@ export const getStyles = (colors: ColorsType) =>
       position: 'absolute',
       left: 15,
       right: 15,
-      top: 310,
-      zIndex: 1,
     },
     suggestionItem: {
       padding: 12,

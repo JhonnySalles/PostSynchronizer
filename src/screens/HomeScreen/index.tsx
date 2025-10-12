@@ -1,20 +1,13 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  FlatList,
-  Image,
-  ScrollView,
-  Keyboard,
-} from 'react-native';
+import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Alert, FlatList, Image, Keyboard } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
-import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
+import NestableDraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+  NestableScrollContainer,
+} from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { usePostStore } from '../../store/usePostStore';
@@ -75,8 +68,16 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const [isAdjustingImages, setIsAdjustingImages] = useState(false);
   const [imagesProgress, setImagesProgress] = useState(0);
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
+  const [tagCursor, setTagCursor] = useState({ start: 0, end: 0 });
+  const [tagInputLayout, setTagInputLayout] = useState<{ x: number; y: number; width: number; height: number } | null>(
+    null,
+  );
 
-  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const scrollRef = useRef(null);
+
+  const tagSuggestionTimeout = useRef<NodeJS.Timeout | null>(null);
+  const tagCloseTimeout = useRef<NodeJS.Timeout | null>(null);
+  const tagCleanupTimeout = useRef<NodeJS.Timeout | null>(null);
   const unsubscribeFirebase = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -116,8 +117,16 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   useEffect(() => {
     return () => {
       // prettier-ignore
-      if (debounceTimeout.current)
-        clearTimeout(debounceTimeout.current);
+      if (tagSuggestionTimeout.current)
+        clearTimeout(tagSuggestionTimeout.current);
+
+      // prettier-ignore
+      if (tagCleanupTimeout.current)
+        clearTimeout(tagCleanupTimeout.current);
+
+      // prettier-ignore
+      if (tagCloseTimeout.current)
+        clearTimeout(tagCloseTimeout.current);
 
       // prettier-ignore
       if (unsubscribeFirebase.current)
@@ -140,30 +149,83 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     }
   };
 
+  const handleTagsFocus = () => {
+    // prettier-ignore
+    if (tagCleanupTimeout.current)
+      clearTimeout(tagCleanupTimeout.current);
+
+    // prettier-ignore
+    if (tagCloseTimeout.current)
+      clearTimeout(tagCloseTimeout.current);
+  };
+
   const handleTagsChange = (text: string) => {
     setTagsText(text);
 
     // prettier-ignore
-    if (debounceTimeout.current) 
-        clearTimeout(debounceTimeout.current);
+    if (tagSuggestionTimeout.current) 
+        clearTimeout(tagSuggestionTimeout.current);
 
-    debounceTimeout.current = setTimeout(() => {
-      fetchTagSuggestions(text);
+    tagSuggestionTimeout.current = setTimeout(() => {
+      const cursorPosition = tagCursor.start;
+      const lastCommaIndex = text.lastIndexOf(',', cursorPosition - 1);
+      const startIndex = lastCommaIndex === -1 ? 0 : lastCommaIndex + 1;
+      let nextCommaIndex = text.indexOf(',', cursorPosition);
+      // prettier-ignore
+      if (nextCommaIndex === -1) 
+        nextCommaIndex = text.length;
+
+      const currentTag = text.substring(startIndex, nextCommaIndex).trim();
+
+      // prettier-ignore
+      if (currentTag) 
+        fetchTagSuggestions(currentTag);
+      else 
+        setTagSuggestions([]);
     }, 500);
   };
 
   const handleTagsBlur = () => {
-    const currentTags = usePostStore.getState().tagsText;
-    const cleanedTags = currentTags.trim().replace(/,$/, '').trim();
     // prettier-ignore
-    if (cleanedTags !== currentTags)
-      setTagsText(cleanedTags);
+    if (tagCleanupTimeout.current)
+      clearTimeout(tagCleanupTimeout.current);
 
-    setTagSuggestions([]);
+    // prettier-ignore
+    if (tagCloseTimeout.current)
+      clearTimeout(tagCloseTimeout.current);
+
+    tagCleanupTimeout.current = setTimeout(() => {
+      const currentTags = usePostStore.getState().tagsText;
+      const cleanedTags = currentTags.trim().replace(/,$/, '').trim();
+      // prettier-ignore
+      if (cleanedTags !== currentTags)
+        setTagsText(cleanedTags);
+    }, 3000);
+
+    tagCloseTimeout.current = setTimeout(() => {
+      setTagSuggestions([]);
+    }, 1000);
   };
 
   const handleSelectSuggestion = (tag: string) => {
-    setTagsText(tag + ', ');
+    const currentTags = tagsText;
+    const cursorPosition = tagCursor.start;
+
+    const lastCommaIndex = currentTags.lastIndexOf(',', cursorPosition - 1);
+    const startIndex = lastCommaIndex === -1 ? 0 : lastCommaIndex + 1;
+
+    let nextCommaIndex = currentTags.indexOf(',', cursorPosition);
+    // prettier-ignore
+    if (nextCommaIndex === -1)
+      nextCommaIndex = currentTags.length;
+
+    const textBefore = currentTags.substring(0, startIndex);
+    const textAfter = currentTags.substring(nextCommaIndex);
+
+    const trailingSpace = textAfter.length > 0 ? '' : ', ';
+    const newTagsText = `${textBefore.trim()} ${tag}${trailingSpace}${textAfter.trim()}`.trim().replace(/^,\s*/, '');
+
+    setTagsText(newTagsText);
     setTagSuggestions([]);
     Keyboard.dismiss();
   };
@@ -634,51 +696,53 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       return null;
 
     return (
-      <TouchableOpacity
-        onLongPress={drag}
-        onPress={() => handleImageClick(item)}
-        style={[styles.imageItemContainer, { opacity: isActive ? 0.5 : 1 }]}
-      >
-        <Image source={{ uri: item.path }} style={styles.imageItem} />
+      <ScaleDecorator>
         <TouchableOpacity
-          style={styles.editIconOverlay}
-          onPress={() => handleAdjustSingleImage(index)}
-          disabled={isAdjustingImages}
+          onLongPress={drag}
+          onPress={() => handleImageClick(item)}
+          style={[styles.imageItemContainer, { elevation: isActive ? 5 : 0 }, { opacity: isActive ? 0.5 : 1 }]}
         >
-          <Icon name="crop-outline" size={20} color={colors.iconOverlay} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.removeIconOverlay}
-          onPress={() => handleRemoveImage(index)}
-          disabled={isAdjustingImages}
-        >
-          <Icon name="close-circle" size={20} color={colors.cancel} />
-        </TouchableOpacity>
+          <Image source={{ uri: item.path }} style={styles.imageItem} />
+          <TouchableOpacity
+            style={styles.editIconOverlay}
+            onPress={() => handleAdjustSingleImage(index)}
+            disabled={isAdjustingImages}
+          >
+            <Icon name="crop-outline" size={20} color={colors.iconOverlay} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.removeIconOverlay}
+            onPress={() => handleRemoveImage(index)}
+            disabled={isAdjustingImages}
+          >
+            <Icon name="close-circle" size={20} color={colors.cancel} />
+          </TouchableOpacity>
 
-        <View style={styles.platformIconsOverlay}>
-          {connections
-            .filter(c => c.active)
-            .map(connection => {
-              const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === connection.platform);
-              // prettier-ignore
-              if (!platformInfo) 
+          <View style={styles.platformIconsOverlay}>
+            {connections
+              .filter(c => c.active)
+              .map(connection => {
+                const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === connection.platform);
+                // prettier-ignore
+                if (!platformInfo) 
                 return null;
 
-              const isSelected = item.platforms.includes(connection.platform);
-              const iconColor = isSelected ? getPlatformColor(connection.platform) : '#505050';
+                const isSelected = item.platforms.includes(connection.platform);
+                const iconColor = isSelected ? getPlatformColor(connection.platform) : '#505050';
 
-              return (
-                <TouchableOpacity
-                  key={connection.platform}
-                  onPress={() => handleToggleImagePlatform(index, connection.platform)}
-                  style={styles.platformIconWrapper}
-                >
-                  <Icon name={platformInfo.icon} size={22} color={iconColor} />
-                </TouchableOpacity>
-              );
-            })}
-        </View>
-      </TouchableOpacity>
+                return (
+                  <TouchableOpacity
+                    key={connection.platform}
+                    onPress={() => handleToggleImagePlatform(index, connection.platform)}
+                    style={styles.platformIconWrapper}
+                  >
+                    <Icon name={platformInfo.icon} size={22} color={iconColor} />
+                  </TouchableOpacity>
+                );
+              })}
+          </View>
+        </TouchableOpacity>
+      </ScaleDecorator>
     );
   };
 
@@ -732,7 +796,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView style={styles.container}>
+        <NestableScrollContainer ref={scrollRef} style={styles.container} nestedScrollEnabled={true}>
           <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
 
           <TextInput
@@ -783,23 +847,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             placeholder="Adicione tags separadas por vírgula"
             placeholderTextColor={colors.textSecondary}
             value={tagsText}
+            onSelectionChange={e => setTagCursor(e.nativeEvent.selection)}
+            onFocus={handleTagsFocus}
             onChangeText={handleTagsChange}
             onBlur={handleTagsBlur}
+            onLayout={event => setTagInputLayout(event.nativeEvent.layout)}
           />
-
-          {tagSuggestions.length > 0 && (
-            <View style={styles.suggestionsContainer}>
-              <FlatList
-                data={tagSuggestions}
-                keyExtractor={(item, index) => item + index}
-                renderItem={({ item }) => (
-                  <TouchableOpacity style={styles.suggestionItem} onPress={() => handleSelectSuggestion(item)}>
-                    <Text style={styles.suggestionText}>{item}</Text>
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
-          )}
 
           <Button
             title={'Anexar Imagens'}
@@ -812,13 +865,15 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           {selectedImages.length > 0 && (
             <>
               <View style={styles.carouselContainer}>
-                <DraggableFlatList
+                <NestableDraggableFlatList
                   data={selectedImages}
                   onDragEnd={({ data }) => setSelectedImages(data)}
                   renderItem={renderImageItem}
                   keyExtractor={(item, index) => `${item.path}-${index}`}
                   horizontal
                   showsHorizontalScrollIndicator={false}
+                  simultaneousHandlers={scrollRef}
+                  activationDistance={10}
                 />
               </View>
 
@@ -837,7 +892,30 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
               />
             </>
           )}
-        </ScrollView>
+        </NestableScrollContainer>
+
+        {tagSuggestions.length > 0 && tagInputLayout && (
+          <View
+            style={{
+              top: tagInputLayout.y + tagInputLayout.height,
+              width: tagInputLayout.width,
+              zIndex: 10,
+              ...styles.suggestionsContainer,
+            }}
+          >
+            <FlatList
+              data={tagSuggestions}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={styles.suggestionItem} onPress={() => handleSelectSuggestion(item)}>
+                  <Text style={styles.suggestionText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+              showsVerticalScrollIndicator={true}
+              nestedScrollEnabled={true}
+            />
+          </View>
+        )}
 
         {isPosting && (
           <View style={styles.progressContainer}>
