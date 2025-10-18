@@ -3,7 +3,7 @@ import auth from '@react-native-firebase/auth';
 import Logger from './LoggerService';
 import PostDao from 'src/dao/PostDao';
 import { PlatformType } from 'src/constants/platforms';
-import { IDLE, POSTED, PostType } from 'src/constants/app';
+import { POSTED, PostType } from 'src/constants/app';
 import { usePostStore } from 'src/store/usePostStore';
 
 export type FirebasePostUpdate = {

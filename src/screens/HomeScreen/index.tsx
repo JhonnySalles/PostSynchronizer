@@ -28,6 +28,7 @@ import { requestGalleryPermission } from 'src/utils/permissions';
 import Logger from 'src/services/LoggerService';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { DRAFT, ERROR, IDLE, PENDING, POSTED, PostType, SUCCESS } from 'src/constants/app';
+import { formatarData } from 'src/utils/util';
 
 type SelectedImage = {
   path: string;
@@ -488,7 +489,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         if (result.success) {
           Toast.show({
             type: 'success',
-            text1: 'Sucesso!',
+            text1: 'Processo Finalizado',
             text2: 'Postagem enviada para o servidor. Verifique o resultado nas redes sociais.',
             position: 'top',
             visibilityTime: 4000,
@@ -513,15 +514,29 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             updatePostProgress({ progress: update.progress });
             if (update.platform && update.status) {
               updatePostProgress({ platform: update.platform as PlatformType, status: update.status });
+              console.log('[Post Flow] Update de progresso:', update.status, update);
 
-              if (update.status === 'error')
-                Toast.show({
-                  type: 'error',
-                  text1: `Falha na postagem (${update.platform})`,
-                  text2: update.error || 'Falha ao enviar postagem.',
-                  position: 'top',
-                  visibilityTime: 4000,
-                });
+              switch (update.status) {
+                case 'error':
+                  Toast.show({
+                    type: 'error',
+                    text1: `Falha na postagem (${update.platform})`,
+                    text2: update.error || 'Falha ao enviar postagem.',
+                    position: 'top',
+                    visibilityTime: 4000,
+                  });
+                  break;
+                case 'scheduled':
+                  Toast.show({
+                    type: 'info',
+                    text1: `Postagem agendada (${update.platform})`,
+                    text2: `Postagem agendada para ${formatarData(update.publishTime)}.`,
+                    position: 'top',
+                    visibilityTime: 4000,
+                  });
+                  break;
+                default:
+              }
             }
           } else if (update.type === 'summary') {
             Logger.info('[Post Flow] Sumário final recebido:', update.summary);
@@ -580,7 +595,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       Logger.error(error, { message: '[Post Flow] Erro ao postar:' });
       Toast.show({
         type: 'error',
-        text1: 'Erro',
+        text1: 'Falha ao enviar postagem',
         text2: 'Ocorreu um erro ao processar sua postagem.',
         position: 'top',
         visibilityTime: 4000,
@@ -657,9 +672,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       const result = await apiService.postSingle(platform, payload);
       if (result.success) {
         Toast.show({
-          type: 'success',
-          text1: 'Sucesso!',
-          text2: `Post enviado com sucesso para ${platform}.`,
+          type: result.scheduled ? 'info' : 'success',
+          text1: result.scheduled ? `Postagem agendada (${platform})` : `Postagem enviada (${platform})`,
+          text2: result.scheduled ? result.message : `Postagem enviada com sucesso para ${platform}.`,
           position: 'top',
           visibilityTime: 4000,
         });
@@ -669,8 +684,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         updatePostProgress({ platform, status: ERROR });
         Toast.show({
           type: 'error',
-          text1: 'Falha ao enviar postagem',
-          text2: result.message,
+          text1: `Falha na postagem (${platform})`,
+          text2: result.message || 'Falha ao enviar postagem para a plataforma.',
           position: 'top',
           visibilityTime: 4000,
         });
@@ -681,7 +696,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     } catch (error: any) {
       Logger.error(error, { message: `[Single Post Flow] Erro ao postar em ${platform}` });
       updatePostProgress({ platform, status: ERROR });
-      Toast.show({ type: 'error', text1: `Falha ao enviar (${platform})`, text2: error.message });
+      Toast.show({
+        type: 'error',
+        text1: `Falha na postagem (${platform})`,
+        text2: error.message || 'Falha ao enviar postagem para a plataforma.',
+      });
     }
   };
 

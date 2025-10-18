@@ -26,7 +26,9 @@ interface PostState {
 
   // Ações para o fluxo de postagem
   startPosting: (platformsToPost: PlatformType[]) => void;
-  updatePostProgress: (update: { platform: PlatformType; status: 'success' | 'error' } | { progress: number }) => void;
+  updatePostProgress: (
+    update: { platform: PlatformType; status: 'success' | 'scheduled' | 'error' } | { progress: number },
+  ) => void;
   mergeConnections: (allPlatforms: PlatformType[], activePlatforms: PlatformType[]) => void;
   finishPosting: (summary: { successful: PlatformType[]; failed: PlatformType[] }) => void;
   resetPostStatus: () => void;
@@ -91,8 +93,21 @@ export const usePostStore = create<PostState>((set, get) => ({
         return { postProgress: update.progress };
 
       if ('platform' in update && 'status' in update) {
+        let status: PostStatusType;
+        switch (update.status) {
+          case 'error':
+            status = ERROR;
+            break;
+          case 'success':
+          case 'scheduled':
+            status = SUCCESS;
+            break;
+          default:
+            status = PENDING;
+        }
+
         const newConnections = state.connections.map(c =>
-          c.platform === update.platform ? { ...c, postStatus: update.status } : c,
+          c.platform === update.platform ? { ...c, postStatus: status } : c,
         );
 
         const completedPlatforms = newConnections.filter(c => c.postStatus !== IDLE && c.postStatus !== PENDING).length;

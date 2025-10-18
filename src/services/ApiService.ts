@@ -8,6 +8,7 @@ import { io, Socket } from 'socket.io-client';
 import EventEmitter from 'eventemitter3';
 import { PlatformType } from 'src/constants/platforms';
 import { firebaseService } from 'src/services/FirebaseService';
+import { formatarData } from 'src/utils/util';
 
 const JWT_TOKEN_KEY = 'api_jwt_token';
 const JWT_EXPIRES_AT_KEY = 'api_jwt_expires_at';
@@ -43,9 +44,10 @@ export interface SinglePostPayload {
 export interface ProgressUpdate {
   type: 'progress' | 'summary';
   platform?: string;
-  status?: 'success' | 'error';
+  status?: 'success' | 'scheduled' | 'error';
   progress?: number;
   error?: string | null;
+  publishTime?: string | null;
   summary?: {
     successful: string[];
     failed: string[];
@@ -320,7 +322,7 @@ class ApiService {
     platform: PlatformType,
     payload: Omit<SinglePostPayload, 'platforms'>,
     isFirst: boolean = true,
-  ): Promise<{ success: boolean; message?: string }> {
+  ): Promise<{ success: boolean; scheduled?: boolean; message?: string }> {
     try {
       Logger.info(`[ApiService] Enviando post individual para: ${platform}`);
 
@@ -334,7 +336,12 @@ class ApiService {
 
       if (response.status === 200 || response.status === 201) {
         Logger.info(`[ApiService] Post individual para ${platform} bem-sucedido.`);
-        return { success: true };
+        const scheduled = response.status === 201 || response.data.scheduled === true;
+        return {
+          success: true,
+          scheduled,
+          message: scheduled ? `Agendado para ${formatarData(response.data.publishTime)}.` : undefined,
+        };
       } else {
         const errorMsg = `Status inesperado ao postar em ${platform}: ${response.status}`;
         Logger.warn(`[ApiService] ${errorMsg}`);
