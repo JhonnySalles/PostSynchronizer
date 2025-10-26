@@ -614,18 +614,18 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       return;
     }
 
-    if (!postText.trim() && selectedImages.length === 0) {
+    const images = selectedImages.filter(
+      img => !img.platforms || img.platforms.length === 0 || img.platforms.includes(platform),
+    );
+
+    if (!postText.trim() && images.length === 0) {
       Alert.alert('Conteúdo Vazio', 'Escreva algo ou anexe uma imagem para postar.');
       return;
     }
 
-    if (platform === X || platform === BLUESKY) {
-      const twitterImageCount = selectedImages.filter(img => img.platforms.includes(X)).length;
-      const blueskyImageCount = selectedImages.filter(img => img.platforms.includes(BLUESKY)).length;
-      if (twitterImageCount > 4 || blueskyImageCount > 4) {
-        Alert.alert('Limite de Imagens Excedido', 'X (Twitter) e Bluesky aceitam no máximo 4 imagens.');
-        return;
-      }
+    if ((platform === X || platform === BLUESKY) && images.length > 4) {
+      Alert.alert('Limite de Imagens Excedido', 'X (Twitter) e Bluesky aceitam no máximo 4 imagens.');
+      return;
     }
 
     Toast.show({ type: 'info', text1: 'Enviando...', text2: `Preparando post para ${platform}.` });
@@ -633,7 +633,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     // Salva o post como rascunho antes de enviar
     const draftData = {
       content: postText,
-      images: selectedImages,
+      images: images,
       status: DRAFT as PostType,
       tags: tagsText,
       platformsSend: platform,
@@ -660,7 +660,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       const payload: SinglePostPayload = {
         platform,
         text: postText,
-        images: [...selectedImages],
+        images: images,
         tags: tagsText
           .split(',')
           .map(t => t.trim())
