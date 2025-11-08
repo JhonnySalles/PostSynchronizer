@@ -6,11 +6,20 @@
 // Includes from @react-native-async-storage/async-storage
 #include <winrt/ReactNativeAsyncStorage.h>
 
+// Includes from @react-native-clipboard/clipboard
+#include <winrt/Clipboard.h>
+
 // Includes from @react-native-picker/picker
 #include <winrt/ReactNativePicker.h>
 
+// Includes from react-native-device-info
+#include <winrt/RNDeviceInfoCPP.h>
+
 // Includes from react-native-screens
 #include <winrt/RNScreens.h>
+
+// Includes from react-native-share
+#include <winrt/ReactNativeShare.h>
 
 // Includes from react-native-sqlite-storage
 #include <winrt/SQLitePlugin.h>
@@ -25,10 +34,16 @@ void RegisterAutolinkedNativeModulePackages(winrt::Windows::Foundation::Collecti
 { 
     // IReactPackageProviders from @react-native-async-storage/async-storage
     packageProviders.Append(winrt::ReactNativeAsyncStorage::ReactPackageProvider());
+    // IReactPackageProviders from @react-native-clipboard/clipboard
+    packageProviders.Append(winrt::Clipboard::ReactPackageProvider());
     // IReactPackageProviders from @react-native-picker/picker
     packageProviders.Append(winrt::ReactNativePicker::ReactPackageProvider());
+    // IReactPackageProviders from react-native-device-info
+    packageProviders.Append(winrt::RNDeviceInfoCPP::ReactPackageProvider());
     // IReactPackageProviders from react-native-screens
     packageProviders.Append(winrt::RNScreens::ReactPackageProvider());
+    // IReactPackageProviders from react-native-share
+    packageProviders.Append(winrt::ReactNativeShare::ReactPackageProvider());
     // IReactPackageProviders from react-native-sqlite-storage
     packageProviders.Append(winrt::SQLitePlugin::ReactPackageProvider());
     // IReactPackageProviders from react-native-webview

@@ -1,6 +1,7 @@
 import { DRAFT, PostType } from 'src/constants/app';
 import { getDBConnection } from '../database';
 import Logger from 'src/services/LoggerService';
+import { PlatformType } from 'src/constants/platforms';
 
 export interface Post {
   id: number;
@@ -241,6 +242,27 @@ class PostDao {
       return posts;
     } catch (error) {
       Logger.error(error as Error, { message: '[Post Dao] Erro ao buscar posts pendentes.' });
+      throw error;
+    }
+  }
+
+  /**
+   * Consulta a quantidade de post de sucesso em uma determinada plataforma entre o periodo.
+   * @param {PlatformType} platform - Plataforma a ser consultada.
+   * @param {Date} startsWith - A data de início do período a ser considerado.
+   */
+  public async platformSuccessCount(platform: PlatformType, startsWith: Date): Promise<number> {
+    const db = await getDBConnection();
+    try {
+      const results = await db.executeSql(
+        `SELECT COUNT(*) AS qtd FROM posts WHERE Replace((',' || platforms_success || ','), ' ','') LIKE ? AND created_at >= ?`,
+        [`%,${platform},%`, startsWith.toISOString()],
+      );
+      return results[0].rows.item(0)['qtd'];
+    } catch (error) {
+      Logger.error(error as Error, {
+        message: `[Post Dao] Erro ao contar posts de sucesso para a plataforma ${platform}`,
+      });
       throw error;
     }
   }

@@ -40,6 +40,7 @@ type HomeScreenProps = BottomTabScreenProps<RootTabParamList, 'Home'>;
 const TAG_SEPARADOR = ';';
 const TAG_REMOVE_LAST_SEPARATOR_REGEX = /;$/;
 const TAG_REMOVE_SPACE_REGEX = /^;\s*/;
+const TWITTER_DAILY_POST_LIMIT = 15;
 
 const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const { colors } = useTheme();
@@ -442,11 +443,30 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       const currentTagsText = tagsText;
       const currentSelectedImages = [...selectedImages];
 
-      const platformsToPost = connections.filter(c => c.active).map(c => c.platform);
-      const sortedPlatformsToPost: PlatformType[] = platformsToPost.filter(p => p !== THREADS);
-      // prettier-ignore
-      if (platformsToPost.includes(THREADS)) 
-        sortedPlatformsToPost.push(THREADS);
+      const platformsToPost: PlatformType[] = connections.filter(c => c.active).map(c => c.platform);
+      let platformsSend: PlatformType[] = connections.filter(c => c.active).map(c => c.platform);
+      let twitterRateLimited = false;
+
+      if (platformsSend.includes(X)) {
+        try {
+          const now = new Date();
+          const startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          if ((await PostDao.platformSuccessCount(X, startDate)) >= TWITTER_DAILY_POST_LIMIT) {
+            platformsSend = platformsToPost.filter(p => p !== X);
+            twitterRateLimited = true;
+
+            if (platformsSend.length === 0) {
+              Alert.alert(
+                'Postagem Cancelada',
+                'A única plataforma selecionada (Twitter) está com o limite de postagens atingido. Tente novamente mais tarde.',
+              );
+              return;
+            }
+          }
+        } catch (error: Error | any) {
+          Logger.error(error, { message: '[Home Screen] Erro ao verificar o limite de postagens do Twitter.' });
+        }
+      }
 
       startPosting(platformsToPost);
 
@@ -470,10 +490,22 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
       unsubscribeFirebase.current = firebaseService.listenForPostUpdates(postId, handleFirebaseFinish);
 
+      if (twitterRateLimited) {
+        updatePostProgress({ platform: X, status: ERROR });
+        Toast.show({
+          type: 'error',
+          text1: 'Falha no Twitter',
+          text2: 'Limite de postagens do Twitter atingido (15 posts por 24h).',
+          position: 'top',
+          visibilityTime: 4000,
+        });
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+
       const tumblrCreds = await AuthTokenDao.getCredentialsForPlatform<TumblrCredentials>(TUMBLR);
       const payload: PostPayload = {
         postId,
-        platforms: sortedPlatformsToPost,
+        platforms: platformsSend,
         text: currentPostText,
         images: currentSelectedImages,
         tags: currentTagsText
