@@ -6,7 +6,7 @@ import { API_BASE_URL, API_USERNAME, API_PASSWORD, API_ACCESS_TOKEN } from '@env
 import AuthTokenDao, { TumblrBlogs, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import { io, Socket } from 'socket.io-client';
 import EventEmitter from 'eventemitter3';
-import { PlatformType } from 'src/constants/platforms';
+import { PlatformType, THREADS } from 'src/constants/platforms';
 import { firebaseService } from 'src/services/FirebaseService';
 import { formatarData } from 'src/utils/util';
 
@@ -225,16 +225,28 @@ class ApiService {
     options: { forceNoWebSocket?: boolean } = {},
     isFirst: boolean = true,
   ): Promise<{ success: boolean; message?: string; isWebSocket?: boolean }> {
+    const platforms = payload.platforms.filter(p => p !== THREADS);
+    // prettier-ignore
+    if (payload.platforms.includes(THREADS)) 
+        platforms.push(THREADS);
+
     if (options.forceNoWebSocket) {
       try {
-        Logger.warn('[ApiService] Forçando postagem sem WebSocket por solicitação do usuário.');
-        const { ...backendPayload } = {
-          ...payload,
+        Logger.info(
+          `[ApiService] Forçando postagem sem WebSocket por solicitação do usuário para: ${platforms.join(', ')}`,
+        );
+
+        const backendPayload = {
+          platforms: platforms,
+          text: payload.text,
           images: await this.prepareImagesAll(payload.images),
+          tags: payload.tags,
+          platformOptions: payload.platformOptions,
           instanceId: firebaseService.getAppInstanceId(),
           postId: payload.postId,
           socketId: undefined,
         };
+
         const response = await this.axiosInstance.post('/publish-all/post', backendPayload);
         // prettier-ignore
         if (response.status === 202) {
@@ -270,11 +282,11 @@ class ApiService {
     this.eventEmitter.addListener('post_update', progressListener);
 
     try {
-      Logger.info(`[ApiService] Enviando post para: ${payload.platforms.join(', ')}`);
+      Logger.info(`[ApiService] Enviando post para: ${platforms.join(', ')}`);
 
       const backendPayload = {
         socketId: this.socket.id,
-        platforms: payload.platforms,
+        platforms: platforms,
         text: payload.text,
         images: await this.prepareImagesAll(payload.images),
         tags: payload.tags,
