@@ -37,6 +37,10 @@ type SelectedImage = {
 
 type HomeScreenProps = BottomTabScreenProps<RootTabParamList, 'Home'>;
 
+const TAG_SEPARADOR = ';';
+const TAG_REMOVE_LAST_SEPARATOR_REGEX = /;$/;
+const TAG_REMOVE_SPACE_REGEX = /^;\s*/;
+
 const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
@@ -169,9 +173,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
     tagSuggestionTimeout.current = setTimeout(() => {
       const cursorPosition = tagCursor.start;
-      const lastCommaIndex = text.lastIndexOf(',', cursorPosition - 1);
+      const lastCommaIndex = text.lastIndexOf(TAG_SEPARADOR, cursorPosition - 1);
       const startIndex = lastCommaIndex === -1 ? 0 : lastCommaIndex + 1;
-      let nextCommaIndex = text.indexOf(',', cursorPosition);
+      let nextCommaIndex = text.indexOf(TAG_SEPARADOR, cursorPosition);
       // prettier-ignore
       if (nextCommaIndex === -1) 
         nextCommaIndex = text.length;
@@ -197,7 +201,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
     tagCleanupTimeout.current = setTimeout(() => {
       const currentTags = usePostStore.getState().tagsText;
-      const cleanedTags = currentTags.trim().replace(/,$/, '').trim();
+      const cleanedTags = currentTags.trim().replace(TAG_REMOVE_LAST_SEPARATOR_REGEX, '').trim();
       // prettier-ignore
       if (cleanedTags !== currentTags)
         setTagsText(cleanedTags);
@@ -212,10 +216,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     const currentTags = tagsText;
     const cursorPosition = tagCursor.start;
 
-    const lastCommaIndex = currentTags.lastIndexOf(',', cursorPosition - 1);
+    const lastCommaIndex = currentTags.lastIndexOf(TAG_SEPARADOR, cursorPosition - 1);
     const startIndex = lastCommaIndex === -1 ? 0 : lastCommaIndex + 1;
 
-    let nextCommaIndex = currentTags.indexOf(',', cursorPosition);
+    let nextCommaIndex = currentTags.indexOf(TAG_SEPARADOR, cursorPosition);
     // prettier-ignore
     if (nextCommaIndex === -1)
       nextCommaIndex = currentTags.length;
@@ -223,8 +227,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     const textBefore = currentTags.substring(0, startIndex);
     const textAfter = currentTags.substring(nextCommaIndex);
 
-    const trailingSpace = textAfter.length > 0 ? '' : ', ';
-    const newTagsText = `${textBefore.trim()} ${tag}${trailingSpace}${textAfter.trim()}`.trim().replace(/^,\s*/, '');
+    const trailingSpace = textAfter.length > 0 ? '' : TAG_SEPARADOR + ' ';
+    const newTagsText = `${textBefore.trim()} ${tag}${trailingSpace}${textAfter.trim()}`
+      .trim()
+      .replace(TAG_REMOVE_SPACE_REGEX, '');
 
     setTagsText(newTagsText);
     setTagSuggestions([]);
@@ -471,7 +477,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         text: currentPostText,
         images: currentSelectedImages,
         tags: currentTagsText
-          .split(',')
+          .split(TAG_SEPARADOR)
           .map(t => t.trim())
           .filter(t => t)
           .filter(Boolean),
@@ -633,7 +639,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     // Salva o post como rascunho antes de enviar
     const draftData = {
       content: postText,
-      images: images,
+      images: selectedImages,
       status: DRAFT as PostType,
       tags: tagsText,
       platformsSend: platform,
@@ -662,7 +668,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         text: postText,
         images: images,
         tags: tagsText
-          .split(',')
+          .split(TAG_SEPARADOR)
           .map(t => t.trim())
           .filter(t => t)
           .filter(Boolean),
@@ -863,7 +869,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
           <TextInput
             style={styles.tagsInput}
-            placeholder="Adicione tags separadas por vírgula"
+            placeholder="Adicione tags separadas por ponto e vírgula (;)"
             placeholderTextColor={colors.textSecondary}
             value={tagsText}
             onSelectionChange={e => setTagCursor(e.nativeEvent.selection)}

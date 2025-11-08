@@ -5,7 +5,7 @@ import RNFS from 'react-native-fs';
 import Logger from 'src/services/LoggerService';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 
-const BLACK_THRESHOLD = 30; // Tolerância para o "preto" (0-255). Ajuda com JPEGs.
+const BLACK_THRESHOLD = 2; // Tolerância para o "preto" (0-255). Ajuda com JPEGs.
 
 class ImageProcessingService {
   /**
@@ -54,13 +54,17 @@ class ImageProcessingService {
     const imageData = Skia.Data.fromBase64(base64);
     const image = Skia.Image.MakeImageFromEncoded(imageData);
 
-    if (!image) return null;
+    // prettier-ignore
+    if (!image) 
+        return null;
 
     const { width, height } = image.getImageInfo();
     const verticalCenter = Math.floor(height / 2);
 
     const pixels = image.readPixels(0, 0, image.getImageInfo());
-    if (!pixels) return null;
+    // prettier-ignore
+    if (!pixels) 
+        return null;
 
     let leftBound = 0;
     for (let x = 0; x < width; x++) {
@@ -108,7 +112,9 @@ class ImageProcessingService {
       processedUris.push(newUri);
 
       const progress = (i + 1) / totalImages;
-      if (onProgress) onProgress(progress);
+      // prettier-ignore
+      if (onProgress) 
+        onProgress(progress);
     }
     return processedUris;
   }
