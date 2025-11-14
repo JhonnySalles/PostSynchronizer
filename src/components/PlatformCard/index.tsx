@@ -37,7 +37,7 @@ const PlatformCard = ({
 
   useEffect(() => {
     // prettier-ignore
-    if (credential.platform === TUMBLR && (credential as TumblrCredentials).blogs.length > 0)
+    if (credential.platform === TUMBLR && (credential as TumblrCredentials).blogs && (credential as TumblrCredentials).blogs.length > 0)
         setBlogItems((credential as TumblrCredentials).blogs.map<{ label: string; value: string }>(b => ({label: b.title, value: b.name, })),);
     else 
         setBlogItems([]);
