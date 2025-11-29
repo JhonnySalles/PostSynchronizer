@@ -22,6 +22,8 @@ import { SOCIAL_PLATFORMS } from 'src/constants/platforms';
 
 type HistoryScreenNavigationProp = BottomTabNavigationProp<RootTabParamList, 'History'>;
 
+const TAG_SEPARADOR = ';';
+
 const HistoryScreen = () => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
@@ -106,7 +108,7 @@ const HistoryScreen = () => {
 
       if (item.tags) {
         formattedTags = item.tags
-          .split(',')
+          .split(TAG_SEPARADOR)
           .map(tag => tag.trim())
           .filter(Boolean)
           .map(tag =>
