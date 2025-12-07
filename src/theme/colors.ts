@@ -18,6 +18,7 @@ export interface ColorsType {
   success: string;
   error: string;
   inactive: string;
+  disabledPlatform: string;
   shadown: string;
   iconOverlay: string;
 
@@ -47,6 +48,7 @@ const lightColors: ColorsType = {
   success: '#28a745',
   error: '#dc3545',
   inactive: '#808080',
+  disabledPlatform: '#000000',
   shadown: '#000000',
   iconOverlay: '#ffffff',
 
@@ -76,6 +78,7 @@ const darkColors: ColorsType = {
   success: '#28a745',
   error: '#dc3545',
   inactive: '#bfbfbf',
+  disabledPlatform: '#ffffff',
   shadown: '#000000',
   iconOverlay: '#ffffff',
 

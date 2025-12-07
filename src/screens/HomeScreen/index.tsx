@@ -84,6 +84,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     setSelectedImages,
   } = usePostStore();
 
+  const [disabledPlatforms, setDisabledPlatforms] = useState<PlatformType[]>([]);
   const [isAdjustingImages, setIsAdjustingImages] = useState(false);
   const [imagesProgress, setImagesProgress] = useState(0);
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
@@ -168,6 +169,22 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         unsubscribeFirebase.current();
     };
   }, []);
+
+  const handleToggleDisable = (platform: PlatformType) => {
+    const connection = connections.find(c => c.platform === platform);
+
+    // prettier-ignore
+    if (!connection || !connection.active) 
+        return;
+
+    setDisabledPlatforms(prev => {
+      // prettier-ignore
+      if (prev.includes(platform))
+        return prev.filter(p => p !== platform);
+      else
+        return [...prev, platform];
+    });
+  };
 
   const handleTextChange = (text: string) => {
     setPostText(text);
@@ -437,10 +454,16 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   };
 
   const handlePost = async () => {
-    const connectedPlatforms = connections.filter(conn => conn.active).map(conn => conn.platform);
+    const platformsToPost = connections
+      .filter(conn => conn.active && !disabledPlatforms.includes(conn.platform))
+      .map(conn => conn.platform);
 
-    if (connectedPlatforms.length === 0) {
-      Alert.alert('Nenhuma Conta Conectada', 'Vá para as Configurações para conectar suas contas primeiro.');
+    if (platformsToPost.length === 0) {
+      // prettier-ignore
+      if (!connections.find(c => c.active))
+        Alert.alert('Nenhuma Conta Conectada', 'Vá para as Configurações para conectar suas contas primeiro.');
+      else
+        Alert.alert('Nenhuma Conta Conectada', 'É necessário selecionar pelo menos uma conta para postar.');
       return;
     }
 
@@ -472,8 +495,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       const currentTagsText = tagsText;
       const currentSelectedImages = [...selectedImages];
 
-      const platformsToPost: PlatformType[] = connections.filter(c => c.active).map(c => c.platform);
-      let platformsSend: PlatformType[] = connections.filter(c => c.active).map(c => c.platform);
+      let platformsSend: PlatformType[] = [...platformsToPost];
       let twitterRateLimited = false;
 
       if (platformsSend.includes(X)) {
@@ -853,6 +875,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     if (!connection) 
         return colors.inactive;
 
+    // prettier-ignore
+    if (disabledPlatforms.includes(platform))
+      return colors.disabledPlatform;
+
     switch (connection.postStatus) {
       case PENDING:
         return colors.tertiary;
@@ -871,6 +897,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       <TouchableOpacity
         key={platformInfo.name}
         style={styles.statusIconWrapper}
+        onPress={() => handleToggleDisable(platformInfo.name)}
         onLongPress={() => handlePostToSingle(platformInfo.name)}
         delayLongPress={500}
       >
