@@ -1,5 +1,17 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Alert, FlatList, Image, Keyboard } from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  FlatList,
+  Image,
+  Keyboard,
+  AppState,
+  AppStateStatus,
+} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -45,6 +57,7 @@ const TWITTER_DAILY_POST_LIMIT = 15;
 const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
+  const appState = useRef(AppState.currentState);
 
   const {
     postText,
@@ -85,6 +98,22 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const tagCloseTimeout = useRef<NodeJS.Timeout | null>(null);
   const tagCleanupTimeout = useRef<NodeJS.Timeout | null>(null);
   const unsubscribeFirebase = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      // prettier-ignore
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') 
+            apiService.healthCheck();
+
+      appState.current = nextAppState;
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    apiService.healthCheck();
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (route.params?.postToEdit) {

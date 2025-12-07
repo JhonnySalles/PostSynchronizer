@@ -403,6 +403,18 @@ class ApiService {
       return [];
     }
   }
+
+  public async healthCheck(): Promise<void> {
+    try {
+      Logger.info('[ApiService] Realizando Health Check para aquecer a API...');
+
+      await this.axiosInstance.get('/health', { timeout: 5000 });
+
+      Logger.info('[ApiService] API está online e pronta.');
+    } catch (error) {
+      Logger.warn('[ApiService] Health Check falhou ou API está dormindo.', error);
+    }
+  }
 }
 
 export const apiService = new ApiService();
