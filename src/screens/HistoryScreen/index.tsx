@@ -1,5 +1,16 @@
-import React, { useState, useCallback } from 'react';
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  Alert,
+  TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
@@ -22,14 +33,20 @@ import { SOCIAL_PLATFORMS } from 'src/constants/platforms';
 
 type HistoryScreenNavigationProp = BottomTabNavigationProp<RootTabParamList, 'History'>;
 
-const TAG_SEPARADOR = ';';
+const TAG_SEPARATOR = ';';
+const FILTER_REGEX = /\b(tag|status|data):(?:"([^"]*)"|([^"\s]+))/gi;
 
 const HistoryScreen = () => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
   const [history, setHistory] = useState<PostHistoryItem[]>([]);
+  const [filteredHistory, setFilteredHistory] = useState<PostHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const navigation = useNavigation<HistoryScreenNavigationProp>();
 
@@ -50,6 +67,111 @@ const HistoryScreen = () => {
       fetchHistory();
     }, []),
   );
+
+  useEffect(() => {
+    let result = history;
+    let contentSearch = query;
+    const activeFilters: { key: string; value: string }[] = [];
+
+    contentSearch = query.replace(FILTER_REGEX, (match, key, quotedValue, unquotedValue) => {
+      const value = quotedValue || unquotedValue;
+      activeFilters.push({ key: key.toLowerCase(), value: value.toLowerCase() });
+      return '';
+    });
+
+    contentSearch = contentSearch.replace(/\s+/g, ' ').trim().toLowerCase();
+
+    // prettier-ignore
+    if (contentSearch) 
+        result = result.filter(item => item.content?.toLowerCase().includes(contentSearch));
+
+    if (activeFilters.length > 0) {
+      result = result.filter(item => {
+        return activeFilters.every(filter => {
+          // prettier-ignore
+          if (filter.key === 'tag')
+            return item.tags?.toLowerCase().includes(filter.value);
+
+          if (filter.key === 'status') {
+            const itemStatus = item.status === 'posted' ? 'postado' : 'rascunho';
+            return itemStatus.includes(filter.value) || item.status.includes(filter.value);
+          }
+
+          if (filter.key === 'data') {
+            const itemDate = new Date(item.created_at).toLocaleDateString('pt-BR');
+            return itemDate.includes(filter.value);
+          }
+
+          return true;
+        });
+      });
+    }
+
+    setFilteredHistory(result);
+  }, [history, query]);
+
+  const updateSuggestions = (text: string) => {
+    setQuery(text);
+
+    const tokens = text.split(/\s+/);
+    const currentToken = tokens[tokens.length - 1].toLowerCase();
+
+    if (!currentToken) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    let newSuggestions: string[] = [];
+    const prefixes = ['tag:', 'status:', 'data:'];
+
+    // prettier-ignore
+    if (!currentToken.includes(':')) {
+      const matchingPrefixes = prefixes.filter(p => p.startsWith(currentToken));
+      if (matchingPrefixes.length > 0) 
+        newSuggestions = matchingPrefixes;
+    } else {
+      const [prefix, rawValue] = currentToken.split(':');
+      const value = rawValue ? rawValue.replace(/^"/, '') : '';
+
+      if (prefix === 'tag') {
+        const allTags = new Set<string>();
+        history.forEach(h => {
+          if (h.tags)
+            h.tags.split(TAG_SEPARATOR).forEach(t => allTags.add(t.trim().toLowerCase()));
+        });
+        newSuggestions = Array.from(allTags)
+          .filter(t => t.includes(value))
+          .map(t => `tag:"${t}"`);
+      } else if (prefix === 'status')
+        newSuggestions = ['status:"postado"', 'status:"rascunho"'].filter(s => s.includes(value) || s.includes(`"${value}`),);
+      else if (prefix === 'data') {
+        const allDates = new Set<string>();
+        history.forEach(h => {
+          if (h.created_at) {
+            const dateFormatted = new Date(h.created_at).toLocaleDateString('pt-BR');
+            allDates.add(dateFormatted);
+          }
+        });
+        newSuggestions = Array.from(allDates)
+          .filter(d => d.includes(value))
+          .map(d => `data:"${d}"`);
+      }
+    }
+
+    setSuggestions(newSuggestions.slice(0, 5));
+    setShowSuggestions(newSuggestions.length > 0);
+  };
+
+  const handleSuggestionPress = (suggestion: string) => {
+    const tokens = query.split(/\s+/);
+    tokens.pop();
+    tokens.push(suggestion);
+
+    const newQuery = tokens.join(' ') + ' ';
+    setQuery(newQuery);
+    setShowSuggestions(false);
+  };
 
   const handleItemPress = (item: PostHistoryItem) => {
     const postToEdit: PostDraftData = {
@@ -108,7 +230,7 @@ const HistoryScreen = () => {
 
       if (item.tags) {
         formattedTags = item.tags
-          .split(TAG_SEPARADOR)
+          .split(TAG_SEPARATOR)
           .map(tag => tag.trim())
           .filter(Boolean)
           .map(tag =>
@@ -244,18 +366,70 @@ const HistoryScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <Icon name="search-outline" size={20} color={colors.textSecondary} style={{ marginRight: 8 }} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder='Busca... (Ex: "noticia" tag:"news" status:"postado")'
+              placeholderTextColor={colors.textSecondary}
+              value={query}
+              onChangeText={updateSuggestions}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            {query.length > 0 && (
+              <TouchableOpacity
+                onPress={() => {
+                  setQuery('');
+                  setShowSuggestions(false);
+                }}
+              >
+                <Icon name="close-circle" size={18} color={colors.textSecondary} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+
+      {showSuggestions && suggestions.length > 0 && (
+        <View style={styles.suggestionsListContainer}>
+          <FlatList
+            data={suggestions}
+            keyExtractor={item => item}
+            keyboardShouldPersistTaps="handled"
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.suggestionItem} onPress={() => handleSuggestionPress(item)}>
+                <Text style={styles.suggestionText}>
+                  {item.includes(':') ? (
+                    <>
+                      {item.split(':')[0]}:<Text style={{ fontWeight: 'bold' }}>{item.split(':')[1]}</Text>
+                    </>
+                  ) : (
+                    item
+                  )}
+                </Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      )}
+
       <LoadingIndicator visible={isLoading} text="Carregando histórico..." />
 
-      {history.length === 0 ? (
+      {filteredHistory.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Nenhuma postagem ou rascunho encontrado.</Text>
         </View>
       ) : (
         <FlatList
-          data={history}
+          data={filteredHistory}
           renderItem={renderItem}
           keyExtractor={item => item.id.toString()}
           style={styles.container}
+          contentContainerStyle={{ paddingBottom: 80 }}
+          onScroll={() => setShowSuggestions(false)}
         />
       )}
     </SafeAreaView>
