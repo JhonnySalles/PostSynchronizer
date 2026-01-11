@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 3,
-      "versionName": "1.0.2",
-      "outputFile": "post-synchronizer-v1.0.2-debug.apk"
+      "versionCode": 4,
+      "versionName": "1.0.3",
+      "outputFile": "post-synchronizer-v1.0.3-debug.apk"
     }
   ],
   "elementType": "File",

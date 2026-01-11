@@ -168,7 +168,11 @@ const HistoryScreen = () => {
     tokens.pop();
     tokens.push(suggestion);
 
-    const newQuery = tokens.join(' ') + ' ';
+    let newQuery = tokens.join(' ');
+    // prettier-ignore
+    if (!suggestion.endsWith(':')) 
+        newQuery = newQuery + ' ';
+
     setQuery(newQuery);
     setShowSuggestions(false);
   };

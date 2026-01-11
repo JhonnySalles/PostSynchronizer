@@ -1,4 +1,4 @@
-#Sat Nov 08 08:16:46 BRT 2025
+#Sun Jan 11 14:23:22 BRT 2026
 base.0=F\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
 base.1=F\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
 base.2=F\:\\Projetos\\PostSynchronizer\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
