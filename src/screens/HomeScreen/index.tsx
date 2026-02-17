@@ -681,6 +681,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
+          PostDao.update(postId!, { platformsSuccess: UNKNOW, status: POSTED as PostType });
         }
       };
 
