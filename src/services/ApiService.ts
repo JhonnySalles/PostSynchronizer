@@ -42,6 +42,7 @@ export interface SinglePostPayload {
 }
 
 export interface ProgressUpdate {
+  postId?: string;
   type: 'progress' | 'summary';
   platform?: string;
   status?: 'success' | 'scheduled' | 'error';

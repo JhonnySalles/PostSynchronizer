@@ -632,10 +632,15 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             const finalResults = update.summary! as { successful: PlatformType[]; failed: PlatformType[] };
             finishPosting(finalResults);
 
-            PostDao.update(postId!, {
-              platformsSuccess: finalResults.successful.join(', '),
-              status: POSTED as PostType,
-            });
+            if (update.postId) {
+              const postId = Number.parseInt(update.postId, 10);
+              if (!isNaN(postId))
+                PostDao.update(postId, {
+                  platformsSuccess: finalResults.successful.join(', '),
+                  status: POSTED as PostType,
+                });
+            }
+
             resetPosting();
             resetPostStatus();
           }
