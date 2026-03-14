@@ -79,10 +79,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     finishPosting,
     mergeConnections,
     resetPostStatus,
-    resetPosting,
     setSelectedImages,
   } = usePostStore();
 
+  const [awaitPosting, setAwaitPosting] = useState(false);
   const [disabledPlatforms, setDisabledPlatforms] = useState<PlatformType[]>([]);
   const [isAdjustingImages, setIsAdjustingImages] = useState(false);
   const [imagesProgress, setImagesProgress] = useState(0);
@@ -144,7 +144,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       };
 
       fetchConnections();
-      resetPosting();
+      setAwaitPosting(false);
     }, []),
   );
 
@@ -506,6 +506,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         }
       }
 
+      setAwaitPosting(true);
       startPosting(platformsToPost);
 
       const draftData = {
@@ -557,6 +558,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       };
 
       const postWithoutFeedback = async () => {
+        setAwaitPosting(false);
         startPosting(platformsToPost);
         const result = await apiService.postAll(payload, () => {}, { forceNoWebSocket: true });
         // prettier-ignore
@@ -578,7 +580,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-        resetPosting();
         resetPostStatus();
       };
 
@@ -626,13 +627,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                 });
             }
 
-            resetPosting();
             resetPostStatus();
           }
         };
 
         const result = await apiService.postAll(payload, handleProgressUpdate);
-
+        setAwaitPosting(false);
         if (!result.success && result.isWebSocket) {
           resetPostStatus();
           Alert.alert(
@@ -651,7 +651,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-          resetPosting();
           resetPostStatus();
         } else {
           Toast.show({
@@ -668,6 +667,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       await postWithFeedback();
     } catch (error: Error | any) {
       Logger.error(error, { message: '[Post Flow] Erro ao postar:' });
+      setAwaitPosting(false);
       Toast.show({
         type: 'error',
         text1: 'Falha ao enviar postagem',
@@ -700,7 +700,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
     Toast.show({ type: 'info', text1: 'Enviando...', text2: `Preparando post para ${platform}.` });
 
-    // Salva o post como rascunho antes de enviar
     const draftData = {
       content: postText,
       images: selectedImages,
@@ -710,6 +709,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     };
 
     try {
+      setAwaitPosting(true);
       let postId = editingPostId;
       // prettier-ignore
       if (postId) 
@@ -760,11 +760,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           visibilityTime: 4000,
         });
       }
-
-      resetPosting();
+      setAwaitPosting(false);
       resetPostStatus();
     } catch (error: any) {
       Logger.error(error, { message: `[Single Post Flow] Erro ao postar em ${platform}` });
+      setAwaitPosting(false);
       updatePostProgress({ platform, status: ERROR });
       Toast.show({
         type: 'error',
@@ -1022,7 +1022,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             onPress={handleCancel}
             style={[styles.actionButton, styles.cancelButton]}
             textStyle={styles.cancelButtonText}
-            disabled={isPosting}
+            disabled={awaitPosting}
           />
 
           <Button
@@ -1037,7 +1037,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             onPress={handlePost}
             style={[styles.actionButton, styles.postButton]}
             textStyle={styles.postButtonText}
-            disabled={isPosting}
+            disabled={awaitPosting}
           />
         </View>
       </SafeAreaView>

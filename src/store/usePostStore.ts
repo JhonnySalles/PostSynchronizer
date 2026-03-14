@@ -32,7 +32,6 @@ interface PostState {
   mergeConnections: (allPlatforms: PlatformType[], activePlatforms: PlatformType[]) => void;
   finishPosting: (summary: { successful: PlatformType[]; failed: PlatformType[] }) => void;
   resetPostStatus: () => void;
-  resetPosting: () => void;
 }
 
 export const usePostStore = create<PostState>((set, get) => ({
@@ -165,5 +164,4 @@ export const usePostStore = create<PostState>((set, get) => ({
       }, 5000);
       return {};
     }),
-  resetPosting: () => set({ isPosting: false }),
 }));

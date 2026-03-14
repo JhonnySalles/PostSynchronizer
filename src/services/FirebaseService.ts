@@ -108,7 +108,7 @@ class FirebaseService {
         return;
 
     const postId = parseInt(postIdStr, 10);
-    const { updatePostProgress, editingPostId, finishPosting, resetPosting, resetPostStatus } = usePostStore.getState();
+    const { updatePostProgress, editingPostId, finishPosting, resetPostStatus } = usePostStore.getState();
 
     const isCurrentPost = editingPostId === postId;
 
@@ -138,7 +138,6 @@ class FirebaseService {
 
       if (isCurrentPost) {
         finishPosting({ successful: data._summary.successful, failed: data._summary.failed || [] });
-        resetPosting();
         resetPostStatus();
       }
     }
