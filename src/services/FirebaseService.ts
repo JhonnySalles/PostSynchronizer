@@ -22,6 +22,8 @@ class FirebaseService {
   private appInstanceId: string | null = null;
   private isListening = false;
   private appBackground: any = null;
+  private processingFinish = new Set<number>();
+  private lastProcessedState = new Map<number, string>();
 
   public async initialize(): Promise<void> {
     try {
@@ -108,6 +110,18 @@ class FirebaseService {
         return;
 
     const postId = parseInt(postIdStr, 10);
+
+    // prettier-ignore
+    if (this.processingFinish.has(postId))
+      return;
+
+    const currentDataString = JSON.stringify(data);
+    // prettier-ignore
+    if (this.lastProcessedState.get(postId) === currentDataString)
+      return;
+
+    this.lastProcessedState.set(postId, currentDataString);
+
     const { updatePostProgress, finishPosting, resetPostStatus } = usePostStore.getState();
 
     for (const platformKey in data) {
@@ -131,8 +145,15 @@ class FirebaseService {
         `[FirebaseService] Sumário final recebido para o post ${postId}. Finalizando e limpando.`,
         JSON.stringify(data),
       );
+      this.processingFinish.add(postId);
       await this.finalizePostSync(postId, data._summary.successful);
-      await snapshot.ref.remove();
+      try {
+        await snapshot.ref.remove();
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
+
+      this.lastProcessedState.delete(postId);
+      setTimeout(() => this.processingFinish.delete(postId), 5000);
 
       finishPosting(postId, { successful: data._summary.successful, failed: data._summary.failed || [] });
       resetPostStatus(postId);

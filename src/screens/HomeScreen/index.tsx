@@ -613,14 +613,14 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
               }
             }
           } else if (update.type === 'summary') {
-            Logger.info('[Post Flow] Sumário final recebido:', JSON.stringify(update.summary));
+            Logger.info('[Post Flow] Sumário final recebido:', JSON.stringify(update));
             const finalResults = update.summary! as { successful: PlatformType[]; failed: PlatformType[] };
             finishPosting(update.postId, finalResults);
 
             if (update.postId) {
-              const postId = Number.parseInt(update.postId, 10);
-              if (!isNaN(postId))
-                PostDao.update(postId, {
+              const id = Number.parseInt(update.postId, 10);
+              if (!isNaN(id))
+                PostDao.update(id, {
                   platformsSuccess: finalResults.successful.join(', '),
                   status: POSTED as PostType,
                 });
