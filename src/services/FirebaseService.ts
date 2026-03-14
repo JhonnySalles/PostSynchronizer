@@ -1,5 +1,6 @@
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
+import { AppState, AppStateStatus } from 'react-native';
 import Logger from './LoggerService';
 import PostDao from 'src/dao/PostDao';
 import { PlatformType } from 'src/constants/platforms';
@@ -19,15 +20,34 @@ const BASE_DOCUMENT = 'post_status';
 
 class FirebaseService {
   private appInstanceId: string | null = null;
+  private isListening = false;
+  private appBackground: any = null;
 
   public async initialize(): Promise<void> {
     try {
       await this.anonymousLogin();
       await this.processPendingCallbacks();
+
+      this.listenForPostUpdates();
+
+      // prettier-ignore
+      if (!this.appBackground) 
+        this.appBackground = AppState.addEventListener('change', this.handleAppStateChange);
     } catch (error) {
       Logger.error(error as Error, { message: '[FirebaseService] Falha na inicialização.' });
     }
   }
+
+  private handleAppStateChange = async (nextAppState: AppStateStatus) => {
+    if (nextAppState === 'active') {
+      Logger.info('[FirebaseService] App em primeiro plano. Processando pendentes e reativando listener.');
+      await this.processPendingCallbacks();
+      this.listenForPostUpdates();
+    } else if (nextAppState.match(/inactive|background/)) {
+      Logger.info('[FirebaseService] App em segundo plano. Desativando listener do Firebase.');
+      this.stopListening();
+    }
+  };
 
   private async anonymousLogin(): Promise<void> {
     if (auth().currentUser) {
@@ -46,54 +66,83 @@ class FirebaseService {
     return this.appInstanceId;
   }
 
-  public listenForPostUpdates(postId: number, onFinish: () => void): () => void {
+  public listenForPostUpdates(): void {
     if (!this.appInstanceId) {
       Logger.warn('[FirebaseService] Não é possível ouvir updates sem um appInstanceId.');
-      return () => {};
+      return;
     }
 
-    const dbRef = database().ref(`/${BASE_DOCUMENT}/${this.appInstanceId}/${postId}`);
-
-    const onValueChange = (snapshot: any) => {
-      // prettier-ignore
-      if (!snapshot.exists())
+    // prettier-ignore
+    if (this.isListening) 
         return;
 
-      const data = snapshot.val();
-      const { updatePostProgress } = usePostStore.getState();
+    const dbRef = database().ref(`/${BASE_DOCUMENT}/${this.appInstanceId}`);
+    dbRef.on('child_added', this.processPosts);
+    dbRef.on('child_changed', this.processPosts);
 
-      for (const platformKey in data) {
-        // prettier-ignore
-        if (platformKey == '_summary') 
-            continue;
-
-        const platformUpdate = data[platformKey];
-        if (platformUpdate && platformUpdate.status)
-          updatePostProgress({
-            platform: platformKey as PlatformType,
-            status: platformUpdate.status,
-          });
-      }
-
-      const isFinish = !!data._summary;
-
-      if (isFinish) {
-        Logger.info(`[FirebaseService] Sumário final recebido para o post ${postId}. Finalizando.`);
-        this.finalizePostSync(postId, data._summary.successful);
-        dbRef.off('value', onValueChange);
-        dbRef.remove();
-
-        PostDao.update(postId, {
-          platformsSuccess: data._summary.successful.join(', '),
-          status: POSTED as PostType,
-        });
-        onFinish();
-      }
-    };
-
-    dbRef.on('value', onValueChange);
-    return () => dbRef.off('value', onValueChange);
+    this.isListening = true;
+    Logger.info('[FirebaseService] Listener global ativado na raiz do documento.');
   }
+
+  public stopListening(): void {
+    // prettier-ignore
+    if (!this.appInstanceId || !this.isListening) 
+        return;
+
+    const dbRef = database().ref(`/${BASE_DOCUMENT}/${this.appInstanceId}`);
+    dbRef.off('child_added', this.processPosts);
+    dbRef.off('child_changed', this.processPosts);
+
+    this.isListening = false;
+  }
+
+  private processPosts = async (snapshot: any) => {
+    // prettier-ignore
+    if (!snapshot.exists()) 
+        return;
+
+    const postIdStr = snapshot.key;
+    const data = snapshot.val();
+    // prettier-ignore
+    if (!postIdStr || !data) 
+        return;
+
+    const postId = parseInt(postIdStr, 10);
+    const { updatePostProgress, editingPostId, finishPosting, resetPosting, resetPostStatus } = usePostStore.getState();
+
+    const isCurrentPost = editingPostId === postId;
+
+    for (const platformKey in data) {
+      // prettier-ignore
+      if (platformKey === '_summary') 
+        continue;
+
+      const platformUpdate = data[platformKey];
+      if (platformUpdate && platformUpdate.status && isCurrentPost) {
+        updatePostProgress({
+          platform: platformKey as PlatformType,
+          status: platformUpdate.status,
+        });
+      }
+    }
+
+    const isFinish = !!data._summary;
+
+    if (isFinish) {
+      Logger.info(
+        `[FirebaseService] Sumário final recebido para o post ${postId}. Finalizando e limpando.`,
+        JSON.stringify(data),
+      );
+      await this.finalizePostSync(postId, data._summary.successful);
+      await snapshot.ref.remove();
+
+      if (isCurrentPost) {
+        finishPosting({ successful: data._summary.successful, failed: data._summary.failed || [] });
+        resetPosting();
+        resetPostStatus();
+      }
+    }
+  };
 
   public async processPendingCallbacks(): Promise<void> {
     const pendingPosts = await PostDao.getPendingPosts();

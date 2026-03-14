@@ -31,7 +31,6 @@ import Button from '../../components/Button';
 import PostDao from '../../dao/PostDao';
 import { apiService, PostPayload, ProgressUpdate, SinglePostPayload } from '../../services/ApiService';
 import ImageProcessingService from '../../services/ImageService';
-import { firebaseService } from '../../services/FirebaseService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
 import { PlatformType, SOCIAL_PLATFORMS, UNKNOW, THREADS, TUMBLR, X, BLUESKY } from '../../constants/platforms';
@@ -98,7 +97,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const tagSuggestionTimeout = useRef<NodeJS.Timeout | null>(null);
   const tagCloseTimeout = useRef<NodeJS.Timeout | null>(null);
   const tagCleanupTimeout = useRef<NodeJS.Timeout | null>(null);
-  const unsubscribeFirebase = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -163,10 +161,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       // prettier-ignore
       if (tagCloseTimeout.current)
         clearTimeout(tagCloseTimeout.current);
-
-      // prettier-ignore
-      if (unsubscribeFirebase.current)
-        unsubscribeFirebase.current();
     };
   }, []);
 
@@ -397,13 +391,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     removeImage(index);
   };
 
-  const handleFirebaseFinish = () => {
-    if (unsubscribeFirebase.current) {
-      unsubscribeFirebase.current();
-      unsubscribeFirebase.current = null;
-    }
-  };
-
   const handleCancel = () => {
     clearForm();
   };
@@ -539,8 +526,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
       clearForm();
 
-      unsubscribeFirebase.current = firebaseService.listenForPostUpdates(postId, handleFirebaseFinish);
-
       if (twitterRateLimited) {
         updatePostProgress({ platform: X, status: ERROR });
         Toast.show({
@@ -628,7 +613,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
               }
             }
           } else if (update.type === 'summary') {
-            Logger.info('[Post Flow] Sumário final recebido:', update.summary);
+            Logger.info('[Post Flow] Sumário final recebido:', JSON.stringify(update.summary));
             const finalResults = update.summary! as { successful: PlatformType[]; failed: PlatformType[] };
             finishPosting(finalResults);
 
@@ -659,11 +644,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             ],
           );
         } else if (!result.success) {
-          if (unsubscribeFirebase.current) {
-            unsubscribeFirebase.current();
-            unsubscribeFirebase.current = null;
-          }
-
           Toast.show({
             type: 'error',
             text1: 'Falha ao enviar postagem',
@@ -695,11 +675,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         position: 'top',
         visibilityTime: 4000,
       });
-
-      if (unsubscribeFirebase.current) {
-        unsubscribeFirebase.current();
-        unsubscribeFirebase.current = null;
-      }
     }
   };
 

@@ -96,12 +96,12 @@ class ApiService {
     });
 
     this.socket.on('progressUpdate', (data: ProgressUpdate) => {
-      Logger.info('[ApiService] Progresso recebido via WebSocket:', data.toString());
+      Logger.info('[ApiService] Progresso recebido via WebSocket:', JSON.stringify(data));
       this.eventEmitter.emit('post_update', data);
     });
 
     this.socket.on('taskCompleted', (data: ProgressUpdate) => {
-      Logger.info('[ApiService] Tarefa concluída recebida via WebSocket:', data.toString());
+      Logger.info('[ApiService] Tarefa concluída recebida via WebSocket:', JSON.stringify(data));
       this.eventEmitter.emit('post_update', { ...data, type: 'summary' });
     });
 
