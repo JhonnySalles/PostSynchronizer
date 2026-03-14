@@ -507,7 +507,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       }
 
       setAwaitPosting(true);
-      startPosting(platformsToPost);
 
       const draftData = {
         content: currentPostText,
@@ -524,11 +523,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         await PostDao.update(postId, draftData);
       else
         postId = await PostDao.create(draftData);
+      startPosting(postId, platformsToPost);
 
       clearForm();
 
       if (twitterRateLimited) {
-        updatePostProgress({ platform: X, status: ERROR });
+        updatePostProgress(postId, { platform: X, status: ERROR });
         Toast.show({
           type: 'error',
           text1: 'Falha no Twitter',
@@ -559,7 +559,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
       const postWithoutFeedback = async () => {
         setAwaitPosting(false);
-        startPosting(platformsToPost);
+        startPosting(postId, platformsToPost);
         const result = await apiService.postAll(payload, () => {}, { forceNoWebSocket: true });
         // prettier-ignore
         if (result.success) {
@@ -586,10 +586,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       const postWithFeedback = async () => {
         const handleProgressUpdate = (update: ProgressUpdate) => {
           if (update.type === 'progress' && update.progress) {
-            updatePostProgress({ progress: update.progress });
+            updatePostProgress(update.postId, { progress: update.progress });
             if (update.platform && update.status) {
-              updatePostProgress({ platform: update.platform as PlatformType, status: update.status });
-              console.log('[Post Flow] Update de progresso:', update.status, update);
+              updatePostProgress(update.postId, { platform: update.platform as PlatformType, status: update.status });
 
               switch (update.status) {
                 case 'error':
@@ -616,7 +615,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           } else if (update.type === 'summary') {
             Logger.info('[Post Flow] Sumário final recebido:', JSON.stringify(update.summary));
             const finalResults = update.summary! as { successful: PlatformType[]; failed: PlatformType[] };
-            finishPosting(finalResults);
+            finishPosting(update.postId, finalResults);
 
             if (update.postId) {
               const postId = Number.parseInt(update.postId, 10);
@@ -708,9 +707,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       platformsSend: platform,
     };
 
+    let postId = editingPostId;
     try {
       setAwaitPosting(true);
-      let postId = editingPostId;
       // prettier-ignore
       if (postId) 
         await PostDao.update(postId, draftData);
@@ -719,7 +718,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
       usePostStore.setState({ editingPostId: postId });
 
-      startPosting([platform]);
+      startPosting(postId, [platform]);
 
       let blogName = null;
       if (platform === TUMBLR) {
@@ -749,9 +748,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           visibilityTime: 4000,
         });
         PostDao.update(postId!, { platformsSuccess: platform, status: POSTED as PostType });
-        updatePostProgress({ platform, status: SUCCESS });
+        updatePostProgress(postId, { platform, status: SUCCESS });
       } else {
-        updatePostProgress({ platform, status: ERROR });
+        updatePostProgress(postId, { platform, status: ERROR });
         Toast.show({
           type: 'error',
           text1: `Falha na postagem (${platform})`,
@@ -765,7 +764,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     } catch (error: any) {
       Logger.error(error, { message: `[Single Post Flow] Erro ao postar em ${platform}` });
       setAwaitPosting(false);
-      updatePostProgress({ platform, status: ERROR });
+      updatePostProgress(postId, { platform, status: ERROR });
       Toast.show({
         type: 'error',
         text1: `Falha na postagem (${platform})`,
@@ -818,7 +817,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
                 const isSelected = item.platforms.includes(connection.platform);
                 const iconColor = isSelected ? getPlatformColor(connection.platform) : '#505050';
-
                 return (
                   <TouchableOpacity
                     key={connection.platform}

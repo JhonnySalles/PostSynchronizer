@@ -108,9 +108,7 @@ class FirebaseService {
         return;
 
     const postId = parseInt(postIdStr, 10);
-    const { updatePostProgress, editingPostId, finishPosting, resetPostStatus } = usePostStore.getState();
-
-    const isCurrentPost = editingPostId === postId;
+    const { updatePostProgress, finishPosting, resetPostStatus } = usePostStore.getState();
 
     for (const platformKey in data) {
       // prettier-ignore
@@ -118,8 +116,8 @@ class FirebaseService {
         continue;
 
       const platformUpdate = data[platformKey];
-      if (platformUpdate && platformUpdate.status && isCurrentPost) {
-        updatePostProgress({
+      if (platformUpdate && platformUpdate.status) {
+        updatePostProgress(postId, {
           platform: platformKey as PlatformType,
           status: platformUpdate.status,
         });
@@ -136,10 +134,8 @@ class FirebaseService {
       await this.finalizePostSync(postId, data._summary.successful);
       await snapshot.ref.remove();
 
-      if (isCurrentPost) {
-        finishPosting({ successful: data._summary.successful, failed: data._summary.failed || [] });
-        resetPostStatus();
-      }
+      finishPosting(postId, { successful: data._summary.successful, failed: data._summary.failed || [] });
+      resetPostStatus(postId);
     }
   };
 

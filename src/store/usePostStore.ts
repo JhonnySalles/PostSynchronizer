@@ -3,17 +3,24 @@ import { PlatformType, X, BLUESKY } from 'src/constants/platforms';
 import { ConnectionStatus, SelectedImage } from 'src/types/types';
 import { IDLE, PENDING, SUCCESS, ERROR, PostStatusType } from 'src/constants/app';
 
+export interface PendingPostProgress {
+  postId: number;
+  progress: number;
+  platformsCount: number;
+}
 interface PostState {
   // Conteúdo do Post
   postText: string;
   tagsText: string;
   selectedImages: SelectedImage[];
+  oldPostId: number | null;
   editingPostId: number | null;
 
   // Status da UI
   connections: ConnectionStatus[];
   isPosting: boolean;
   postProgress: number;
+  pendingPosts: Record<number, PendingPostProgress>;
 
   // Ações para modificar o estado
   setPostText: (text: string) => void;
@@ -25,24 +32,48 @@ interface PostState {
   setSelectedImages: (images: SelectedImage[]) => void;
 
   // Ações para o fluxo de postagem
-  startPosting: (platformsToPost: PlatformType[]) => void;
+  startPosting: (postId: number, platformsToPost: PlatformType[]) => void;
   updatePostProgress: (
+    postId: number | string | undefined | null,
     update: { platform: PlatformType; status: 'success' | 'scheduled' | 'error' } | { progress: number },
   ) => void;
   mergeConnections: (allPlatforms: PlatformType[], activePlatforms: PlatformType[]) => void;
-  finishPosting: (summary: { successful: PlatformType[]; failed: PlatformType[] }) => void;
-  resetPostStatus: () => void;
+  finishPosting: (
+    postId: number | string | undefined | null,
+    summary: { successful: PlatformType[]; failed: PlatformType[] },
+  ) => void;
+  resetPostStatus: (postId?: number | null) => void;
+  removePendingPost: (postId: number) => void;
 }
+
+const globalProgress = (pendingPosts: Record<number, PendingPostProgress>): number => {
+  const posts = Object.values(pendingPosts);
+  // prettier-ignore
+  if (posts.length === 0) 
+    return 0;
+
+  let totalProgress = 0;
+  let totalWeight = 0;
+
+  posts.forEach(post => {
+    totalProgress += post.progress * post.platformsCount;
+    totalWeight += post.platformsCount;
+  });
+
+  return totalWeight > 0 ? totalProgress / totalWeight : 0;
+};
 
 export const usePostStore = create<PostState>((set, get) => ({
   // Estado Inicial
   postText: '',
   tagsText: '',
   selectedImages: [],
+  oldPostId: null,
   editingPostId: null,
   connections: [],
   isPosting: false,
   postProgress: 0,
+  pendingPosts: {},
 
   // Ações
   setPostText: text => set({ postText: text }),
@@ -77,21 +108,49 @@ export const usePostStore = create<PostState>((set, get) => ({
   clearForm: () => set({ postText: '', selectedImages: [], editingPostId: null }),
   setSelectedImages: images => set({ selectedImages: images }),
 
-  startPosting: platformsToPost =>
-    set(state => ({
-      isPosting: true,
-      postProgress: 0,
-      connections: state.connections.map(c =>
-        platformsToPost.includes(c.platform) ? { ...c, postStatus: PENDING } : { ...c, postStatus: IDLE },
-      ),
-    })),
-  updatePostProgress: update =>
+  startPosting: (postId: number, platformsToPost: PlatformType[]) =>
+    set(state => {
+      const newPendingPosts = {
+        ...state.pendingPosts,
+        [postId]: {
+          postId,
+          progress: 0,
+          platformsCount: platformsToPost.length,
+        },
+      };
+
+      return {
+        oldPostId: postId,
+        isPosting: true,
+        pendingPosts: newPendingPosts,
+        postProgress: globalProgress(newPendingPosts),
+        connections: state.connections.map(c =>
+          platformsToPost.includes(c.platform) ? { ...c, postStatus: PENDING } : { ...c, postStatus: IDLE },
+        ),
+      };
+    }),
+  updatePostProgress: (postId: number | string | undefined | null, update) =>
     set(state => {
       // prettier-ignore
-      if ('progress' in update) 
-        return { postProgress: update.progress };
+      if (postId === undefined || postId === null)
+        return {};
 
-      if ('platform' in update && 'status' in update) {
+      const id: number = typeof postId === 'string' ? Number.parseInt(postId, 10) : (postId as number);
+
+      // prettier-ignore
+      if (isNaN(id)) 
+        return {};
+
+      const postToUpdate = state.pendingPosts[id];
+      let newPendingPosts = state.pendingPosts;
+      if (postToUpdate && 'progress' in update) {
+        newPendingPosts = {
+          ...state.pendingPosts,
+          [id]: { ...postToUpdate, progress: update.progress },
+        };
+      }
+      let newConnections = state.connections;
+      if ('platform' in update && 'status' in update && state.oldPostId === id && state.oldPostId !== null) {
         let status: PostStatusType;
         switch (update.status) {
           case 'error':
@@ -104,34 +163,62 @@ export const usePostStore = create<PostState>((set, get) => ({
           default:
             status = PENDING;
         }
-
-        const newConnections = state.connections.map(c =>
+        newConnections = state.connections.map(c =>
           c.platform === update.platform ? { ...c, postStatus: status } : c,
         );
-
-        const completedPlatforms = newConnections.filter(c => c.postStatus !== IDLE && c.postStatus !== PENDING).length;
-        const newProgress = newConnections.length > 0 ? (completedPlatforms / newConnections.length) * 100 : 0;
-        return {
-          connections: newConnections,
-          postProgress: newProgress,
-        };
       }
-      return {};
+      return {
+        pendingPosts: newPendingPosts,
+        postProgress: globalProgress(newPendingPosts),
+        connections: newConnections,
+      };
     }),
-  finishPosting: summary =>
+  removePendingPost: postId =>
     set(state => {
-      const finalConnections = state.connections.map(c => {
-        // prettier-ignore
-        if (summary.successful.includes(c.platform)) 
-            return { ...c, postStatus: SUCCESS as PostStatusType };
+      const newPendingPosts = { ...state.pendingPosts };
+      delete newPendingPosts[postId];
 
-        // prettier-ignore
-        if (summary.failed.includes(c.platform)) 
-            return { ...c, postStatus: ERROR as PostStatusType };
+      const hasRemaining = Object.keys(newPendingPosts).length > 0;
 
-        return c;
-      });
-      return { postProgress: 1, connections: finalConnections };
+      return {
+        pendingPosts: newPendingPosts,
+        postProgress: hasRemaining ? globalProgress(newPendingPosts) : 0,
+        isPosting: hasRemaining,
+      };
+    }),
+  finishPosting: (postId: number | string | undefined | null, summary) =>
+    set(state => {
+      // prettier-ignore
+      if (postId === undefined || postId === null)
+        return {};
+
+      const id: number = typeof postId === 'string' ? Number.parseInt(postId, 10) : (postId as number);
+
+      // prettier-ignore
+      if (isNaN(id)) 
+        return {};
+
+      const newPendingPosts = { ...state.pendingPosts };
+      delete newPendingPosts[id];
+      const hasRemaining = Object.keys(newPendingPosts).length > 0;
+
+      let newConnections = state.connections;
+
+      if (state.oldPostId === id && state.oldPostId !== null) {
+        newConnections = state.connections.map(c => {
+          if (summary.successful.includes(c.platform)) return { ...c, postStatus: SUCCESS as PostStatusType };
+          if (summary.failed.includes(c.platform)) return { ...c, postStatus: ERROR as PostStatusType };
+          return c;
+        });
+      }
+
+      return {
+        pendingPosts: newPendingPosts,
+        postProgress: hasRemaining ? globalProgress(newPendingPosts) : 100,
+        connections: newConnections,
+        isPosting: hasRemaining,
+        oldPostId: hasRemaining ? state.oldPostId : null,
+      };
     }),
   mergeConnections: (allPlatforms, activePlatforms) =>
     set(state => {
@@ -154,12 +241,17 @@ export const usePostStore = create<PostState>((set, get) => ({
 
       return { connections: newConnections };
     }),
-  resetPostStatus: () =>
+  resetPostStatus: (postId?: number | null) =>
     set(state => {
       setTimeout(() => {
-        set({
-          isPosting: false,
-          connections: state.connections.map(c => ({ ...c, postStatus: IDLE })),
+        set(s => {
+          // prettier-ignore
+          if (postId != null && s.oldPostId !== postId && s.oldPostId !== null)
+            return {};
+
+          return {
+            connections: s.connections.map(c => ({ ...c, postStatus: IDLE })),
+          };
         });
       }, 5000);
       return {};
