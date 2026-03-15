@@ -184,6 +184,7 @@ export const usePostStore = create<PostState>((set, get) => ({
         pendingPosts: newPendingPosts,
         postProgress: hasRemaining ? globalProgress(newPendingPosts) : 0,
         isPosting: hasRemaining,
+        oldPostId: state.oldPostId === postId ? null : state.oldPostId,
       };
     }),
   finishPosting: (postId: number | string | undefined | null, summary) =>
@@ -214,10 +215,10 @@ export const usePostStore = create<PostState>((set, get) => ({
 
       return {
         pendingPosts: newPendingPosts,
-        postProgress: hasRemaining ? globalProgress(newPendingPosts) : 100,
+        postProgress: hasRemaining ? globalProgress(newPendingPosts) : 0,
         connections: newConnections,
         isPosting: hasRemaining,
-        oldPostId: hasRemaining ? state.oldPostId : null,
+        oldPostId: !hasRemaining || state.oldPostId == postId ? null : state.oldPostId,
       };
     }),
   mergeConnections: (allPlatforms, activePlatforms) =>

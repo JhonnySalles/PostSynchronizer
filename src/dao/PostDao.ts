@@ -1,4 +1,4 @@
-import { DRAFT, PostType } from 'src/constants/app';
+import { DRAFT, POSTED, PostType } from 'src/constants/app';
 import { getDBConnection } from '../database';
 import Logger from 'src/services/LoggerService';
 import { PlatformType } from 'src/constants/platforms';
@@ -205,6 +205,31 @@ class PostDao {
       Logger.info(`[Post Dao] Post ID ${postId} atualizado com sucesso`);
     } catch (error) {
       Logger.error(error as Error, { message: `[Post Dao] Erro ao atualizar post ID ${postId}` });
+      throw error;
+    }
+  }
+
+  /**
+   * Finaliza o post atualizando os campos de envio e sucesso com base no sumário final.
+   * A lista 'platformsSend' conterá todas as plataformas tentadas (sucesso + falha).
+   * A lista 'platformsSuccess' conterá apenas as que tiveram sucesso.
+   *
+   * @param {number} postId - O ID do post a ser atualizado.
+   * @param {string[]} successfulPlatforms - Array com o nome das plataformas que tiveram sucesso.
+   */
+  public async updateLastSync(postId: number, successfulPlatforms: string[]): Promise<void> {
+    const db = await getDBConnection();
+
+    try {
+      const platformsSuccess = Array.from(new Set(successfulPlatforms)).join(', ');
+      await db.executeSql(
+        `UPDATE posts SET pending = ?, status = ?, platforms_success = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        [false, POSTED, platformsSuccess, postId],
+      );
+
+      Logger.info(`[Post Dao] Post ID ${postId} sincronizado a partir do sumário com sucesso.`);
+    } catch (error) {
+      Logger.error(error as Error, { message: `[Post Dao] Erro ao sincronizar sumário do post ID ${postId}` });
       throw error;
     }
   }

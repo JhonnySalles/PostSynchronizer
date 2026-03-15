@@ -4,7 +4,6 @@ import { AppState, AppStateStatus } from 'react-native';
 import Logger from './LoggerService';
 import PostDao from 'src/dao/PostDao';
 import { PlatformType } from 'src/constants/platforms';
-import { POSTED, PostType } from 'src/constants/app';
 import { usePostStore } from 'src/store/usePostStore';
 
 export type FirebasePostUpdate = {
@@ -28,8 +27,6 @@ class FirebaseService {
   public async initialize(): Promise<void> {
     try {
       await this.anonymousLogin();
-      await this.processPendingCallbacks();
-
       this.listenForPostUpdates();
 
       // prettier-ignore
@@ -43,7 +40,6 @@ class FirebaseService {
   private handleAppStateChange = async (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') {
       Logger.info('[FirebaseService] App em primeiro plano. Processando pendentes e reativando listener.');
-      await this.processPendingCallbacks();
       this.listenForPostUpdates();
     } else if (nextAppState.match(/inactive|background/)) {
       Logger.info('[FirebaseService] App em segundo plano. Desativando listener do Firebase.');
@@ -106,7 +102,7 @@ class FirebaseService {
     const postIdStr = snapshot.key;
     const data = snapshot.val();
     // prettier-ignore
-    if (!postIdStr || !data) 
+    if (!postIdStr || !data || !data._summary) 
         return;
 
     const postId = parseInt(postIdStr, 10);
@@ -121,93 +117,32 @@ class FirebaseService {
       return;
 
     this.lastProcessedState.set(postId, currentDataString);
+    this.processingFinish.add(postId);
 
-    const { updatePostProgress, finishPosting, resetPostStatus } = usePostStore.getState();
+    const { finishPosting, resetPostStatus, removePendingPost, editingPostId } = usePostStore.getState();
+    const isCurrentPost = editingPostId === postId;
 
-    for (const platformKey in data) {
-      // prettier-ignore
-      if (platformKey === '_summary') 
-        continue;
+    const summary = data._summary;
+    const successfulPlatforms: PlatformType[] = summary.successful || [];
+    const failedPlatforms: PlatformType[] = summary.failed ? summary.failed.map((f: any) => f.platform) : [];
+    await this.finalizePostSync(postId, successfulPlatforms);
 
-      const platformUpdate = data[platformKey];
-      if (platformUpdate && platformUpdate.status) {
-        updatePostProgress(postId, {
-          platform: platformKey as PlatformType,
-          status: platformUpdate.status,
-        });
-      }
-    }
+    try {
+      await snapshot.ref.remove();
+      // eslint-disable-next-line no-empty
+    } catch (_) {}
 
-    const isFinish = !!data._summary;
-
-    if (isFinish) {
-      Logger.info(
-        `[FirebaseService] Sumário final recebido para o post ${postId}. Finalizando e limpando.`,
-        JSON.stringify(data),
-      );
-      this.processingFinish.add(postId);
-      await this.finalizePostSync(postId, data._summary.successful);
-      try {
-        await snapshot.ref.remove();
-        // eslint-disable-next-line no-empty
-      } catch (e) {}
-
-      this.lastProcessedState.delete(postId);
-      setTimeout(() => this.processingFinish.delete(postId), 5000);
-
-      finishPosting(postId, { successful: data._summary.successful, failed: data._summary.failed || [] });
+    removePendingPost(postId);
+    this.lastProcessedState.delete(postId);
+    setTimeout(() => this.processingFinish.delete(postId), 5000);
+    if (isCurrentPost) {
+      finishPosting(postId, { successful: successfulPlatforms, failed: failedPlatforms });
       resetPostStatus(postId);
     }
   };
 
-  public async processPendingCallbacks(): Promise<void> {
-    const pendingPosts = await PostDao.getPendingPosts();
-    // prettier-ignore
-    if (pendingPosts.length === 0 || !this.appInstanceId) 
-        return;
-
-    Logger.info(`[FirebaseService] Verificando ${pendingPosts.length} posts com callbacks pendentes.`);
-    const userDbRef = database().ref(`/${BASE_DOCUMENT}/${this.appInstanceId}`);
-
-    for (const post of pendingPosts) {
-      const postSnapshot = await userDbRef.child(post.id.toString()).once('value');
-      // prettier-ignore
-      if (!postSnapshot.exists()) 
-        continue;
-
-      const rtData = postSnapshot.val();
-      const originalPlatforms = post.platformsSend?.split(',').map(p => p.trim()) || [];
-      // prettier-ignore
-      const successfulPlatforms = new Set(post.platformsSuccess?.split(',').map(p => p.trim()).filter(Boolean) || []);
-
-      let hasUpdates = false;
-      for (const platform in rtData) {
-        // prettier-ignore
-        if (platform === '_summary') 
-            continue;
-
-        successfulPlatforms.add(platform);
-        hasUpdates = true;
-        await userDbRef.child(post.id.toString()).child(platform).remove();
-      }
-
-      // prettier-ignore
-      if (hasUpdates)
-        await PostDao.update(post.id, { platformsSuccess: Array.from(successfulPlatforms).join(', '), status: POSTED as PostType });
-
-      const remainingPlatforms = originalPlatforms.filter(p => !successfulPlatforms.has(p));
-      if (remainingPlatforms.length === 0) {
-        await this.finalizePostSync(post.id, Array.from(successfulPlatforms));
-        await userDbRef.child(post.id.toString()).remove();
-      }
-    }
-  }
-
   private async finalizePostSync(postId: number, successfulPlatforms: string[]) {
-    await PostDao.update(postId, {
-      pending: false,
-      platformsSuccess: successfulPlatforms.join(', '),
-    });
+    await PostDao.updateLastSync(postId, successfulPlatforms);
     Logger.info(`[FirebaseService] Post ${postId} finalizado e sincronizado.`);
   }
 }
