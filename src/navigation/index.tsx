@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { ApiStatusIcon } from 'src/components/ApiStatusIcon';
 
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
@@ -37,9 +38,21 @@ const AppNavigator = () => {
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Postar' }} />
-      <Tab.Screen name="History" component={HistoryScreen} options={{ title: 'Histórico' }} />
-      <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'Configurações' }} />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ title: 'Postar', headerRight: () => <ApiStatusIcon /> }}
+      />
+      <Tab.Screen
+        name="History"
+        component={HistoryScreen}
+        options={{ title: 'Histórico', headerRight: () => <ApiStatusIcon /> }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ title: 'Configurações', headerRight: () => <ApiStatusIcon /> }}
+      />
     </Tab.Navigator>
   );
 };

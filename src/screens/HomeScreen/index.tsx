@@ -100,15 +100,19 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      // prettier-ignore
-      if (appState.current.match(/inactive|background/) && nextAppState === 'active') 
-            apiService.healthCheck();
+      if (appState.current.match(/inactive|background/)) {
+        // prettier-ignore
+        if (nextAppState === 'active') 
+          apiService.startHealthCheckLoop();
+        else 
+          apiService.stopHealthCheckLoop();
+      }
 
       appState.current = nextAppState;
     };
 
     const subscription = AppState.addEventListener('change', handleAppStateChange);
-    apiService.healthCheck();
+    apiService.startHealthCheckLoop();
     return () => {
       subscription.remove();
     };

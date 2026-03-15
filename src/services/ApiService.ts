@@ -9,6 +9,7 @@ import EventEmitter from 'eventemitter3';
 import { PlatformType, THREADS } from 'src/constants/platforms';
 import { firebaseService } from 'src/services/FirebaseService';
 import { formatarData } from 'src/utils/util';
+import { ApiStatusType, CONNECTING, OFFLINE, ONLINE } from 'src/constants/app';
 
 const JWT_TOKEN_KEY = 'api_jwt_token';
 const JWT_EXPIRES_AT_KEY = 'api_jwt_expires_at';
@@ -61,6 +62,9 @@ class ApiService {
   private axiosInstance: AxiosInstance;
   private socket: Socket;
   private eventEmitter: EventEmitter;
+  private healthCheckInterval: NodeJS.Timeout | null = null;
+  private healthCheckTimeout: NodeJS.Timeout | null = null;
+  private apiStatus: ApiStatusType = CONNECTING;
 
   constructor() {
     Logger.info('[ApiService] Iniciando criação do service, endereço da api:', API_BASE_URL);
@@ -405,15 +409,60 @@ class ApiService {
     }
   }
 
-  public async healthCheck(): Promise<void> {
-    try {
-      Logger.info('[ApiService] Realizando Health Check para aquecer a API...');
+  public getApiStatus() {
+    return this.apiStatus;
+  }
 
-      await this.axiosInstance.get('/health', { timeout: 5000 });
+  public onApiStatusChange(callback: (status: ApiStatusType) => void) {
+    this.eventEmitter.on('api_status_change', callback);
+  }
 
-      Logger.info('[ApiService] API está online e pronta.');
-    } catch (error) {
-      Logger.warn('[ApiService] Health Check falhou ou API está dormindo.', error);
+  public offApiStatusChange(callback: (status: ApiStatusType) => void) {
+    this.eventEmitter.off('api_status_change', callback);
+  }
+
+  private setApiStatus(status: ApiStatusType) {
+    if (this.apiStatus !== status) {
+      this.apiStatus = status;
+      this.eventEmitter.emit('api_status_change', status);
+    }
+  }
+
+  public startHealthCheckLoop(): void {
+    this.stopHealthCheckLoop();
+
+    this.setApiStatus('connecting');
+    Logger.info('[ApiService] Iniciando verificação de Health Check (Cold Start)...');
+
+    this.healthCheckTimeout = setTimeout(() => {
+      Logger.warn('[ApiService] Health Check excedeu 5 minutos. Parando verificação.');
+      this.stopHealthCheckLoop();
+      this.setApiStatus(OFFLINE);
+    }, 300000);
+
+    const pingApi = async () => {
+      try {
+        await this.axiosInstance.get('/health', { timeout: 2000 });
+
+        Logger.info('[ApiService] API está online e pronta!');
+        this.setApiStatus(ONLINE);
+        this.stopHealthCheckLoop();
+        // eslint-disable-next-line no-empty
+      } catch (_) {}
+    };
+
+    pingApi();
+    this.healthCheckInterval = setInterval(pingApi, 1000);
+  }
+
+  public stopHealthCheckLoop(): void {
+    if (this.healthCheckInterval) {
+      clearInterval(this.healthCheckInterval);
+      this.healthCheckInterval = null;
+    }
+    if (this.healthCheckTimeout) {
+      clearTimeout(this.healthCheckTimeout);
+      this.healthCheckTimeout = null;
     }
   }
 }
