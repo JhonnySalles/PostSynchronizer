@@ -102,3 +102,5 @@ ios/sentry.properties
 android/sentry.properties
 compileAndSend.bat
 android/app/google-services.json
+android/.gradle
+android/app/build
