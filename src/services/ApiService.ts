@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Logger from 'src/services/LoggerService';
-import RNFS from 'react-native-fs';
+import { fileService } from 'src/services/FileService';
 import { API_BASE_URL, API_USERNAME, API_PASSWORD, API_ACCESS_TOKEN } from '@env';
 import AuthTokenDao, { TumblrBlogs, TumblrCredentials } from 'src/dao/AuthTokenDao';
 import { io, Socket } from 'socket.io-client';
@@ -216,7 +216,7 @@ class ApiService {
   private async prepareImagesAll(images: ImagePayload[]) {
     return Promise.all(
       images.map(async imageInfo => {
-        const base64Data = await RNFS.readFile(imageInfo.path!, 'base64');
+        const base64Data = await fileService.readFileBase64(imageInfo.path!);
         const imageType = imageInfo.path!.endsWith('.png') ? 'png' : 'jpeg';
         const dataUrl = `data:image/${imageType};base64,${base64Data}`;
         return { base64: dataUrl, platforms: imageInfo.platforms };
@@ -327,7 +327,7 @@ class ApiService {
   private async prepareImagesSingle(images: ImagePayload[]) {
     return Promise.all(
       images.map(async imageInfo => {
-        const base64Data = await RNFS.readFile(imageInfo.path!, 'base64');
+        const base64Data = await fileService.readFileBase64(imageInfo.path!);
         const imageType = imageInfo.path!.endsWith('.png') ? 'png' : 'jpeg';
         const dataUrl = `data:image/${imageType};base64,${base64Data}`;
         return dataUrl;

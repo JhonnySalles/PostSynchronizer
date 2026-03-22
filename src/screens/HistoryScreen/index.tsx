@@ -16,8 +16,8 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import RNFS from 'react-native-fs';
-import Share from 'react-native-share';
+import { shareService } from '../../services/ShareService';
+import { fileService } from '../../services/FileService';
 
 import { getStyles } from './styles';
 import { useTheme } from '../../theme/ThemeProvider';
@@ -266,7 +266,7 @@ const HistoryScreen = () => {
                 const filename = image.path.split('/').pop() || 'image.jpg';
                 imageFilenames.push(filename);
 
-                const base64Data = await RNFS.readFile(image.path, 'base64');
+                const base64Data = await fileService.readFileBase64(image.path);
                 const mimeType = getMimeType(image.path);
                 return `data:${mimeType};base64,${base64Data}`;
               }),
@@ -277,7 +277,7 @@ const HistoryScreen = () => {
         ? {
             title: 'Compartilhar Post',
             message: message,
-            urls: base64Images,
+            urls: base64Images as string[],
             filenames: imageFilenames,
             type: 'image/*',
             failOnCancel: false,
@@ -288,7 +288,7 @@ const HistoryScreen = () => {
             failOnCancel: false,
           };
 
-      await Share.open(options);
+      await shareService.open(options as any);
     } catch (error: Error | any) {
       Logger.error(error, { message: '[History Screen] Erro ao compartilhar post.' });
       Alert.alert(

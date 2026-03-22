@@ -10,7 +10,7 @@
     "start": "react-native start",
     "test": "jest",
     "postinstall": "patch-package",
-    "windows": "react-native run-windows"
+    "windows": "react-native run-windows --msbuildprops WinUI2xVersion=2.6.0,WindowsTargetPlatformVersion=10.0.22621.0,WindowsTargetPlatformMinVersion=10.0.17134.0,PlatformToolset=v143"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
@@ -30,6 +30,7 @@
     "eventemitter3": "^5.0.1",
     "react": "18.3.1",
     "react-native": "0.75.5",
+    "react-native-blob-util": "^0.24.7",
     "react-native-device-info": "^14.1.1",
     "react-native-draggable-flatlist": "^4.0.3",
     "react-native-dropdown-picker": "^5.4.6",
@@ -64,6 +65,7 @@
     "@react-native/eslint-config": "0.75.5",
     "@react-native/metro-config": "0.75.5",
     "@react-native/typescript-config": "0.75.5",
+    "@types/firebase": "^3.2.3",
     "@types/react": "^18.2.6",
     "@types/react-native-sqlite-storage": "^6.0.5",
     "@types/react-native-vector-icons": "^6.4.18",

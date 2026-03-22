@@ -1,6 +1,6 @@
 import { logger, fileAsyncTransport } from 'react-native-logs';
 import * as Sentry from '@sentry/react-native';
-import RNFS from 'react-native-fs';
+import { fileService } from './FileService';
 import { IS_PRODUCTION } from 'src/constants/app';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
@@ -15,8 +15,8 @@ const config = {
   severity: __DEV__ ? 'debug' : 'error',
   transport: fileAsyncTransport,
   transportOptions: {
-    FS: RNFS as any,
-    filePath: RNFS.DocumentDirectoryPath,
+    FS: fileService as any,
+    filePath: fileService.DocumentDirectoryPath,
     fileName: 'app_logs.txt',
     fileMaxSize: 1024 * 1024, // 1MB
     fileBackupCount: 2,

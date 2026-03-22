@@ -1,7 +1,7 @@
 import { Alert } from 'react-native';
 import ImageEditor from '@react-native-community/image-editor';
 import { Skia } from '@shopify/react-native-skia';
-import RNFS from 'react-native-fs';
+import { fileService } from './FileService';
 import Logger from 'src/services/LoggerService';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 
@@ -50,7 +50,7 @@ class ImageProcessingService {
   }
 
   private async findCropBoundsWithSkia(imageUri: string) {
-    const base64 = await RNFS.readFile(imageUri, 'base64');
+    const base64 = await fileService.readFileBase64(imageUri);
     const imageData = Skia.Data.fromBase64(base64);
     const image = Skia.Image.MakeImageFromEncoded(imageData);
 
@@ -128,21 +128,21 @@ class ImageProcessingService {
     const originalDirectory = originalUri.substring(0, lastSlashIndex);
     const cleanDirectory = originalDirectory.startsWith('file://') ? originalDirectory.substring(7) : originalDirectory;
     const newPath = `${cleanDirectory}/${newFilename}`;
-    await RNFS.moveFile(tempUri, newPath);
+    await fileService.moveFile(tempUri, newPath);
     await this.saveImageToGallery(newPath);
     return `file://${newPath}`;
   }
 
   private async saveImageToGallery(tempUri: string): Promise<string> {
     try {
-      const newPathWithExtension = `${RNFS.CachesDirectoryPath}/${Date.now()}.jpg`;
-      await RNFS.copyFile(tempUri, newPathWithExtension);
+      const newPathWithExtension = `${fileService.CachesDirectoryPath}/${Date.now()}.jpg`;
+      await fileService.copyFile(tempUri, newPathWithExtension);
       const galleryUri = await CameraRoll.save(`file://${newPathWithExtension}`, {
         type: 'photo',
         album: 'CortarImagem',
       });
       Logger.info(`[Image Service] Imagem salva na galeria: ${galleryUri}`);
-      await RNFS.unlink(newPathWithExtension);
+      await fileService.unlink(newPathWithExtension);
       return galleryUri;
     } catch (error) {
       Logger.error(error as Error, { message: `[Image Service] Erro ao salvar imagem na galeria:` });

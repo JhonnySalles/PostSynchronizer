@@ -390,6 +390,58 @@
         "windows": null
       }
     },
+    "react-native-blob-util": {
+      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-blob-util",
+      "name": "react-native-blob-util",
+      "platforms": {
+        "ios": {
+          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-blob-util\\react-native-blob-util.podspec",
+          "version": "0.24.7",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-blob-util\\android",
+          "packageImportPath": "import com.ReactNativeBlobUtil.ReactNativeBlobUtilPackage;",
+          "packageInstance": "new ReactNativeBlobUtilPackage()",
+          "buildTypes": [],
+          "libraryName": "ReactNativeBlobUtilSpec",
+          "componentDescriptors": [],
+          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-blob-util/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": {
+          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-blob-util",
+          "projects": [
+            {
+              "projectFile": "ReactNativeBlobUtil\\ReactNativeBlobUtil.vcxproj",
+              "projectName": "ReactNativeBlobUtil",
+              "projectLang": "cpp",
+              "projectGuid": "{CDDE3311-EFD2-462D-8551-93637A7FAE92}",
+              "directDependency": true,
+              "cppHeaders": [
+                "winrt/ReactNativeBlobUtil.h"
+              ],
+              "cppPackageProviders": [
+                "ReactNativeBlobUtil::ReactPackageProvider"
+              ],
+              "csNamespaces": [
+                "ReactNativeBlobUtil"
+              ],
+              "csPackageProviders": [
+                "ReactNativeBlobUtil.ReactPackageProvider"
+              ]
+            }
+          ],
+          "solutionFile": "ReactNativeBlobUtil.sln",
+          "nugetPackages": [],
+          "sourceDir": "windows"
+        }
+      }
+    },
     "react-native-device-info": {
       "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-device-info",
       "name": "react-native-device-info",
@@ -1587,6 +1639,10 @@
         "UseHermes": "true",
         "UseWinUI3": "false",
         "UseExperimentalNuget": "false",
+        "WinUI2xVersion": "2.6.0",
+        "WindowsTargetPlatformVersion": "10.0.22621.0",
+        "WindowsTargetPlatformMinVersion": "10.0.17134.0",
+        "PlatformToolset": "v143",
         "ReactExperimentalFeaturesSet": "true"
       }
     }
