@@ -1,7 +1,7 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { ColorsType } from '../../theme/colors';
 
-const { width } = Dimensions.get('window');
+// const { width } = Dimensions.get('window');
 
 export const getStyles = (colors: ColorsType) =>
   StyleSheet.create({
@@ -41,6 +41,7 @@ export const getStyles = (colors: ColorsType) =>
       padding: 10,
       borderRadius: 8,
       marginBottom: 15,
+      marginLeft: Platform.OS === 'windows' ? 16 : 0,
       color: colors.text,
       backgroundColor: colors.background,
     },

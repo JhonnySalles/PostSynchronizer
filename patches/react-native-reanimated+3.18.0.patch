@@ -1,0 +1,30 @@
+diff --git a/node_modules/react-native-reanimated/lib/module/initializers.js b/node_modules/react-native-reanimated/lib/module/initializers.js
+index 1000000..2000000 100644
+--- a/node_modules/react-native-reanimated/lib/module/initializers.js
++++ b/node_modules/react-native-reanimated/lib/module/initializers.js
+@@ -88,7 +88,9 @@
+       return [methodName, method];
+     }
+     const methodWrapper = function methodWrapper(...args) {
+-      return method(...args);
++      if (typeof method === 'function') {
++        return method(...args);
++      }
+     };
+     if (method.name) {
+       /**
+diff --git a/node_modules/react-native-reanimated/src/initializers.ts b/node_modules/react-native-reanimated/src/initializers.ts
+index 1000000..2000000 100644
+--- a/node_modules/react-native-reanimated/src/initializers.ts
++++ b/node_modules/react-native-reanimated/src/initializers.ts
+@@ -106,7 +106,9 @@
+         return [methodName, method];
+       }
+       const methodWrapper = function methodWrapper(...args: unknown[]) {
+-        return method(...args);
++        if (typeof method === 'function') {
++          return method(...args);
++        }
+       };
+       if (method.name) {
+         /**

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, Text, ActivityIndicator } from 'react-native';
+import { Modal, View, Text, ActivityIndicator, Platform } from 'react-native';
 import { useTheme } from '../../theme/ThemeProvider';
 import { getStyles } from './styles';
 
@@ -13,7 +13,12 @@ const LoadingIndicator = ({ visible, text = 'Carregando...' }: LoadingIndicatorP
   const styles = getStyles(colors);
 
   return (
-    <Modal transparent={true} animationType="fade" visible={visible} onRequestClose={() => {}}>
+    <Modal
+      transparent={true}
+      animationType={Platform.OS === 'windows' ? 'none' : 'fade'}
+      visible={visible}
+      onRequestClose={() => {}}
+    >
       <View style={styles.modalBackground}>
         <View style={styles.activityIndicatorWrapper}>
           <ActivityIndicator animating={visible} size="large" color={colors.primary} style={styles.indicator} />

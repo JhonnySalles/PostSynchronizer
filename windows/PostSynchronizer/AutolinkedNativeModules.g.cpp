@@ -12,6 +12,9 @@
 // Includes from @react-native-picker/picker
 #include <winrt/ReactNativePicker.h>
 
+// Includes from react-native-blob-util
+#include <winrt/ReactNativeBlobUtil.h>
+
 // Includes from react-native-device-info
 #include <winrt/RNDeviceInfoCPP.h>
 
@@ -38,6 +41,8 @@ void RegisterAutolinkedNativeModulePackages(winrt::Windows::Foundation::Collecti
     packageProviders.Append(winrt::Clipboard::ReactPackageProvider());
     // IReactPackageProviders from @react-native-picker/picker
     packageProviders.Append(winrt::ReactNativePicker::ReactPackageProvider());
+    // IReactPackageProviders from react-native-blob-util
+    packageProviders.Append(winrt::ReactNativeBlobUtil::ReactPackageProvider());
     // IReactPackageProviders from react-native-device-info
     packageProviders.Append(winrt::RNDeviceInfoCPP::ReactPackageProvider());
     // IReactPackageProviders from react-native-screens

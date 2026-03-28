@@ -147,6 +147,9 @@
     </Midl>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\*.ttf">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="PropertySheet.props" />
     <Text Include="readme.txt">
       <DeploymentContent>false</DeploymentContent>

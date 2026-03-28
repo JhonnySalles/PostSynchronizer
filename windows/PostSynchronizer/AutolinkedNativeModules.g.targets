@@ -14,6 +14,10 @@
     <ProjectReference Include="$(ProjectDir)..\..\node_modules\@react-native-picker\picker\windows\ReactNativePicker\ReactNativePicker.vcxproj">
       <Project>{bedcc600-4541-41f2-aa46-9e058202b6ad}</Project>
     </ProjectReference>
+    <!-- Projects from react-native-blob-util -->
+    <ProjectReference Include="$(ProjectDir)..\..\node_modules\react-native-blob-util\windows\ReactNativeBlobUtil\ReactNativeBlobUtil.vcxproj">
+      <Project>{CDDE3311-EFD2-462D-8551-93637A7FAE92}</Project>
+    </ProjectReference>
     <!-- Projects from react-native-device-info -->
     <ProjectReference Include="$(ProjectDir)..\..\node_modules\react-native-device-info\windows\RNDeviceInfoCPP\RNDeviceInfoCPP.vcxproj">
       <Project>{3e3931f2-4735-4417-8cb0-33668a7314d6}</Project>

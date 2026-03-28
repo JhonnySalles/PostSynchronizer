@@ -1,5 +1,5 @@
 import { Alert } from 'react-native';
-import ImageEditor from '@react-native-community/image-editor';
+import { imageEditorService } from './ImageEditorService';
 import { Skia } from '@shopify/react-native-skia';
 import { fileService } from './FileService';
 import Logger from 'src/services/LoggerService';
@@ -36,7 +36,7 @@ class ImageProcessingService {
         size: { width, height: originalHeight },
       };
 
-      const cropResult = await ImageEditor.cropImage(imageUri, cropData);
+      const cropResult = await imageEditorService.cropImage(imageUri, cropData);
       const croppedImageUri = cropResult.uri;
       const newPath = await this.saveImageWithCorrectedName(croppedImageUri, imageUri);
 
