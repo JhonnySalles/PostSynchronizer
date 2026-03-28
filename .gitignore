@@ -100,10 +100,9 @@ fastlane/report.xml
 fastlane/Preview.html
 ios/sentry.properties
 android/sentry.properties
-compileAndSend.bat
 android/app/google-services.json
 firebase-service-account.json
 android/.gradle
 android/app/build
 /android/build
-compile android send.bat
+compileAndroidSend.bat

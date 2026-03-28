@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-blob-util/windows/ReactNativeBlobUtil/ReactNativeBlobUtil.vcxproj b/node_modules/react-native-blob-util/windows/ReactNativeBlobUtil/ReactNativeBlobUtil.vcxproj
-index c123456..7890abc 100644
+index 79bc96a..4651f65 100644
 --- a/node_modules/react-native-blob-util/windows/ReactNativeBlobUtil/ReactNativeBlobUtil.vcxproj
 +++ b/node_modules/react-native-blob-util/windows/ReactNativeBlobUtil/ReactNativeBlobUtil.vcxproj
 @@ -66,7 +66,7 @@
@@ -11,15 +11,16 @@ index c123456..7890abc 100644
    </ImportGroup>
    <ItemDefinitionGroup>
      <ClCompile>
-@@ -126,14 +126,14 @@
-   <ItemGroup>
+@@ -126,7 +126,7 @@
    </ItemGroup>
    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
    <ImportGroup Label="ReactNativeWindowsTargets">
 -    <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.targets" Condition="Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.targets')" />
 +    <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Uwp.CppLib.targets" Condition="Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Uwp.CppLib.targets')" />
    </ImportGroup>
-   <Target Name="EnsureReactNativeWindowsTargets" BeforeTargets="PrepareForBuild">
+   <ItemGroup>
+   </ItemGroup>
+@@ -134,7 +134,7 @@
      <PropertyGroup>
        <ErrorText>This project references targets in your node_modules\react-native-windows folder. The missing file is {0}.</ErrorText>
      </PropertyGroup>
@@ -29,3 +30,4 @@ index c123456..7890abc 100644
 +    <Error Condition="!Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Uwp.CppLib.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Uwp.CppLib.targets'))" />
    </Target>
  </Project>
+\ No newline at end of file
