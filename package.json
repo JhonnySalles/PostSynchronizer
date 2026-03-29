@@ -3,14 +3,15 @@
   "version": "0.0.2",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android": "cross-env APP_ENV=mobile react-native run-android",
+    "ios": "cross-env APP_ENV=mobile react-native run-ios",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "start": "react-native start",
+    "start": "cross-env APP_ENV=mobile react-native start",
+    "start:windows": "cross-env APP_ENV=windows react-native start",
     "test": "jest",
     "postinstall": "patch-package",
-    "windows": "react-native run-windows --msbuildprops WinUI2xVersion=2.6.0,WindowsTargetPlatformVersion=10.0.22621.0,WindowsTargetPlatformMinVersion=10.0.17134.0,PlatformToolset=v143"
+    "windows": "cross-env APP_ENV=windows react-native run-windows --msbuildprops WinUI2xVersion=2.6.0,WindowsTargetPlatformVersion=10.0.22621.0,WindowsTargetPlatformMinVersion=10.0.17134.0,PlatformToolset=v143"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
@@ -75,6 +76,7 @@
     "@typescript-eslint/parser": "^8.41.0",
     "babel-jest": "^29.6.3",
     "babel-plugin-module-resolver": "^5.0.2",
+    "cross-env": "^7.0.3",
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",

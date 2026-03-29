@@ -1,1 +1,1 @@
-yarn android
+yarn start
