@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { ColorsType } from '../../theme/colors';
 
 export const getStyles = (colors: ColorsType) =>
@@ -6,10 +6,27 @@ export const getStyles = (colors: ColorsType) =>
     safeArea: {
       flex: 1,
       backgroundColor: colors.background,
+      ...Platform.select({
+        windows: {
+          marginTop: 10,
+          marginBottom: 10,
+        },
+        default: {
+
+        }
+      })
     },
     container: {
       flex: 1,
-      paddingHorizontal: 16,
+      ...Platform.select({
+        windows: {
+          marginStart: 16,
+          marginEnd: 16,
+        },
+        default: {
+          paddingHorizontal: 16,
+        }
+      })
     },
     // Seção de Status das Conexões
     statusContainer: {
@@ -72,18 +89,34 @@ export const getStyles = (colors: ColorsType) =>
       flexDirection: 'row',
       alignItems: 'center',
       paddingVertical: 12,
-      paddingHorizontal: 16,
       borderTopWidth: 1,
       borderTopColor: colors.border,
       backgroundColor: colors.background,
+      ...Platform.select({
+        windows: {
+          marginStart: 16,
+          marginEnd: 16,
+        },
+        default: {
+          paddingHorizontal: 16,
+        }
+      })
     },
     actionButton: {
       flex: 1,
       padding: 15,
-      paddingHorizontal: 16,
       borderRadius: 8,
       alignItems: 'center',
       marginHorizontal: 5,
+      ...Platform.select({
+        windows: {
+          marginStart: 16,
+          marginEnd: 16,
+        },
+        default: {
+          paddingHorizontal: 16,
+        }
+      })
     },
     actionButtonText: {
       fontSize: 16,
@@ -165,11 +198,19 @@ export const getStyles = (colors: ColorsType) =>
       left: 5,
       backgroundColor: 'rgba(255, 255, 255, 0.6)',
       borderRadius: 8,
-      paddingHorizontal: 5,
       paddingVertical: 3,
       flexDirection: 'row',
       alignItems: 'center',
       zIndex: 2,
+      ...Platform.select({
+        windows: {
+          marginStart: 5,
+          marginEnd: 5,
+        },
+        default: {
+          paddingHorizontal: 5,
+        }
+      })
     },
     platformIconWrapper: {
       marginHorizontal: 4,
@@ -217,9 +258,17 @@ export const getStyles = (colors: ColorsType) =>
       backgroundColor: colors.primary,
       borderRadius: 20,
       paddingVertical: 4,
-      paddingHorizontal: 8,
       marginLeft: 8,
       marginTop: 5,
+      ...Platform.select({
+        windows: {
+          marginStart: 8,
+          marginEnd: 8,
+        },
+        default: {
+          paddingHorizontal: 8,
+        }
+      })
     },
     counterCardError: {
       backgroundColor: colors.error,

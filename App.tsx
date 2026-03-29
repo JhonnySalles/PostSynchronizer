@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigation';
 import { getDBConnection } from './src/database';
@@ -35,7 +35,17 @@ const AppContent = () => {
       <BaseToast
         {...props}
         style={{ borderLeftColor: colors.success, backgroundColor: colors.card }}
-        contentContainerStyle={{ paddingHorizontal: 15 }}
+        contentContainerStyle={{ 
+          ...Platform.select({
+            windows: {
+              marginStart: 15,
+              marginEnd: 15,
+            },
+            default: {
+              paddingHorizontal: 15,
+            }
+          }) 
+        }}
         text1Style={{
           fontSize: 16,
           fontWeight: 'bold',
@@ -51,7 +61,17 @@ const AppContent = () => {
       <ErrorToast
         {...props}
         style={{ borderLeftColor: colors.error, backgroundColor: colors.card }}
-        contentContainerStyle={{ paddingHorizontal: 15 }}
+        contentContainerStyle={{ 
+          ...Platform.select({
+            windows: {
+              marginStart: 15,
+              marginEnd: 15,
+            },
+            default: {
+              paddingHorizontal: 15,
+            }
+          }) 
+        }}
         text1Style={{
           fontSize: 16,
           fontWeight: 'bold',
@@ -67,7 +87,17 @@ const AppContent = () => {
       <BaseToast
         {...props}
         style={{ borderLeftColor: colors.primary, backgroundColor: colors.card }}
-        contentContainerStyle={{ paddingHorizontal: 15 }}
+        contentContainerStyle={{ 
+          ...Platform.select({
+            windows: {
+              marginStart: 15,
+              marginEnd: 15,
+            },
+            default: {
+              paddingHorizontal: 15,
+            }
+          }) 
+        }}
         text1Style={{
           fontSize: 16,
           fontWeight: 'bold',

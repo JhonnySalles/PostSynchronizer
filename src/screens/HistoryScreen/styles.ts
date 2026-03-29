@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { ColorsType } from 'src/theme/colors';
 
 export const getStyles = (colors: ColorsType) =>
@@ -43,9 +43,17 @@ export const getStyles = (colors: ColorsType) =>
       alignItems: 'center',
     },
     statusBadge: {
-      paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 12,
+      ...Platform.select({
+        windows: {
+          marginStart: 10,
+          marginEnd: 10,
+        },
+        default: {
+          paddingHorizontal: 10,
+        }
+      })
     },
     statusText: {
       color: colors.text,
@@ -111,10 +119,18 @@ export const getStyles = (colors: ColorsType) =>
       alignItems: 'center',
       backgroundColor: colors.background || '#f0f0f0',
       borderRadius: 8,
-      paddingHorizontal: 12,
       height: 40,
       borderWidth: 1,
       borderColor: colors.border,
+      ...Platform.select({
+        windows: {
+          marginStart: 12,
+          marginEnd: 12,
+        },
+        default: {
+          paddingHorizontal: 12,
+        }
+      })
     },
     searchInput: {
       flex: 1,

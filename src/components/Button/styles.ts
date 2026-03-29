@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { ColorsType } from '../../theme/colors';
 
 // Esta função gera os estilos do botão com base nas cores do tema atual
@@ -7,11 +7,19 @@ export const getStyles = (colors: ColorsType) =>
     // Estilo base para todos os botões
     baseContainer: {
       paddingVertical: 14,
-      paddingHorizontal: 20,
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
+      ...Platform.select({
+        windows: {
+          marginStart: 20,
+          marginEnd: 20,
+        },
+        default: {
+          paddingHorizontal: 20,
+        }
+      })
     },
     // Estilo base para o texto de todos os botões
     baseText: {

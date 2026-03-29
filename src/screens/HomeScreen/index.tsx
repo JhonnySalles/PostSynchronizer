@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { pickerService } from '../../services/PickerService';
+import ImagePicker from 'react-native-image-crop-picker';
 import NestableDraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
@@ -290,10 +290,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     }
 
     try {
-      const images = await pickerService.openPicker({
+      const images = await ImagePicker.openPicker({
         multiple: true,
         mediaType: 'photo',
         maxFiles: 50,
+        selectionLimit: 50,
       });
 
       const activePlatforms = connections.filter(c => c.active).map(c => c.platform);
@@ -363,8 +364,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         return;
 
     try {
-      const croppedImage = await pickerService.openCropper({
+      const croppedImage = await ImagePicker.openCropper({
         path: image.path,
+        mediaType: 'photo',
         cropping: true,
         compressImageMaxWidth: 1000,
         compressImageMaxHeight: 1000,

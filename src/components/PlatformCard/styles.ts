@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { ColorsType } from 'src/theme/colors';
 
 export const getStyles = (colors: ColorsType) =>
@@ -31,13 +31,21 @@ export const getStyles = (colors: ColorsType) =>
     input: {
       backgroundColor: colors.card,
       borderRadius: 8,
-      paddingHorizontal: 15,
       paddingVertical: 12,
       fontSize: 16,
       marginBottom: 12,
       borderWidth: 1,
       borderColor: colors.border,
       color: colors.text,
+      ...Platform.select({
+        windows: {
+          marginStart: 15,
+          marginEnd: 15,
+        },
+        default: {
+          paddingHorizontal: 15,
+        }
+      })
     },
     button: {
       backgroundColor: colors.primary,
