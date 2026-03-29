@@ -10,8 +10,7 @@ import { SENTRY_DSN, SENTRY_ENVIRONMENT } from '@env';
 import { apiService } from './src/services/ApiService';
 import Logger from './src/services/LoggerService';
 import { ProgressProvider } from './src/contexts/ProgressContext';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import { BaseToast, ErrorToast } from 'react-native-toast-message';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import { firebaseService } from './src/services/FirebaseService';
 
 Sentry.init({
@@ -34,7 +33,18 @@ const AppContent = () => {
     success: (props: any) => (
       <BaseToast
         {...props}
-        style={{ borderLeftColor: colors.success, backgroundColor: colors.card }}
+        style={{ backgroundColor: colors.card, 
+            ...Platform.select({
+              windows: {
+                borderLeftWidth: 5,
+                borderColor: colors.success,
+              },
+              default: {
+                borderLeftWidth: 5,
+                borderLeftColor: colors.success,
+              }
+            })
+         }}
         contentContainerStyle={{ 
           ...Platform.select({
             windows: {
@@ -60,7 +70,18 @@ const AppContent = () => {
     error: (props: any) => (
       <ErrorToast
         {...props}
-        style={{ borderLeftColor: colors.error, backgroundColor: colors.card }}
+        style={{ backgroundColor: colors.card,
+            ...Platform.select({
+              windows: {
+                borderLeftWidth: 5,
+                borderColor: colors.error,
+              },
+              default: {
+                borderLeftWidth: 5,
+                borderLeftColor: colors.error,
+              }
+            })
+         }}
         contentContainerStyle={{ 
           ...Platform.select({
             windows: {
@@ -86,7 +107,19 @@ const AppContent = () => {
     info: (props: any) => (
       <BaseToast
         {...props}
-        style={{ borderLeftColor: colors.primary, backgroundColor: colors.card }}
+        style={{ borderColor: colors.primary,  
+            backgroundColor: colors.card,
+            ...Platform.select({
+              windows: {
+                borderLeftWidth: 5,
+                borderColor: colors.primary,
+              },
+              default: {
+                borderLeftWidth: 5,
+                borderLeftColor: colors.primary,
+              }
+            })
+         }}
         contentContainerStyle={{ 
           ...Platform.select({
             windows: {

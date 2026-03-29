@@ -12,19 +12,30 @@ const LoadingIndicator = ({ visible, text = 'Carregando...' }: LoadingIndicatorP
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
+  const content = (
+    <View style={styles.modalBackground}>
+      <View style={styles.activityIndicatorWrapper}>
+        <ActivityIndicator animating={visible} size="large" color={colors.primary} style={styles.indicator} />
+        <Text style={styles.text}>{text}</Text>
+      </View>
+    </View>
+  );
+
+  if (Platform.OS === 'windows') {
+    if (!visible) 
+        return null;
+
+    return content;
+  }
+
   return (
     <Modal
       transparent={true}
-      animationType={Platform.OS === 'windows' ? 'none' : 'fade'}
+      animationType={'fade'}
       visible={visible}
       onRequestClose={() => {}}
     >
-      <View style={styles.modalBackground}>
-        <View style={styles.activityIndicatorWrapper}>
-          <ActivityIndicator animating={visible} size="large" color={colors.primary} style={styles.indicator} />
-          <Text style={styles.text}>{text}</Text>
-        </View>
-      </View>
+      {content}
     </Modal>
   );
 };

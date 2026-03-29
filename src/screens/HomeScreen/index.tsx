@@ -37,7 +37,7 @@ import { PlatformType, SOCIAL_PLATFORMS, UNKNOW, THREADS, TUMBLR, X, BLUESKY } f
 import AuthTokenDao, { TumblrCredentials } from '../../dao/AuthTokenDao';
 import { requestGalleryPermission } from 'src/utils/permissions';
 import Logger from 'src/services/LoggerService';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import Toast from 'react-native-toast-message';
 import { DRAFT, ERROR, IDLE, PENDING, POSTED, PostType, SUCCESS } from 'src/constants/app';
 import { formatarData } from 'src/utils/util';
 
