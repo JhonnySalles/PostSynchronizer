@@ -1,6 +1,10 @@
-import { Platform } from 'react-native';
+// This file exists solely for TypeScript type resolution.
+// At runtime, Metro bundler will automatically resolve the correct
+// platform-specific implementation:
+//   - FileService.native.ts  → Android / iOS
+//   - FileService.windows.ts → Windows
+//
+// Do NOT add runtime logic here.
 
-import { fileService as mobileFS } from './FileService.Mobile';
-import { fileService as windowsFS } from './FileService.Windows';
-
-export const fileService = Platform.OS === 'windows' ? windowsFS : mobileFS;
+export { fileService } from './FileService.native';
+export type { FileService } from './FileService.native';

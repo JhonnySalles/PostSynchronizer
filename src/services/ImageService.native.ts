@@ -152,4 +152,4 @@ class ImageProcessingServiceMobile {
   }
 }
 
-export default ImageProcessingServiceMobile;
+export default new ImageProcessingServiceMobile();

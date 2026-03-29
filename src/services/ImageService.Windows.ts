@@ -28,4 +28,4 @@ class ImageProcessingServiceWindows {
   }
 }
 
-export default ImageProcessingServiceWindows;
+export default new ImageProcessingServiceWindows();

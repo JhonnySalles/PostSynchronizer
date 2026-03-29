@@ -1,7 +1,10 @@
-import { Platform } from 'react-native';
+// This file exists solely for TypeScript type resolution.
+// At runtime, Metro bundler will automatically resolve the correct
+// platform-specific implementation:
+//   - ShareService.native.ts  → Android / iOS
+//   - ShareService.windows.ts → Windows
+//
+// Do NOT add runtime logic here.
 
-import { shareService as mobileShare } from './ShareService.Mobile';
-import { shareService as windowsShare } from './ShareService.Windows';
-
-export const shareService = Platform.OS === 'windows' ? windowsShare : mobileShare;
-export type { ShareOptions } from './ShareService.Mobile';
+export { shareService } from './ShareService.native';
+export type { ShareOptions } from './ShareService.native';
