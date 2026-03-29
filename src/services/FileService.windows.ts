@@ -4,11 +4,38 @@ export class FileService {
   public DocumentDirectoryPath = ReactNativeBlobUtil.fs.dirs.DocumentDir;
   public CachesDirectoryPath = ReactNativeBlobUtil.fs.dirs.CacheDir;
 
+  private operationQueue: Promise<any> = Promise.resolve();
+
+  private async executeSerialized<T>(operation: () => Promise<T>, retries = 3, delay = 50): Promise<T> {
+    const nextInQueue = async () => {
+      let lastError: any;
+      for (let i = 0; i < retries; i++) {
+        try {
+          return await operation();
+        } catch (error: any) {
+          lastError = error;
+          // EUNSPECIFIED ou similar no Windows geralmente indica arquivo em uso
+          const isFileInUse = error?.message?.includes('EUNSPECIFIED') || error?.message?.includes('arquivo está em uso');
+          if (isFileInUse && i < retries - 1) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+          }
+          throw error;
+        }
+      }
+      throw lastError;
+    };
+
+    const promise = this.operationQueue.then(nextInQueue);
+    this.operationQueue = promise.catch(() => {}); // Manter a fila andando mesmo se falhar
+    return promise;
+  }
+
   public writeFile = (path: string, content: string, encoding?: string) =>
-    ReactNativeBlobUtil.fs.writeFile(path, content, encoding as any);
+    this.executeSerialized(() => ReactNativeBlobUtil.fs.writeFile(path, content, encoding as any));
 
   public appendFile = (path: string, content: string, encoding?: string) =>
-    ReactNativeBlobUtil.fs.appendFile(path, content, encoding as any);
+    this.executeSerialized(() => ReactNativeBlobUtil.fs.appendFile(path, content, encoding as any));
 
   public mkdir = async (path: string): Promise<void> => {
     await ReactNativeBlobUtil.fs.mkdir(path);
