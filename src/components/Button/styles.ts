@@ -6,7 +6,6 @@ export const getStyles = (colors: ColorsType) =>
   StyleSheet.create({
     // Estilo base para todos os botões
     baseContainer: {
-      paddingVertical: 14,
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
@@ -15,9 +14,11 @@ export const getStyles = (colors: ColorsType) =>
         windows: {
           marginStart: 20,
           marginEnd: 20,
+          padding: 14,
         },
         default: {
           paddingHorizontal: 20,
+          paddingVertical: 14,
         }
       })
     },

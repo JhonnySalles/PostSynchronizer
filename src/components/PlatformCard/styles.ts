@@ -31,7 +31,6 @@ export const getStyles = (colors: ColorsType) =>
     input: {
       backgroundColor: colors.card,
       borderRadius: 8,
-      paddingVertical: 12,
       fontSize: 16,
       marginBottom: 12,
       borderWidth: 1,
@@ -41,18 +40,27 @@ export const getStyles = (colors: ColorsType) =>
         windows: {
           marginStart: 15,
           marginEnd: 15,
+          padding: 12,
         },
         default: {
           paddingHorizontal: 15,
+          paddingVertical: 12,
         }
       })
     },
     button: {
       backgroundColor: colors.primary,
       borderRadius: 8,
-      paddingVertical: 15,
       alignItems: 'center',
       marginTop: 10,
+      ...Platform.select({
+        windows: {
+          padding: 15,
+        },
+        default: {
+          paddingVertical: 15,
+        }
+      })
     },
     buttonText: {
       color: colors.textPrimary,
@@ -63,10 +71,17 @@ export const getStyles = (colors: ColorsType) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingVertical: 10,
       marginTop: 10,
       borderTopWidth: 1,
       borderTopColor: colors.border,
+      ...Platform.select({
+        windows: {
+          padding: 10,
+        },
+        default: {
+          paddingVertical: 10,
+        }
+      })
     },
     switchLabel: {
       fontSize: 16,

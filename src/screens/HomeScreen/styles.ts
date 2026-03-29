@@ -33,10 +33,17 @@ export const getStyles = (colors: ColorsType) =>
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      paddingVertical: 10,
       marginBottom: 15,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
+      ...Platform.select({
+        windows: {
+          padding: 10,
+        },
+        default: {
+          paddingVertical: 10,
+        }
+      })
     },
     statusIconWrapper: {
       marginHorizontal: 15,
@@ -56,7 +63,6 @@ export const getStyles = (colors: ColorsType) =>
       padding: 10,
       borderRadius: 8,
       marginBottom: 15,
-      marginLeft: 0,
       color: colors.text,
       backgroundColor: colors.background,
     },
@@ -88,7 +94,6 @@ export const getStyles = (colors: ColorsType) =>
     actionsContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: 12,
       borderTopWidth: 1,
       borderTopColor: colors.border,
       backgroundColor: colors.background,
@@ -96,9 +101,11 @@ export const getStyles = (colors: ColorsType) =>
         windows: {
           marginStart: 16,
           marginEnd: 16,
+          padding: 12,
         },
         default: {
           paddingHorizontal: 16,
+          paddingVertical: 12,
         }
       })
     },
@@ -147,8 +154,15 @@ export const getStyles = (colors: ColorsType) =>
       marginBottom: 15,
       color: colors.text,
       backgroundColor: colors.background,
-      borderTopWidth: 1,
-      borderTopColor: colors.border,
+      ...Platform.select({
+        windows: {
+          borderRadius: 6,
+        },
+        default: {
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+        }
+      })
     },
     // Container para as sugestões
     suggestionsContainer: {
@@ -198,7 +212,6 @@ export const getStyles = (colors: ColorsType) =>
       left: 5,
       backgroundColor: 'rgba(255, 255, 255, 0.6)',
       borderRadius: 8,
-      paddingVertical: 3,
       flexDirection: 'row',
       alignItems: 'center',
       zIndex: 2,
@@ -206,9 +219,11 @@ export const getStyles = (colors: ColorsType) =>
         windows: {
           marginStart: 5,
           marginEnd: 5,
+          padding: 3,
         },
         default: {
           paddingHorizontal: 5,
+          paddingVertical: 3,
         }
       })
     },
@@ -257,16 +272,17 @@ export const getStyles = (colors: ColorsType) =>
       alignItems: 'center',
       backgroundColor: colors.primary,
       borderRadius: 20,
-      paddingVertical: 4,
       marginLeft: 8,
       marginTop: 5,
       ...Platform.select({
         windows: {
           marginStart: 8,
           marginEnd: 8,
+          padding: 6,
         },
         default: {
           paddingHorizontal: 8,
+          paddingVertical: 4,
         }
       })
     },

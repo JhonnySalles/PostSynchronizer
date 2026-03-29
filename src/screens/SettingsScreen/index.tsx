@@ -9,10 +9,10 @@ import AuthTokenDao, { Credentials, TumblrCredentials } from 'src/dao/AuthTokenD
 import { useFocusEffect } from '@react-navigation/native';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import Logger from 'src/services/LoggerService';
-import { Picker } from '@react-native-picker/picker';
 import { useTheme } from '../../theme/ThemeProvider';
 import { DARK, LIGHT, SYSTEM } from 'src/constants/themes';
 import Button from 'src/components/Button';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const DEFAULT: Credentials = {
   platform: UNKNOW,
@@ -25,8 +25,15 @@ const SettingsScreen = () => {
   const [isConsulting, setIsConsulting] = useState<string | null>(null);
   const [connections, setConnections] = useState<Credentials[]>([]);
 
-  const { themeMode, setThemeMode, colors } = useTheme();
+  const { themeMode, setThemeMode, colors, isDark } = useTheme();
   const styles = getStyles(colors);
+
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([
+    { label: 'Padrão do Sistema', value: SYSTEM },
+    { label: 'Modo Claro', value: LIGHT },
+    { label: 'Modo Escuro', value: DARK },
+  ]);
 
   useFocusEffect(
     useCallback(() => {
@@ -132,18 +139,24 @@ const SettingsScreen = () => {
 
         <View style={styles.themeSelectorContainer}>
           <Text style={styles.themeSelectorLabel}>Aparência do Aplicativo</Text>
-          <View style={styles.pickerWrapper}>
-            <Picker
-              selectedValue={themeMode}
-              onValueChange={itemValue => setThemeMode(itemValue)}
-              dropdownIconColor={colors.text}
-              style={{ width: '100%', color: colors.text }}
-            >
-              <Picker.Item label="Padrão do Sistema" value={SYSTEM} />
-              <Picker.Item label="Modo Claro" value={LIGHT} />
-              <Picker.Item label="Modo Escuro" value={DARK} />
-            </Picker>
-          </View>
+          <DropDownPicker
+            open={open}
+            value={themeMode}
+            items={items}
+            setOpen={setOpen}
+            setValue={callback => {
+              const newValue = callback(themeMode);
+              setThemeMode(newValue);
+            }}
+            setItems={setItems}
+            theme={isDark ? 'DARK' : 'LIGHT'}
+            style={styles.pickerContainer}
+            textStyle={styles.pickerTextStyle}
+            placeholderStyle={styles.pickerPlaceholderStyle}
+            dropDownContainerStyle={styles.pickerDropDownContainer}
+            listItemLabelStyle={styles.pickerListItemLabel}
+            listMode="SCROLLVIEW"
+          />
         </View>
 
         <PlatformCard

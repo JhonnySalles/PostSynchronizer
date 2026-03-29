@@ -920,6 +920,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           })}
         </View>
 
+        <View style={{borderTopWidth: 1, borderTopColor: colors.border, marginBottom: 15 }}/>
+
         <TextInput
           style={styles.tagsInput}
           placeholder="Adicione tags separadas por ponto e vírgula (;)"

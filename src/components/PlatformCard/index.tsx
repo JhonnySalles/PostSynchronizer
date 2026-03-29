@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleProp, ViewStyle, TextStyle, Switch, ActivityIndicator } from 'react-native';
+import { View, Text, StyleProp, ViewStyle, TextStyle, Switch, ActivityIndicator, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getStyles } from './styles';
 import { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
@@ -67,7 +67,7 @@ const PlatformCard = ({
         <Switch
           trackColor={{ false: colors.primaryOutherAccent, true: colors.primaryAccent }}
           thumbColor={credential.active ? colors.primary : colors.primaryOuther}
-          ios_backgroundColor={colors.inactive}
+          ios_backgroundColor={Platform.OS === 'windows' ? undefined : colors.inactive}
           onValueChange={() => {
             const credenciais = { ...credential, active: !credential.active };
             // prettier-ignore

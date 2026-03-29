@@ -43,15 +43,17 @@ export const getStyles = (colors: ColorsType) =>
       alignItems: 'center',
     },
     statusBadge: {
-      paddingVertical: 4,
-      borderRadius: 12,
       ...Platform.select({
         windows: {
           marginStart: 10,
           marginEnd: 10,
+          padding: 6,
+          borderRadius: 16,
         },
         default: {
           paddingHorizontal: 10,
+          paddingVertical: 4,
+          borderRadius: 12,
         }
       })
     },
@@ -119,13 +121,13 @@ export const getStyles = (colors: ColorsType) =>
       alignItems: 'center',
       backgroundColor: colors.background || '#f0f0f0',
       borderRadius: 8,
-      height: 40,
       borderWidth: 1,
       borderColor: colors.border,
       ...Platform.select({
         windows: {
           marginStart: 12,
           marginEnd: 12,
+          paddingLeft: 10,
         },
         default: {
           paddingHorizontal: 12,

@@ -17,15 +17,31 @@ export const getStyles = (colors: ColorsType) =>
       marginTop: 20,
       padding: 15,
       backgroundColor: colors.background,
+      zIndex: 5000,
     },
     themeSelectorLabel: {
       fontSize: 16,
       color: colors.text,
       marginBottom: 10,
     },
-    pickerWrapper: {
-      borderWidth: 1,
+    pickerContainer: {
+      backgroundColor: colors.card,
       borderColor: colors.border,
-      borderRadius: 8,
+      borderWidth: 1,
+      marginBottom: 10,
+    },
+    pickerTextStyle: {
+      color: colors.text,
+      fontSize: 14,
+    },
+    pickerPlaceholderStyle: {
+      color: colors.textSecondary,
+    },
+    pickerDropDownContainer: {
+      backgroundColor: colors.card,
+      borderColor: colors.border,
+    },
+    pickerListItemLabel: {
+      color: colors.text,
     },
   });
