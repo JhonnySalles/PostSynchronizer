@@ -11,11 +11,10 @@ import {
   Keyboard,
   AppState,
   AppStateStatus,
-  Platform,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import ImagePicker from 'react-native-image-crop-picker';
+import { pickerService } from '../../services/PickerService';
 import NestableDraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
@@ -31,7 +30,7 @@ import Button from '../../components/Button';
 
 import PostDao from '../../dao/PostDao';
 import { apiService, PostPayload, ProgressUpdate, SinglePostPayload } from '../../services/ApiService';
-import ImageProcessingService from '../../services/ImageService.native';
+import ImageProcessingService from '../../services/ImageService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
 import { PlatformType, SOCIAL_PLATFORMS, UNKNOW, THREADS, TUMBLR, X, BLUESKY } from '../../constants/platforms';
@@ -291,11 +290,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     }
 
     try {
-      const images = await ImagePicker.openPicker({
+      const images = await pickerService.openPicker({
         multiple: true,
         mediaType: 'photo',
-        maxFiles: 10,
-        selectionLimit: 10,
+        maxFiles: 50,
       });
 
       const activePlatforms = connections.filter(c => c.active).map(c => c.platform);
@@ -365,9 +363,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         return;
 
     try {
-      const croppedImage = await ImagePicker.openCropper({
+      const croppedImage = await pickerService.openCropper({
         path: image.path,
-        mediaType: 'photo',
         cropping: true,
         compressImageMaxWidth: 1000,
         compressImageMaxHeight: 1000,
@@ -782,66 +779,60 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     toggleImagePlatform(imageIndex, platform);
   };
 
-  const renderImageItem = (props: any) => {
-    const { item, index: itemIndex, getIndex, drag, isActive } = props;
-    const index = getIndex ? getIndex() : itemIndex;
-
+  const renderImageItem = ({ item, getIndex, drag, isActive }: RenderItemParams<SelectedImage>) => {
+    const index = getIndex();
     // prettier-ignore
-    if (index === undefined || index === null)
+    if (index === undefined)
       return null;
 
-    const content = (
-      <TouchableOpacity
-        onLongPress={Platform.OS === 'windows' ? undefined : drag}
-        onPress={() => handleImageClick(item)}
-        style={[styles.imageItemContainer, { elevation: isActive ? 5 : 0 }, { opacity: isActive ? 0.5 : 1 }]}
-      >
-        <Image source={{ uri: item.path }} style={styles.imageItem} />
+    return (
+      <ScaleDecorator>
         <TouchableOpacity
-          style={styles.editIconOverlay}
-          onPress={() => handleAdjustSingleImage(index)}
-          disabled={isAdjustingImages}
+          onLongPress={drag}
+          onPress={() => handleImageClick(item)}
+          style={[styles.imageItemContainer, { elevation: isActive ? 5 : 0 }, { opacity: isActive ? 0.5 : 1 }]}
         >
-          <Icon name="crop-outline" size={20} color={colors.iconOverlay} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.removeIconOverlay}
-          onPress={() => handleRemoveImage(index)}
-          disabled={isAdjustingImages}
-        >
-          <Icon name="close-circle" size={20} color={colors.cancel} />
-        </TouchableOpacity>
+          <Image source={{ uri: item.path }} style={styles.imageItem} />
+          <TouchableOpacity
+            style={styles.editIconOverlay}
+            onPress={() => handleAdjustSingleImage(index)}
+            disabled={isAdjustingImages}
+          >
+            <Icon name="crop-outline" size={20} color={colors.iconOverlay} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.removeIconOverlay}
+            onPress={() => handleRemoveImage(index)}
+            disabled={isAdjustingImages}
+          >
+            <Icon name="close-circle" size={20} color={colors.cancel} />
+          </TouchableOpacity>
 
-        <View style={styles.platformIconsOverlay}>
-          {connections
-            .filter((c) => c.active)
-            .map((connection) => {
-              const platformInfo = SOCIAL_PLATFORMS.find((p) => p.name === connection.platform);
-              // prettier-ignore
-              if (!platformInfo) 
-              return null;
+          <View style={styles.platformIconsOverlay}>
+            {connections
+              .filter(c => c.active)
+              .map(connection => {
+                const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === connection.platform);
+                // prettier-ignore
+                if (!platformInfo) 
+                return null;
 
-              const isSelected = item.platforms.includes(connection.platform);
-              const iconColor = isSelected ? getPlatformColor(connection.platform) : '#505050';
-              return (
-                <TouchableOpacity
-                  key={connection.platform}
-                  onPress={() => handleToggleImagePlatform(index, connection.platform)}
-                  style={styles.platformIconWrapper}
-                >
-                  <Icon name={platformInfo.icon} size={22} color={iconColor} />
-                </TouchableOpacity>
-              );
-            })}
-        </View>
-      </TouchableOpacity>
+                const isSelected = item.platforms.includes(connection.platform);
+                const iconColor = isSelected ? getPlatformColor(connection.platform) : '#505050';
+                return (
+                  <TouchableOpacity
+                    key={connection.platform}
+                    onPress={() => handleToggleImagePlatform(index, connection.platform)}
+                    style={styles.platformIconWrapper}
+                  >
+                    <Icon name={platformInfo.icon} size={22} color={iconColor} />
+                  </TouchableOpacity>
+                );
+              })}
+          </View>
+        </TouchableOpacity>
+      </ScaleDecorator>
     );
-
-    if (Platform.OS === 'windows') {
-      return content;
-    }
-
-    return <ScaleDecorator>{content}</ScaleDecorator>;
   };
 
   const getPlatformColor = (platform: PlatformType): string => {
@@ -968,26 +959,16 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           {selectedImages.length > 0 && (
             <>
               <View style={styles.carouselContainer}>
-                {Platform.OS === 'windows' ? (
-                  <FlatList
-                    data={selectedImages}
-                    renderItem={renderImageItem as any}
-                    keyExtractor={(item, index) => `${item.path}-${index}`}
-                    horizontal
-                    showsHorizontalScrollIndicator={true}
-                  />
-                ) : (
-                  <NestableDraggableFlatList
-                    data={selectedImages}
-                    onDragEnd={({ data }) => setSelectedImages(data)}
-                    renderItem={renderImageItem}
-                    keyExtractor={(item, index) => `${item.path}-${index}`}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    simultaneousHandlers={scrollRef}
-                    activationDistance={10}
-                  />
-                )}
+                <NestableDraggableFlatList
+                  data={selectedImages}
+                  onDragEnd={({ data }) => setSelectedImages(data)}
+                  renderItem={renderImageItem}
+                  keyExtractor={(item, index) => `${item.path}-${index}`}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  simultaneousHandlers={scrollRef}
+                  activationDistance={10}
+                />
               </View>
 
               {isAdjustingImages && (
