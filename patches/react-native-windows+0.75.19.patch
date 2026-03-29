@@ -1,0 +1,30 @@
+diff --git a/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/Base.h b/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/Base.h
+index 352a46c..92f168d 100644
+--- a/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/Base.h
++++ b/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/Base.h
+@@ -11,1 +11,1 @@
+-#include <Convert.h> // [Windows]
++#include "Convert.h"
+diff --git a/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/CallbackWrapper.h b/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/CallbackWrapper.h
+index f21c43b..817293a 100644
+--- a/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/CallbackWrapper.h
++++ b/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/CallbackWrapper.h
+@@ -14,1 +14,1 @@
+-#include <LongLivedObject.h> // [Windows]
++#include "LongLivedObject.h"
+diff --git a/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/EventEmitter.h b/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/EventEmitter.h
+index ffa602a..821037d 100644
+--- a/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/EventEmitter.h
++++ b/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/EventEmitter.h
+@@ -10,1 +10,1 @@
+-#include <Function.h> // [Windows]
++#include "Function.h"
+diff --git a/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/Function.h b/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/Function.h
+index 221657c..114a58b 100644
+--- a/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/Function.h
++++ b/node_modules/react-native-windows/ReactCommon/TEMP_UntilReactCommonUpdate/react/bridging/Function.h
+@@ -10,2 +10,2 @@
+-#include <Base.h> // [Windows]
+-#include <CallbackWrapper.h> // [Windows]
++#include "Base.h"
++#include "CallbackWrapper.h"
