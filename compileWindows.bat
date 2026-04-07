@@ -1,3 +1,11 @@
 @echo off
+setlocal
+
+echo.
+echo ===================================================
+echo          Compilando o programa para Windows!
+echo ===================================================
+echo.
+
 set APP_ENV=production
 npx react-native run-windows --release --arch x64 --no-launch --msbuildprops WinUI2xVersion=2.6.0,WindowsTargetPlatformVersion=10.0.22621.0,WindowsTargetPlatformMinVersion=10.0.17134.0,PlatformToolset=v143
