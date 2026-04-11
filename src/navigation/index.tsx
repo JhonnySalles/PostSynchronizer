@@ -41,17 +41,29 @@ const AppNavigator = () => {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: 'Postar', headerRight: () => <ApiStatusIcon /> }}
+        options={{ 
+          title: 'Postar', 
+          headerRight: () => <ApiStatusIcon />,
+          tabBarTestID: 'home-tab-button'
+        }}
       />
       <Tab.Screen
         name="History"
         component={HistoryScreen}
-        options={{ title: 'Histórico', headerRight: () => <ApiStatusIcon /> }}
+        options={{ 
+          title: 'Histórico', 
+          headerRight: () => <ApiStatusIcon />,
+          tabBarTestID: 'history-tab-button'
+        }}
       />
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ title: 'Configurações', headerRight: () => <ApiStatusIcon /> }}
+        options={{ 
+          title: 'Configurações', 
+          headerRight: () => <ApiStatusIcon />,
+          tabBarTestID: 'settings-tab-button'
+        }}
       />
     </Tab.Navigator>
   );

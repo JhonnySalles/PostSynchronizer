@@ -134,7 +134,7 @@ const SettingsScreen = () => {
         <LoadingIndicator visible={isLoading} />
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-          <Button title="Login na API" onPress={handleLoginTest} style={{ flex: 1, marginRight: 10 }} />
+          <Button title="Login na API" onPress={handleLoginTest} style={{ flex: 1, marginRight: 10 }} testID="login-api-button" />
         </View>
 
         <View style={styles.themeSelectorContainer}>

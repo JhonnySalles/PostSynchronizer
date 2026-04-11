@@ -308,6 +308,7 @@ const HistoryScreen = () => {
         onPress={() => handleItemPress(item)}
         onLongPress={() => handleSharePost(item)}
         delayLongPress={500}
+        testID={`history-item-${item.id}`}
       >
         <View style={styles.header}>
           <View style={[styles.statusBadge, item.status === 'posted' ? styles.postedBadge : styles.draftBadge]}>
@@ -315,7 +316,11 @@ const HistoryScreen = () => {
           </View>
           <View style={styles.headerRight}>
             <Text style={styles.dateText}>{new Date(item.created_at).toLocaleString('pt-BR')}</Text>
-            <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeletePress(item.id)}>
+            <TouchableOpacity 
+              style={styles.deleteButton} 
+              onPress={() => handleDeletePress(item.id)}
+              testID={`delete-item-button-${item.id}`}
+            >
               <Icon name="trash-outline" size={24} color={colors.delete} />
             </TouchableOpacity>
           </View>
@@ -382,16 +387,18 @@ const HistoryScreen = () => {
               onChangeText={updateSuggestions}
               autoCapitalize="none"
               autoCorrect={false}
+              testID="history-search-input"
             />
             {query.length > 0 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setQuery('');
-                  setShowSuggestions(false);
-                }}
-              >
-                <Icon name="close-circle" size={18} color={colors.textSecondary} />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setQuery('');
+                    setShowSuggestions(false);
+                  }}
+                  testID="clear-search-button"
+                >
+                  <Icon name="close-circle" size={18} color={colors.textSecondary} />
+                </TouchableOpacity>
             )}
           </View>
         </View>
@@ -424,7 +431,9 @@ const HistoryScreen = () => {
 
       {filteredHistory.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Nenhuma postagem ou rascunho encontrado.</Text>
+          <Text style={styles.emptyText} testID="empty-history-text">
+            Nenhuma postagem ou rascunho encontrado.
+          </Text>
         </View>
       ) : (
         <FlatList
@@ -434,6 +443,7 @@ const HistoryScreen = () => {
           style={styles.container}
           contentContainerStyle={{ paddingBottom: 80 }}
           onScroll={() => setShowSuggestions(false)}
+          testID="history-list"
         />
       )}
     </SafeAreaView>

@@ -892,7 +892,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={styles.safeArea}>
-        <NestableScrollContainer ref={scrollRef} style={styles.container} nestedScrollEnabled={true}>
+        <NestableScrollContainer 
+          ref={scrollRef} 
+          style={styles.container} 
+          nestedScrollEnabled={true}
+          testID="home-scroll-container"
+        >
           <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
 
           <TextInput
@@ -902,6 +907,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             multiline
             value={postText}
             onChangeText={handleTextChange}
+            testID="post-text-input"
           />
 
           <View style={styles.countersContainer}>
@@ -948,6 +954,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             onChangeText={handleTagsChange}
             onBlur={handleTagsBlur}
             onLayout={event => setTagInputLayout(event.nativeEvent.layout)}
+            testID="tags-text-input"
           />
 
           <Button
@@ -956,6 +963,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             style={styles.attachButton}
             textStyle={styles.attachButtonText}
             icon={'image-outline'}
+            testID="attach-image-button"
           />
 
           {selectedImages.length > 0 && (
@@ -1025,6 +1033,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             style={[styles.actionButton, styles.cancelButton]}
             textStyle={styles.cancelButtonText}
             disabled={awaitPosting}
+            testID="cancel-action-button"
           />
 
           <Button
@@ -1032,6 +1041,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             onPress={handleSaveDraft}
             style={[styles.actionButton, styles.draftButton]}
             textStyle={styles.draftButtonText}
+            testID="draft-action-button"
           />
 
           <Button
@@ -1040,6 +1050,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             style={[styles.actionButton, styles.postButton]}
             textStyle={styles.postButtonText}
             disabled={awaitPosting}
+            testID="post-action-button"
           />
         </View>
       </SafeAreaView>

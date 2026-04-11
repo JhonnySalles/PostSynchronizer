@@ -75,6 +75,7 @@ const PlatformCard = ({
                 onStatusChange(credenciais);
           }}
           value={credential.active}
+          testID={`platform-switch-${credential.platform.toLowerCase()}`}
         />
       </View>
 
@@ -121,6 +122,7 @@ const PlatformCard = ({
             isLoading={isConsulting}
             disabled={isConsulting}
             style={{ flex: 1, marginRight: 10 }}
+            testID={`platform-consult-button-${credential.platform.toLowerCase()}`}
           />
         </View>
       )}
