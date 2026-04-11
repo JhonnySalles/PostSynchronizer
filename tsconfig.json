@@ -12,7 +12,9 @@
     "src",
     "App.tsx",
     "index.js",
-    "env.d.ts"
+    "env.d.ts",
+    "__tests__",
+    "__mocks__"
   ],
   "exclude": [
     "node_modules",
