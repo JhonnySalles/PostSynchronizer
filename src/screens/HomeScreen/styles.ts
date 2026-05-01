@@ -298,4 +298,50 @@ export const getStyles = (colors: ColorsType) =>
     counterIcon: {
       color: colors.textPrimary,
     },
+    // Estilos para o Botão de Ideias e Dropdown de Humores
+    ideaButton: {
+      padding: 4,
+      marginRight: 10,
+    },
+    moodDropdownContainer: {
+      position: 'absolute',
+      top: 0, // Agora no topo da área da tela, logo abaixo do header
+      right: 16,
+      backgroundColor: colors.card,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      zIndex: 1000,
+      elevation: 5,
+      width: 180,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+    },
+    moodOption: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    moodOptionLast: {
+      borderBottomWidth: 0,
+    },
+    moodIcon: {
+      marginRight: 10,
+    },
+    moodText: {
+      fontSize: 14,
+      color: colors.text,
+      fontWeight: '500',
+    },
+    statusHeaderRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 16,
+      width: '100%',
+    },
   });

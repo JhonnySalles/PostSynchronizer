@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useLayoutEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -11,7 +11,9 @@ import {
   Keyboard,
   AppState,
   AppStateStatus,
+  TouchableWithoutFeedback,
 } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -30,16 +32,20 @@ import Button from '../../components/Button';
 
 import PostDao from '../../dao/PostDao';
 import { apiService, PostPayload, ProgressUpdate, SinglePostPayload } from '../../services/ApiService';
+import { ApiStatusIcon } from 'src/components/ApiStatusIcon';
+import { shareService } from '../../services/ShareService';
+import { fileService } from '../../services/FileService';
 import ImageProcessingService from '../../services/ImageService';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
 import { PlatformType, SOCIAL_PLATFORMS, UNKNOW, THREADS, TUMBLR, X, BLUESKY } from '../../constants/platforms';
 import AuthTokenDao, { TumblrCredentials } from '../../dao/AuthTokenDao';
-import { requestGalleryPermission } from 'src/utils/permissions';
+import { requestGalleryPermission, requestReadPermission } from 'src/utils/permissions';
+import { getMimeType } from 'src/utils/util';
 import Logger from 'src/services/LoggerService';
 import Toast from 'react-native-toast-message';
 import { DRAFT, ERROR, IDLE, PENDING, POSTED, PostType, SUCCESS } from 'src/constants/app';
-import { formatarData } from 'src/utils/util';
+import { cleanTags, formatarData } from 'src/utils/util';
 
 type SelectedImage = {
   path: string;
@@ -52,6 +58,13 @@ const TAG_SEPARADOR = ';';
 const TAG_REMOVE_LAST_SEPARATOR_REGEX = /;$/;
 const TAG_REMOVE_SPACE_REGEX = /^;\s*/;
 const TWITTER_DAILY_POST_LIMIT = 15;
+
+const MOODS = [
+  { id: 'alegre', label: 'Alegre', icon: 'happy-outline' },
+  { id: 'divertido', label: 'Divertido', icon: 'color-wand-outline' },
+  { id: 'triste', label: 'Triste', icon: 'sad-outline' },
+  { id: 'assustado', label: 'Assustado', icon: 'alert-circle-outline' },
+];
 
 const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const { colors } = useTheme();
@@ -91,8 +104,26 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const [tagInputLayout, setTagInputLayout] = useState<{ x: number; y: number; width: number; height: number } | null>(
     null,
   );
+  const [showMoodSuggestions, setShowMoodSuggestions] = useState(false);
 
   const scrollRef = useRef(null);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity
+            style={styles.ideaButton}
+            onPress={() => setShowMoodSuggestions(prev => !prev)}
+            testID="generate-ideas-button"
+          >
+            <Icon name="chatbubble-ellipses-outline" size={26} color={colors.primary} />
+          </TouchableOpacity>
+          <ApiStatusIcon />
+        </View>
+      ),
+    });
+  }, [navigation, colors, showMoodSuggestions]);
 
   const tagSuggestionTimeout = useRef<NodeJS.Timeout | null>(null);
   const tagCloseTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -246,7 +277,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
     tagCleanupTimeout.current = setTimeout(() => {
       const currentTags = usePostStore.getState().tagsText;
-      const cleanedTags = currentTags.trim().replace(TAG_REMOVE_LAST_SEPARATOR_REGEX, '').trim();
+      const cleanedTags = cleanTags(currentTags);
       // prettier-ignore
       if (cleanedTags !== currentTags)
         setTagsText(cleanedTags);
@@ -781,6 +812,79 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     toggleImagePlatform(imageIndex, platform);
   };
 
+  const handleSharePrompt = async (mood: string) => {
+    setShowMoodSuggestions(false);
+    const hasPermission = await requestReadPermission();
+    if (!hasPermission) {
+      Alert.alert('Permissão necessária', 'É preciso permitir o acesso às imagens para compartilhar.');
+      return;
+    }
+
+    const platforms = connections
+      .filter(c => c.active)
+      .map(c => c.platform)
+      .join(', ');
+
+    const prompt = `Estou criando uma postagem para as seguintes redes sociais: ${platforms || 'Tumblr, Twitter, Threads'}.
+Por favor, gere 3 ideias de textos curtos e engajadores para essa postagem, com um tom **${mood}**.
+Abaixo estão as informações e tags que o post deve conter, e em anexo as imagens que serão usadas.
+
+Texto base:
+"${postText || 'Nenhum texto base fornecido.'}"
+
+Tags: ${tagsText || 'Nenhuma tag fornecida.'}
+
+Formato da resposta desejado (use um marcador para cada opção, para facilitar a cópia):
+• Opção 1: [texto]
+• Opção 2: [texto]
+• Opção 3: [texto]`;
+
+    Clipboard.setString(prompt);
+    Toast.show({
+      type: 'success',
+      text1: 'Prompt copiado!',
+      text2: 'O texto do prompt foi copiado para a área de transferência.',
+      position: 'top',
+    });
+
+    try {
+      const imageFilenames: string[] = [];
+      const base64Images =
+        selectedImages && selectedImages.length > 0
+          ? await Promise.all(
+              selectedImages.map(async image => {
+                const filename = image.path.split('/').pop() || 'image.jpg';
+                imageFilenames.push(filename);
+
+                const base64Data = await fileService.readFileBase64(image.path);
+                const mimeType = getMimeType(image.path);
+                return `data:${mimeType};base64,${base64Data}`;
+              }),
+            )
+          : undefined;
+
+      const options = base64Images
+        ? {
+            title: 'Compartilhar Ideias',
+            message: prompt,
+            urls: base64Images as string[],
+            filenames: imageFilenames,
+            type: 'image/*',
+            failOnCancel: false,
+          }
+        : {
+            title: 'Compartilhar Ideias',
+            message: prompt,
+            failOnCancel: false,
+          };
+
+      await shareService.open(options as any);
+    } catch (error: Error | any) {
+      Logger.error(error, { message: '[Home Screen] Erro ao compartilhar ideias.' });
+      Alert.alert('Erro ao Compartilhar', 'Não foi possível iniciar o compartilhamento das ideias.');
+    }
+  };
+
   const renderImageItem = ({ item, getIndex, drag, isActive }: RenderItemParams<SelectedImage>) => {
     const index = getIndex();
     // prettier-ignore
@@ -891,169 +995,186 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={styles.safeArea}>
-        <NestableScrollContainer 
-          ref={scrollRef} 
-          style={styles.container} 
-          nestedScrollEnabled={true}
-          testID="home-scroll-container"
-        >
-          <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
-
-          <TextInput
-            style={styles.textArea}
-            placeholder="O que você deseja postar?"
-            placeholderTextColor={colors.textSecondary}
-            multiline
-            value={postText}
-            onChangeText={handleTextChange}
-            testID="post-text-input"
-          />
-
-          <View style={styles.countersContainer}>
-            {SOCIAL_PLATFORMS.map(platform => {
-              const platformInfo = connections.find(c => c.platform === platform.name);
-              // prettier-ignore
-              if (!platformInfo || !platformInfo.active) 
-                return null;
-
-              const limit = platform.limits || 0;
-              let tagsLimit = 0;
-              if (tagsText && tagsText.trim().length > 0)
-                switch (platform.name) {
-                  case X:
-                  case BLUESKY:
-                    tagsLimit =
-                      tagsText
-                        .trim()
-                        .split(',')
-                        .filter(tag => tag.trim())
-                        .map(tag => `#${tag.replace(/ /g, '')}`)
-                        .join(' ').length + (postText.length > 0 ? 1 : 0);
-                    break;
-                }
-
-              const remaining = limit - postText.length - tagsLimit;
-
-              return (
-                <View key={platform.name} style={[styles.counterCard, remaining < 0 && styles.counterCardError]}>
-                  <Icon name={platform.icon} size={16} style={styles.counterIcon} />
-                  <Text style={styles.counterText}>{remaining}</Text>
-                </View>
-              );
-            })}
-          </View>
-
-          <TextInput
-            style={styles.tagsInput}
-            placeholder="Adicione tags separadas por ponto e vírgula (;)"
-            placeholderTextColor={colors.textSecondary}
-            value={tagsText}
-            onSelectionChange={e => setTagCursor(e.nativeEvent.selection)}
-            onFocus={handleTagsFocus}
-            onChangeText={handleTagsChange}
-            onBlur={handleTagsBlur}
-            onLayout={event => setTagInputLayout(event.nativeEvent.layout)}
-            testID="tags-text-input"
-          />
-
-          <Button
-            title={'Anexar Imagens'}
-            onPress={handleImagePicker}
-            style={styles.attachButton}
-            textStyle={styles.attachButtonText}
-            icon={'image-outline'}
-            testID="attach-image-button"
-          />
-
-          {selectedImages.length > 0 && (
-            <>
-              <View style={styles.carouselContainer}>
-                <NestableDraggableFlatList
-                  data={selectedImages}
-                  onDragEnd={({ data }) => setSelectedImages(data)}
-                  renderItem={renderImageItem}
-                  keyExtractor={(item, index) => `${item.path}-${index}`}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  simultaneousHandlers={scrollRef}
-                  activationDistance={10}
-                />
-              </View>
-
-              {isAdjustingImages && (
-                <View style={styles.progressContainer}>
-                  <View style={[styles.progressBar, { width: `${imagesProgress * 100}%` }]} />
-                </View>
-              )}
-              <Button
-                title={'Corrigir Bordas de Todas Imagens'}
-                onPress={handleAdjustAllImages}
-                style={styles.adjustButton}
-                textStyle={styles.adjustButtonText}
-                disabled={isAdjustingImages}
-                icon="crop-outline"
-              />
-            </>
-          )}
-        </NestableScrollContainer>
-
-        {tagSuggestions.length > 0 && tagInputLayout && (
-          <View
-            style={{
-              top: tagInputLayout.y + tagInputLayout.height,
-              width: tagInputLayout.width,
-              zIndex: 10,
-              ...styles.suggestionsContainer,
-            }}
+      <TouchableWithoutFeedback onPress={() => setShowMoodSuggestions(false)}>
+        <SafeAreaView style={styles.safeArea}>
+          <NestableScrollContainer 
+            ref={scrollRef} 
+            style={styles.container} 
+            nestedScrollEnabled={true}
+            testID="home-scroll-container"
           >
-            <FlatList
-              data={tagSuggestions}
-              keyExtractor={(item, index) => item + index}
-              renderItem={({ item }) => (
-                <TouchableOpacity style={styles.suggestionItem} onPress={() => handleSelectSuggestion(item)}>
-                  <Text style={styles.suggestionText}>{item}</Text>
-                </TouchableOpacity>
-              )}
-              showsVerticalScrollIndicator={true}
-              nestedScrollEnabled={true}
+            <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
+
+            {showMoodSuggestions && (
+              <View style={styles.moodDropdownContainer}>
+                {MOODS.map((mood, index) => (
+                  <TouchableOpacity
+                    key={mood.id}
+                    style={[styles.moodOption, index === MOODS.length - 1 && styles.moodOptionLast]}
+                    onPress={() => handleSharePrompt(mood.label)}
+                  >
+                    <Icon name={mood.icon} size={20} color={colors.text} style={styles.moodIcon} />
+                    <Text style={styles.moodText}>{mood.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            <TextInput
+              style={styles.textArea}
+              placeholder="O que você deseja postar?"
+              placeholderTextColor={colors.textSecondary}
+              multiline
+              value={postText}
+              onChangeText={handleTextChange}
+              testID="post-text-input"
+            />
+
+            <View style={styles.countersContainer}>
+              {SOCIAL_PLATFORMS.map(platform => {
+                const platformInfo = connections.find(c => c.platform === platform.name);
+                // prettier-ignore
+                if (!platformInfo || !platformInfo.active) 
+                  return null;
+
+                const limit = platform.limits || 0;
+                let tagsLimit = 0;
+                if (tagsText && tagsText.trim().length > 0)
+                  switch (platform.name) {
+                    case X:
+                    case BLUESKY:
+                      tagsLimit =
+                        tagsText
+                          .trim()
+                          .split(';')
+                          .filter(tag => tag.trim())
+                          .map(tag => `#${tag.replace(/ /g, '')}`)
+                          .join(' ').length + (postText.length > 0 ? 1 : 0);
+                      break;
+                  }
+
+                const remaining = limit - postText.length - tagsLimit;
+
+                return (
+                  <View key={platform.name} style={[styles.counterCard, remaining < 0 && styles.counterCardError]}>
+                    <Icon name={platform.icon} size={16} style={styles.counterIcon} />
+                    <Text style={styles.counterText}>{remaining}</Text>
+                  </View>
+                );
+              })}
+            </View>
+
+            <TextInput
+              style={styles.tagsInput}
+              placeholder="Adicione tags separadas por ponto e vírgula (;)"
+              placeholderTextColor={colors.textSecondary}
+              value={tagsText}
+              onSelectionChange={e => setTagCursor(e.nativeEvent.selection)}
+              onFocus={handleTagsFocus}
+              onChangeText={handleTagsChange}
+              onBlur={handleTagsBlur}
+              onLayout={event => setTagInputLayout(event.nativeEvent.layout)}
+              testID="tags-text-input"
+            />
+
+            <Button
+              title={'Anexar Imagens'}
+              onPress={handleImagePicker}
+              style={styles.attachButton}
+              textStyle={styles.attachButtonText}
+              icon={'image-outline'}
+              testID="attach-image-button"
+            />
+
+            {selectedImages.length > 0 && (
+              <>
+                <View style={styles.carouselContainer}>
+                  <NestableDraggableFlatList
+                    data={selectedImages}
+                    onDragEnd={({ data }) => setSelectedImages(data)}
+                    renderItem={renderImageItem}
+                    keyExtractor={(item, index) => `${item.path}-${index}`}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    simultaneousHandlers={scrollRef}
+                    activationDistance={10}
+                  />
+                </View>
+
+                {isAdjustingImages && (
+                  <View style={styles.progressContainer}>
+                    <View style={[styles.progressBar, { width: `${imagesProgress * 100}%` }]} />
+                  </View>
+                )}
+                <Button
+                  title={'Corrigir Bordas de Todas Imagens'}
+                  onPress={handleAdjustAllImages}
+                  style={styles.adjustButton}
+                  textStyle={styles.adjustButtonText}
+                  disabled={isAdjustingImages}
+                  icon="crop-outline"
+                />
+              </>
+            )}
+          </NestableScrollContainer>
+
+          {tagSuggestions.length > 0 && tagInputLayout && (
+            <View
+              style={{
+                top: tagInputLayout.y + tagInputLayout.height,
+                width: tagInputLayout.width,
+                zIndex: 10,
+                ...styles.suggestionsContainer,
+              }}
+            >
+              <FlatList
+                data={tagSuggestions}
+                keyExtractor={(item, index) => item + index}
+                renderItem={({ item }) => (
+                  <TouchableOpacity style={styles.suggestionItem} onPress={() => handleSelectSuggestion(item)}>
+                    <Text style={styles.suggestionText}>{item}</Text>
+                  </TouchableOpacity>
+                )}
+                showsVerticalScrollIndicator={true}
+                nestedScrollEnabled={true}
+              />
+            </View>
+          )}
+
+          {isPosting && (
+            <View style={styles.progressContainer}>
+              <View style={[styles.progressBar, { width: `${postProgress}%` }]} />
+            </View>
+          )}
+          <View style={styles.actionsContainer}>
+            <Button
+              title={'Cancelar'}
+              onPress={handleCancel}
+              style={[styles.actionButton, styles.cancelButton]}
+              textStyle={styles.cancelButtonText}
+              disabled={awaitPosting}
+              testID="cancel-action-button"
+            />
+
+            <Button
+              title={'Rascunho'}
+              onPress={handleSaveDraft}
+              style={[styles.actionButton, styles.draftButton]}
+              textStyle={styles.draftButtonText}
+              testID="draft-action-button"
+            />
+
+            <Button
+              title={'Postar'}
+              onPress={handlePost}
+              style={[styles.actionButton, styles.postButton]}
+              textStyle={styles.postButtonText}
+              disabled={awaitPosting}
+              testID="post-action-button"
             />
           </View>
-        )}
-
-        {isPosting && (
-          <View style={styles.progressContainer}>
-            <View style={[styles.progressBar, { width: `${postProgress}%` }]} />
-          </View>
-        )}
-        <View style={styles.actionsContainer}>
-          <Button
-            title={'Cancelar'}
-            onPress={handleCancel}
-            style={[styles.actionButton, styles.cancelButton]}
-            textStyle={styles.cancelButtonText}
-            disabled={awaitPosting}
-            testID="cancel-action-button"
-          />
-
-          <Button
-            title={'Rascunho'}
-            onPress={handleSaveDraft}
-            style={[styles.actionButton, styles.draftButton]}
-            textStyle={styles.draftButtonText}
-            testID="draft-action-button"
-          />
-
-          <Button
-            title={'Postar'}
-            onPress={handlePost}
-            style={[styles.actionButton, styles.postButton]}
-            textStyle={styles.postButtonText}
-            disabled={awaitPosting}
-            testID="post-action-button"
-          />
-        </View>
-      </SafeAreaView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </GestureHandlerRootView>
   );
 };

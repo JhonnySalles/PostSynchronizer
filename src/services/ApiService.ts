@@ -465,6 +465,22 @@ class ApiService {
       this.healthCheckTimeout = null;
     }
   }
+
+  /**
+   * Realiza uma verificação manual do status da API.
+   * @returns {Promise<boolean>} True se a API estiver online, False caso contrário.
+   */
+  public async checkHealth(): Promise<boolean> {
+    this.setApiStatus(CONNECTING);
+    try {
+      await this.axiosInstance.get('/health', { timeout: 5000 });
+      this.setApiStatus(ONLINE);
+      return true;
+    } catch (error) {
+      this.setApiStatus(OFFLINE);
+      return false;
+    }
+  }
 }
 
 export const apiService = new ApiService();

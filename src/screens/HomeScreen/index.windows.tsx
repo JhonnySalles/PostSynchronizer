@@ -902,7 +902,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                   tagsLimit =
                     tagsText
                       .trim()
-                      .split(',')
+                      .split(';')
                       .filter(tag => tag.trim())
                       .map(tag => `#${tag.replace(/ /g, '')}`)
                       .join(' ').length + (postText.length > 0 ? 1 : 0);

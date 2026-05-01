@@ -2,6 +2,7 @@ import { DRAFT, POSTED, PostType } from 'src/constants/app';
 import { getDBConnection } from '../database';
 import Logger from 'src/services/LoggerService';
 import { PlatformType } from 'src/constants/platforms';
+import { cleanTags } from 'src/utils/util';
 
 export interface Post {
   id: number;
@@ -74,8 +75,9 @@ class PostDao {
         for (let i = 0; i < result.rows.length; i++) {
           result.rows
             .item(i)
-            .tags.split(',')
+            .tags.split(';')
             .map((tag: string) => tag.trim())
+            .filter((tag: string) => tag.length > 0)
             .filter((tag: string) => tag.toLowerCase().includes(query.toLowerCase()))
             .forEach((tag: string) => uniqueTags.add(tag));
         }
@@ -102,13 +104,14 @@ class PostDao {
       pending = false,
     } = postData;
 
+    const cleanedTags = cleanTags(tags);
     const imagesJson = JSON.stringify(images);
     const db = await getDBConnection();
 
     try {
       const [result] = await db.executeSql(
         'INSERT INTO posts (content, images, status, platforms_send, platforms_success, tags, pending) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [content, imagesJson, status, platforms_send, platforms_success, tags, pending],
+        [content, imagesJson, status, platforms_send, platforms_success, cleanedTags, pending],
       );
       const insertId = result.insertId;
       // prettier-ignore
@@ -172,6 +175,10 @@ class PostDao {
         });
         throw error;
       }
+    }
+
+    if (postData.tags !== undefined) {
+      postData.tags = cleanTags(postData.tags);
     }
 
     const fields = Object.keys(postData) as (keyof PostDataPayload)[];

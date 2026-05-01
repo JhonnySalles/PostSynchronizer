@@ -30,3 +30,18 @@ export function formatarData(isoString: string | undefined | null): string {
     minute: '2-digit',
   });
 }
+
+/**
+ * Limpa uma string de tags, removendo espaços extras, tags vazias e garantindo
+ * que o separador (ponto e vírgula) seja usado corretamente apenas entre as tags.
+ * @param tags A string de tags original (ex: "tag1; tag2; ").
+ * @returns A string formatada (ex: "tag1; tag2").
+ */
+export function cleanTags(tags: string | null | undefined): string {
+  if (!tags) return '';
+  return tags
+    .split(';')
+    .map(tag => tag.trim())
+    .filter(tag => tag.length > 0)
+    .join('; ');
+}
