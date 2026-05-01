@@ -44,4 +44,47 @@ export const getStyles = (colors: ColorsType) =>
     pickerListItemLabel: {
       color: colors.text,
     },
+    promptContainer: {
+      width: '100%',
+      marginTop: 20,
+      padding: 20,
+      borderRadius: 12,
+      backgroundColor: colors.background,
+      shadowColor: colors.shadown,
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    promptLabel: {
+      fontSize: 16,
+      color: colors.text,
+      marginBottom: 10,
+    },
+    promptInput: {
+      backgroundColor: colors.card,
+      color: colors.text,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: 12,
+      minHeight: 150,
+      textAlignVertical: 'top',
+      fontSize: 14,
+    },
+    promptHint: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      marginTop: 8,
+      lineHeight: 18,
+    },
+    promptClearButton: {
+      marginTop: 10,
+      backgroundColor: colors.primary,
+      padding: 8,
+      borderRadius: 6,
+    },
   });

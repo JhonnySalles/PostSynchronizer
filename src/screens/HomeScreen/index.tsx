@@ -13,6 +13,7 @@ import {
   AppStateStatus,
   TouchableWithoutFeedback,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -44,7 +45,7 @@ import { requestGalleryPermission, requestReadPermission } from 'src/utils/permi
 import { getMimeType } from 'src/utils/util';
 import Logger from 'src/services/LoggerService';
 import Toast from 'react-native-toast-message';
-import { DRAFT, ERROR, IDLE, PENDING, POSTED, PostType, SUCCESS } from 'src/constants/app';
+import { AI_PROMPT_KEY, DEFAULT_PROMPT, DRAFT, ERROR, IDLE, PENDING, POSTED, PostType, SUCCESS } from 'src/constants/app';
 import { cleanTags, formatarData } from 'src/utils/util';
 
 type SelectedImage = {
@@ -60,10 +61,12 @@ const TAG_REMOVE_SPACE_REGEX = /^;\s*/;
 const TWITTER_DAILY_POST_LIMIT = 15;
 
 const MOODS = [
-  { id: 'alegre', label: 'Alegre', icon: 'happy-outline' },
+  { id: 'alegre', label: 'Alegre', icon: 'sunny-outline' },
   { id: 'divertido', label: 'Divertido', icon: 'color-wand-outline' },
   { id: 'triste', label: 'Triste', icon: 'sad-outline' },
   { id: 'assustado', label: 'Assustado', icon: 'alert-circle-outline' },
+  { id: 'sarcastico', label: 'Sarcástico', icon: 'skull-outline' },
+  { id: 'engracado', label: 'Engraçado', icon: 'happy-outline' },
 ];
 
 const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
@@ -825,19 +828,23 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       .map(c => c.platform)
       .join(', ');
 
-    const prompt = `Estou criando uma postagem para as seguintes redes sociais: ${platforms || 'Tumblr, Twitter, Threads'}.
-Por favor, gere 3 ideias de textos curtos e engajadores para essa postagem, com um tom **${mood}**.
-Abaixo estão as informações e tags que o post deve conter, e em anexo as imagens que serão usadas.
-
-Texto base:
-"${postText || 'Nenhum texto base fornecido.'}"
-
-Tags: ${tagsText || 'Nenhuma tag fornecida.'}
-
-Formato da resposta desejado (use um marcador para cada opção, para facilitar a cópia):
-• Opção 1: [texto]
-• Opção 2: [texto]
-• Opção 3: [texto]`;
+    let prompt = '';
+    try {
+      const savedTemplate = await AsyncStorage.getItem(AI_PROMPT_KEY);
+      const template = savedTemplate !== null ? savedTemplate : DEFAULT_PROMPT;
+      prompt = template
+        .replace(/::texto/g, postText || 'Nenhum texto base fornecido.')
+        .replace(/::tags/g, tagsText || 'Nenhuma tag fornecida.')
+        .replace(/::plataformas/g, platforms || 'Tumblr, Twitter, Threads')
+        .replace(/::emocao/g, mood);
+    } catch (error) {
+      Logger.error(error, { message: '[Home Screen] Erro ao carregar template de prompt.' });
+      // Fallback em caso de erro no AsyncStorage
+      prompt = DEFAULT_PROMPT.replace(/::texto/g, postText || 'Nenhum texto base fornecido.')
+        .replace(/::tags/g, tagsText || 'Nenhuma tag fornecida.')
+        .replace(/::plataformas/g, platforms || 'Tumblr, Twitter, Threads')
+        .replace(/::emocao/g, mood);
+    }
 
     Clipboard.setString(prompt);
     Toast.show({

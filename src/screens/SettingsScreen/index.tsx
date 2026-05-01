@@ -1,6 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { View } from 'react-native';
-import { SafeAreaView, ScrollView, Text, Alert } from 'react-native';
+import { SafeAreaView, ScrollView, Text, Alert, TextInput, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getStyles } from './styles';
 import PlatformCard from '../../components/PlatformCard';
 import { apiService } from 'src/services/ApiService';
@@ -13,6 +12,8 @@ import { useTheme } from '../../theme/ThemeProvider';
 import { DARK, LIGHT, SYSTEM } from 'src/constants/themes';
 import Button from 'src/components/Button';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { AI_PROMPT_KEY, DEFAULT_PROMPT } from 'src/constants/app';
+import { useCallback, useState } from 'react';
 
 const DEFAULT: Credentials = {
   platform: UNKNOW,
@@ -24,6 +25,7 @@ const SettingsScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isConsulting, setIsConsulting] = useState<string | null>(null);
   const [connections, setConnections] = useState<Credentials[]>([]);
+  const [aiPrompt, setAiPrompt] = useState('');
 
   const { themeMode, setThemeMode, colors, isDark } = useTheme();
   const styles = getStyles(colors);
@@ -48,6 +50,13 @@ const SettingsScreen = () => {
           Alert.alert('Erro', 'Não foi possível carregar as configurações salvas.');
         } finally {
           setIsLoading(false);
+        }
+
+        try {
+          const savedPrompt = await AsyncStorage.getItem(AI_PROMPT_KEY);
+          setAiPrompt(savedPrompt || DEFAULT_PROMPT);
+        } catch (error) {
+          Logger.error(error, { msg: '[Settings Screen] Erro ao carregar prompt da IA.' });
         }
       };
 
@@ -128,13 +137,27 @@ const SettingsScreen = () => {
     }
   };
 
+  const handleSavePrompt = async (text: string) => {
+    setAiPrompt(text);
+    try {
+      await AsyncStorage.setItem(AI_PROMPT_KEY, text);
+    } catch (error) {
+      Logger.error(error, { message: '[Settings Screen] Erro ao salvar prompt da IA.' });
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         <LoadingIndicator visible={isLoading} />
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-          <Button title="Login na API" onPress={handleLoginTest} style={{ flex: 1, marginRight: 10 }} testID="login-api-button" />
+          <Button
+            title="Login na API"
+            onPress={handleLoginTest}
+            style={{ flex: 1, marginRight: 10 }}
+            testID="login-api-button"
+          />
         </View>
 
         <View style={styles.themeSelectorContainer}>
@@ -157,6 +180,31 @@ const SettingsScreen = () => {
             listItemLabelStyle={styles.pickerListItemLabel}
             listMode="SCROLLVIEW"
           />
+        </View>
+
+        <View style={styles.promptContainer}>
+          <Text style={styles.promptLabel}>Prompt da IA para Sugestões</Text>
+          <TextInput
+            style={styles.promptInput}
+            multiline
+            value={aiPrompt}
+            onChangeText={handleSavePrompt}
+            placeholder="Digite o modelo de prompt aqui..."
+            placeholderTextColor={colors.textSecondary}
+          />
+          <Button
+            title="Limpar"
+            onPress={() => handleSavePrompt(DEFAULT_PROMPT)}
+            style={styles.promptClearButton}
+            icon="refresh-outline"
+          />
+          <Text style={styles.promptHint}>
+            Parâmetros aceitos (opcionais):{'\n'}
+            ::texto - Texto base da postagem{'\n'}
+            ::tags - Tags selecionadas{'\n'}
+            ::plataformas - Redes sociais ativas{'\n'}
+            ::emocao - Humor selecionado
+          </Text>
         </View>
 
         <PlatformCard
