@@ -1,3 +1,4 @@
+import React, { useCallback, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, Alert, TextInput, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getStyles } from './styles';
@@ -13,8 +14,7 @@ import { DARK, LIGHT, SYSTEM } from 'src/constants/themes';
 import Button from 'src/components/Button';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { AI_PROMPT_KEY, DEFAULT_PROMPT } from 'src/constants/app';
-import { useCallback, useState } from 'react';
-import { exportDatabase, importDatabase } from 'src/services/BackupService';
+import { exportDatabase, importDatabase } from 'src/services/BackupService.windows';
 import Toast from 'react-native-toast-message';
 import ConfirmPopup from 'src/components/ConfirmPopup';
 
@@ -158,7 +158,7 @@ const SettingsScreen = () => {
         Toast.show({
           type: 'success',
           text1: 'Backup concluído',
-          text2: 'O arquivo foi gerado e compartilhado.',
+          text2: 'O arquivo foi salvo na pasta selecionada.',
         });
       }
     } catch (error: any) {
@@ -177,7 +177,7 @@ const SettingsScreen = () => {
         Alert.alert(
           'Importação Concluída',
           'O banco de dados foi restaurado com sucesso. O aplicativo será encerrado para aplicar as mudanças.',
-          [{ text: 'OK', onPress: () => Logger.debug('[App] Reiniciar app após importação') }],
+          [{ text: 'OK', onPress: () => Logger.debug('[App] Reiniciar app após importação') }]
         );
       }
     } catch (error: any) {
@@ -193,7 +193,12 @@ const SettingsScreen = () => {
         <LoadingIndicator visible={isLoading} />
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, width: '100%' }}>
-          <Button title="Login na API" onPress={handleLoginTest} style={{ flex: 1 }} testID="login-api-button" />
+          <Button
+            title="Login na API"
+            onPress={handleLoginTest}
+            style={{ flex: 1 }}
+            testID="login-api-button"
+          />
         </View>
 
         {/* 1. Aparência do Aplicativo */}
@@ -219,7 +224,7 @@ const SettingsScreen = () => {
           />
         </View>
 
-        {/* 2. Gerenciamento de Dados (Reposicionado) */}
+        {/* 2. Gerenciamento de Dados */}
         <View style={styles.dataSection}>
           <Text style={styles.sectionTitle}>Gerenciamento de Dados</Text>
           <View style={styles.dataButtonsRow}>
@@ -239,11 +244,11 @@ const SettingsScreen = () => {
             />
           </View>
           <Text style={styles.dataHint}>
-            Use o backup para transferir seus dados entre dispositivos ou garantir uma cópia de segurança.
+            No Windows, selecione uma pasta para salvar seu backup ou um arquivo .db para restaurar.
           </Text>
         </View>
 
-        {/* 3. Prompt da IA (Abaixo dos Dados) */}
+        {/* 3. Prompt da IA */}
         <View style={styles.promptContainer}>
           <Text style={styles.promptLabel}>Prompt da IA para Sugestões</Text>
           <TextInput
@@ -259,7 +264,6 @@ const SettingsScreen = () => {
             onPress={() => handleSavePrompt(DEFAULT_PROMPT)}
             style={styles.promptClearButton}
             icon="refresh-outline"
-            variant="secondary"
           />
           <Text style={styles.promptHint}>
             Parâmetros aceitos (opcionais):{'\n'}
@@ -332,7 +336,7 @@ const SettingsScreen = () => {
       <ConfirmPopup
         visible={showImportConfirm}
         title="Atenção!"
-        message="Ao importar um backup, todos os seus dados atuais (postagens, histórico, conexões) serão substituídos pelo arquivo selecionado. O aplicativo precisará ser reiniciado. Deseja continuar?"
+        message="Ao importar um backup, todos os seus dados atuais serão substituídos. O Windows App precisará ser reiniciado. Deseja continuar?"
         confirmLabel="Importar"
         cancelLabel="Cancelar"
         onConfirm={handleConfirmImport}

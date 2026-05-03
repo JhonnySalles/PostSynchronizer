@@ -83,8 +83,46 @@ export const getStyles = (colors: ColorsType) =>
     },
     promptClearButton: {
       marginTop: 10,
-      backgroundColor: colors.primary,
-      padding: 8,
       borderRadius: 6,
+      fontSize: 12,
+      color: colors.textSecondary,
+      lineHeight: 18,
+      textAlign: 'center',
+    },
+    sectionTitle: {
+      fontSize: 16,
+      color: colors.text,
+      marginBottom: 10,
+    },
+    dataSection: {
+      width: '100%',
+      marginTop: 20,
+      padding: 20,
+      borderRadius: 12,
+      backgroundColor: colors.background,
+      shadowColor: colors.shadown,
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    dataButtonsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: 12,
+      marginBottom: 12,
+    },
+    dataButton: {
+      flex: 1,
+    },
+    dataHint: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      marginTop: 8,
+      lineHeight: 18,
+      textAlign: 'center',
     },
   });

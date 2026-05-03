@@ -6,6 +6,7 @@ import { ApiStatusIcon } from 'src/components/ApiStatusIcon';
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import HistoryScreen from '../screens/HistoryScreen';
+import StatisticsScreen from '../screens/StatisticsScreen';
 
 import { RootTabParamList } from './types';
 import { useTheme } from 'src/theme/ThemeProvider';
@@ -31,6 +32,8 @@ const AppNavigator = () => {
             iconName = focused ? 'create' : 'create-outline';
           else if (route.name === 'History') 
             iconName = focused ? 'time' : 'time-outline';
+          else if (route.name === 'Statistics') 
+            iconName = focused ? 'stats-chart' : 'stats-chart-outline';
           else if (route.name === 'Settings') 
             iconName = focused ? 'settings' : 'settings-outline';
 
@@ -54,6 +57,15 @@ const AppNavigator = () => {
           title: 'Histórico', 
           headerRight: () => <ApiStatusIcon />,
           tabBarTestID: 'history-tab-button'
+        }}
+      />
+      <Tab.Screen
+        name="Statistics"
+        component={StatisticsScreen}
+        options={{ 
+          title: 'Estatísticas', 
+          headerRight: () => <ApiStatusIcon />,
+          tabBarTestID: 'statistics-tab-button'
         }}
       />
       <Tab.Screen

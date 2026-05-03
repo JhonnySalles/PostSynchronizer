@@ -133,6 +133,46 @@
         }
       }
     },
+    "@react-native-community/datetimepicker": {
+      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\datetimepicker",
+      "name": "@react-native-community/datetimepicker",
+      "platforms": {
+        "ios": {
+          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\datetimepicker\\RNDateTimePicker.podspec",
+          "version": "9.1.0",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": null,
+        "windows": {
+          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\datetimepicker",
+          "projects": [
+            {
+              "projectFile": "DateTimePickerWindows\\DateTimePickerWindows.vcxproj",
+              "projectName": "DateTimePicker",
+              "projectLang": "cpp",
+              "projectGuid": "{0986a4db-8e72-4bb7-ae32-7d9df1758a9d}",
+              "directDependency": true,
+              "cppHeaders": [
+                "winrt/DateTimePicker.h"
+              ],
+              "cppPackageProviders": [
+                "DateTimePicker::ReactPackageProvider"
+              ],
+              "csNamespaces": [
+                "DateTimePicker"
+              ],
+              "csPackageProviders": [
+                "DateTimePicker.ReactPackageProvider"
+              ]
+            }
+          ],
+          "solutionFile": "DateTimePickerWindows.sln",
+          "nugetPackages": [],
+          "sourceDir": "windows"
+        }
+      }
+    },
     "@react-native-community/image-editor": {
       "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\@react-native-community\\image-editor",
       "name": "@react-native-community/image-editor",
@@ -493,6 +533,58 @@
         }
       }
     },
+    "react-native-document-picker": {
+      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-document-picker",
+      "name": "react-native-document-picker",
+      "platforms": {
+        "ios": {
+          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-document-picker\\react-native-document-picker.podspec",
+          "version": "9.3.1",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-document-picker\\android",
+          "packageImportPath": "import com.reactnativedocumentpicker.RNDocumentPickerPackage;",
+          "packageInstance": "new RNDocumentPickerPackage()",
+          "buildTypes": [],
+          "libraryName": "rndocumentpicker",
+          "componentDescriptors": [],
+          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": {
+          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-document-picker",
+          "projects": [
+            {
+              "projectFile": "ReactNativeDocumentPicker\\ReactNativeDocumentPicker.csproj",
+              "projectName": "ReactNativeDocumentPicker",
+              "projectLang": "cs",
+              "projectGuid": "{A4C9C727-0AEB-4A3D-B547-BEDB812B172D}",
+              "directDependency": true,
+              "cppHeaders": [
+                "winrt/ReactNativeDocumentPicker.h"
+              ],
+              "cppPackageProviders": [
+                "ReactNativeDocumentPicker::ReactPackageProvider"
+              ],
+              "csNamespaces": [
+                "ReactNativeDocumentPicker"
+              ],
+              "csPackageProviders": [
+                "ReactNativeDocumentPicker.ReactPackageProvider"
+              ]
+            }
+          ],
+          "solutionFile": "ReactNativeDocumentPicker.sln",
+          "nugetPackages": [],
+          "sourceDir": "windows"
+        }
+      }
+    },
     "react-native-fs": {
       "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-fs",
       "name": "react-native-fs",
@@ -628,6 +720,57 @@
           "isPureCxxDependency": false
         },
         "windows": null
+      }
+    },
+    "react-native-linear-gradient": {
+      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-linear-gradient",
+      "name": "react-native-linear-gradient",
+      "platforms": {
+        "ios": {
+          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-linear-gradient\\BVLinearGradient.podspec",
+          "version": "2.8.3",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-linear-gradient\\android",
+          "packageImportPath": "import com.BV.LinearGradient.LinearGradientPackage;",
+          "packageInstance": "new LinearGradientPackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-linear-gradient/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": {
+          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-linear-gradient",
+          "projects": [
+            {
+              "projectFile": "BVLinearGradient\\BVLinearGradient\\BVLinearGradient.vcxproj",
+              "projectName": "BVLinearGradient",
+              "projectLang": "cpp",
+              "projectGuid": "{193df456-3f97-4cc1-a7d4-809857cc064e}",
+              "directDependency": true,
+              "cppHeaders": [
+                "winrt/BVLinearGradient.h"
+              ],
+              "cppPackageProviders": [
+                "BVLinearGradient::ReactPackageProvider"
+              ],
+              "csNamespaces": [
+                "BVLinearGradient"
+              ],
+              "csPackageProviders": [
+                "BVLinearGradient.ReactPackageProvider"
+              ]
+            }
+          ],
+          "solutionFile": null,
+          "nugetPackages": [],
+          "sourceDir": "windows"
+        }
       }
     },
     "react-native-reanimated": {
@@ -850,6 +993,88 @@
           "solutionFile": "SQLitePlugin.sln",
           "nugetPackages": [],
           "sourceDir": "platforms\\windows"
+        }
+      }
+    },
+    "react-native-svg": {
+      "root": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-svg",
+      "name": "react-native-svg",
+      "platforms": {
+        "ios": {
+          "podspecPath": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-svg\\RNSVG.podspec",
+          "version": "15.15.4",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-svg\\android",
+          "packageImportPath": "import com.horcrux.svg.SvgPackage;",
+          "packageInstance": "new SvgPackage()",
+          "buildTypes": [],
+          "libraryName": "rnsvg",
+          "componentDescriptors": [
+            "RNSVGCircleComponentDescriptor",
+            "RNSVGClipPathComponentDescriptor",
+            "RNSVGDefsComponentDescriptor",
+            "RNSVGFeBlendComponentDescriptor",
+            "RNSVGFeColorMatrixComponentDescriptor",
+            "RNSVGFeCompositeComponentDescriptor",
+            "RNSVGFeFloodComponentDescriptor",
+            "RNSVGFeGaussianBlurComponentDescriptor",
+            "RNSVGFeMergeComponentDescriptor",
+            "RNSVGFeOffsetComponentDescriptor",
+            "RNSVGFilterComponentDescriptor",
+            "RNSVGEllipseComponentDescriptor",
+            "RNSVGForeignObjectComponentDescriptor",
+            "RNSVGGroupComponentDescriptor",
+            "RNSVGImageComponentDescriptor",
+            "RNSVGLinearGradientComponentDescriptor",
+            "RNSVGLineComponentDescriptor",
+            "RNSVGMarkerComponentDescriptor",
+            "RNSVGMaskComponentDescriptor",
+            "RNSVGPathComponentDescriptor",
+            "RNSVGPatternComponentDescriptor",
+            "RNSVGRadialGradientComponentDescriptor",
+            "RNSVGRectComponentDescriptor",
+            "RNSVGSvgViewAndroidComponentDescriptor",
+            "RNSVGSymbolComponentDescriptor",
+            "RNSVGTextComponentDescriptor",
+            "RNSVGTextPathComponentDescriptor",
+            "RNSVGTSpanComponentDescriptor",
+            "RNSVGUseComponentDescriptor"
+          ],
+          "cmakeListsPath": "F:/Projetos/PostSynchronizer/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        },
+        "windows": {
+          "folder": "F:\\Projetos\\PostSynchronizer\\node_modules\\react-native-svg",
+          "projects": [
+            {
+              "projectFile": "RNSVG\\RNSVG.vcxproj",
+              "projectName": "RNSVG",
+              "projectLang": "cpp",
+              "projectGuid": "{7acf84ec-efba-4043-8e14-40b159508902}",
+              "directDependency": true,
+              "cppHeaders": [
+                "winrt/RNSVG.h"
+              ],
+              "cppPackageProviders": [
+                "RNSVG::ReactPackageProvider"
+              ],
+              "csNamespaces": [
+                "RNSVG"
+              ],
+              "csPackageProviders": [
+                "RNSVG.ReactPackageProvider"
+              ]
+            }
+          ],
+          "solutionFile": "RNSVG.sln",
+          "nugetPackages": [],
+          "sourceDir": "windows"
         }
       }
     },

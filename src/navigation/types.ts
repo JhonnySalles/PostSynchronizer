@@ -4,6 +4,7 @@
 export type RootTabParamList = {
   Home: { postToEdit?: PostDraftData } | undefined;
   History: undefined;
+  Statistics: undefined;
   Settings: undefined;
 };
 
