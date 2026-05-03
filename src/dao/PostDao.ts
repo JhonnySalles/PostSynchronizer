@@ -298,6 +298,24 @@ class PostDao {
       throw error;
     }
   }
+  /**
+   * Busca o ano do primeiro registro no banco de dados.
+   * @returns {Promise<number>} O ano mais antigo ou o ano atual se não houver registros.
+   */
+  public async getEarliestYear(): Promise<number> {
+    const db = await getDBConnection();
+    try {
+      const results = await db.executeSql('SELECT MIN(created_at) as first_date FROM posts');
+      const firstDate = results[0].rows.item(0).first_date;
+      if (firstDate) {
+        return new Date(firstDate).getFullYear();
+      }
+      return new Date().getFullYear();
+    } catch (error) {
+      Logger.error(error as Error, { message: '[Post Dao] Erro ao buscar ano inicial.' });
+      return new Date().getFullYear();
+    }
+  }
 }
 
 export default new PostDao();

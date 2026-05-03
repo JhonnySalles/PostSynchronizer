@@ -23,9 +23,10 @@ export interface ColorsType {
   iconOverlay: string;
 
   tumblr: string;
-  twitter: string;
+  x: string;
   threads: string;
   bluesky: string;
+  unknow: string;
 }
 
 // Paleta para o modo claro
@@ -53,9 +54,10 @@ const lightColors: ColorsType = {
   iconOverlay: '#ffffff',
 
   tumblr: '#35465c',
-  twitter: '#1DA1F2',
+  x: '#000000',
   threads: '#000000',
   bluesky: '#0288dbff',
+  unknow: '#121212',
 };
 
 // Paleta para o modo escuro
@@ -83,9 +85,10 @@ const darkColors: ColorsType = {
   iconOverlay: '#ffffff',
 
   tumblr: '#A9B8C5',
-  twitter: '#88C9F7',
+  x: '#ffffff',
   threads: '#E0E0E0',
   bluesky: '#62B8E9',
+  unknow: '#ffffff',
 };
 
 export const palette = {

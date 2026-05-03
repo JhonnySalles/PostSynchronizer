@@ -12,6 +12,7 @@ import Logger from './src/services/LoggerService';
 import { ProgressProvider } from './src/contexts/ProgressContext';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import { firebaseService } from './src/services/FirebaseService';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -145,13 +146,13 @@ const AppContent = () => {
   };
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer theme={navigationTheme}>
         <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={colors.background} />
         <AppNavigator />
       </NavigationContainer>
       <Toast config={toastConfig} />
-    </>
+    </GestureHandlerRootView>
   );
 };
 

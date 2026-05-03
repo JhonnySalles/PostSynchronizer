@@ -16,10 +16,11 @@ interface ConfirmPopupProps {
   title: string;
   message: string;
   onConfirm: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
   confirmLabel?: string;
   cancelLabel?: string;
   isDestructive?: boolean;
+  singleButton?: boolean;
 }
 
 const ConfirmPopup: React.FC<ConfirmPopupProps> = ({
@@ -31,36 +32,47 @@ const ConfirmPopup: React.FC<ConfirmPopupProps> = ({
   confirmLabel = 'Confirmar',
   cancelLabel = 'Cancelar',
   isDestructive = false,
+  singleButton = false,
 }) => {
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   
   const containerWidth = width > 600 ? 400 : width * 0.85;
 
+  const handleClose = () => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      onConfirm();
+    }
+  };
+
   return (
     <Modal
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onCancel}
+      onRequestClose={handleClose}
     >
-      <TouchableWithoutFeedback onPress={onCancel}>
+      <TouchableWithoutFeedback onPress={handleClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
             <View style={[styles.container, { backgroundColor: colors.card, width: containerWidth }]}>
               <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
               <Text style={[styles.message, { color: colors.textSecondary }]}>{message}</Text>
               
-              <View style={styles.footer}>
-                <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-                  <Text style={[styles.cancelText, { color: colors.textSecondary }]}>{cancelLabel}</Text>
-                </TouchableOpacity>
+              <View style={[styles.footer, singleButton && { justifyContent: 'center' }]}>
+                {!singleButton && (
+                  <TouchableOpacity style={styles.cancelButton} onPress={handleClose}>
+                    <Text style={[styles.cancelText, { color: colors.textSecondary }]}>{cancelLabel}</Text>
+                  </TouchableOpacity>
+                )}
                 
                 <Button
                   title={confirmLabel}
                   onPress={onConfirm}
                   variant={isDestructive ? 'destructive' : 'primary'}
-                  style={styles.confirmButton}
+                  style={[styles.confirmButton, singleButton && { flex: 1, minWidth: '100%' }]}
                 />
               </View>
             </View>

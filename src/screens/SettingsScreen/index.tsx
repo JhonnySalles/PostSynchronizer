@@ -133,7 +133,7 @@ const SettingsScreen = () => {
 
       // prettier-ignore
       if (success)
-        Alert.alert('Login Bem-Sucedido!', `Login realizado com sucesso na api.`);
+        Alert.alert('Login Bem-Sucedido!', 'Login realizado com sucesso na api.');
       else
         Alert.alert('Falha no Login', 'Não foi possível realizar o login na api. Verifique sua internet.');
     } catch (e) {
@@ -157,12 +157,20 @@ const SettingsScreen = () => {
       if (success) {
         Toast.show({
           type: 'success',
-          text1: 'Backup concluído',
-          text2: 'O arquivo foi gerado e compartilhado.',
+          text1: 'Backup Concluído',
+          text2: 'O arquivo de backup foi gerado e compartilhado.',
+          position: 'top',
+          visibilityTime: 4000,
         });
       }
     } catch (error: any) {
-      Alert.alert('Erro no Backup', error.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro no Backup',
+        text2: error.message,
+        position: 'top',
+        visibilityTime: 4000,
+      });
     } finally {
       setIsLoading(false);
     }

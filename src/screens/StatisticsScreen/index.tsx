@@ -3,7 +3,7 @@ import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, Platform, Alert
 import { useFocusEffect } from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-import CustomDatePicker from '../../components/Pickers/CustomDatePicker';
+import DateInput from '../../components/DateInput';
 
 import { useTheme } from '../../theme/ThemeProvider';
 import { getStyles } from './styles';
@@ -23,6 +23,7 @@ const StatisticsScreen = () => {
   // Estados de Dados
   const [history, setHistory] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [earliestYear, setEarliestYear] = useState(new Date().getFullYear());
 
   // Estados de Filtro
   const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
@@ -45,6 +46,8 @@ const StatisticsScreen = () => {
         try {
           const items = await PostDao.getAll();
           setHistory(items);
+          const year = await PostDao.getEarliestYear();
+          setEarliestYear(year);
         } catch (error) {
           Logger.error(error as Error, { message: '[Statistics Screen] Erro ao buscar dados' });
         } finally {
@@ -123,19 +126,28 @@ const StatisticsScreen = () => {
     // 1. Dados para o Gráfico de Linha (Postagens por dia)
     const daysMap: Record<string, number> = {};
     const iterDate = new Date(startDate);
+    const dayDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    
     while (iterDate <= endDate) {
-      daysMap[iterDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })] = 0;
+      // Usar YYYY-MM-DD como chave interna para evitar colisões
+      const isoKey = iterDate.toISOString().split('T')[0];
+      daysMap[isoKey] = 0;
       iterDate.setDate(iterDate.getDate() + 1);
     }
 
     filtered.forEach(post => {
-      const dateKey = new Date(post.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-      if (daysMap[dateKey] !== undefined) {
-        daysMap[dateKey]++;
+      const postIso = new Date(post.created_at).toISOString().split('T')[0];
+      if (daysMap[postIso] !== undefined) {
+        daysMap[postIso]++;
       }
     });
 
-    const lineData = Object.entries(daysMap).map(([label, value]) => ({ label, value }));
+    const lineData = Object.entries(daysMap).map(([isoKey, value]) => {
+      const [year, month, day] = isoKey.split('-');
+      // Formato inteligente: dd/MM/yy se período curto (<= 7 dias) ou dd/MM se longo
+      const label = dayDiff <= 7 ? `${day}/${month}/${year.slice(2)}` : `${day}/${month}`;
+      return { label, value };
+    });
 
     // 2. Dados para o Gráfico de Pizza (Sucesso por plataforma no período)
     const pieCounts: Record<string, number> = {};
@@ -151,12 +163,11 @@ const StatisticsScreen = () => {
     });
 
     const pieData = Object.entries(pieCounts).map(([name, count]) => {
-      const platform = SOCIAL_PLATFORMS.find(p => p.name === name);
       return {
         platformName: name,
         value: count,
-        color: platform?.color || colors.primary,
-        label: name,
+        color: (colors as any)[name] || colors.primary,
+        label: name === 'unknow' ? 'Desconhecido' : name,
       };
     });
 
@@ -233,21 +244,23 @@ const StatisticsScreen = () => {
             />
           </View>
 
-          <CustomDatePicker
+          <DateInput
             visible={showStartPicker}
             onClose={() => setShowStartPicker(false)}
             onSelect={(date) => setStartDate(date)}
             initialDate={startDate}
             maxDate={endDate}
+            earliestYear={earliestYear}
           />
 
-          <CustomDatePicker
+          <DateInput
             visible={showEndPicker}
             onClose={() => setShowEndPicker(false)}
             onSelect={(date) => setEndDate(date)}
             initialDate={endDate}
             minDate={startDate}
             maxDate={new Date()}
+            earliestYear={earliestYear}
           />
 
           {/* Gráfico de Linha */}

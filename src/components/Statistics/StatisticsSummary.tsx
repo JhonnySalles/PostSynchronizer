@@ -38,12 +38,28 @@ const StatisticsSummary: React.FC<StatisticsSummaryProps> = ({ platformCounts, p
               key={platform.name}
               style={[styles.platformCard, { backgroundColor: colors.card, borderColor: colors.border }]}
             >
-              <Icon name={platform.icon} size={24} color={platform.color || colors.primary} />
+              <Icon name={platform.icon} size={24} color={(colors as any)[platform.name] || colors.primary} />
               <Text style={[styles.platformName, { color: colors.textSecondary }]}>{platform.name}</Text>
               <Text style={[styles.platformCount, { color: colors.primary }]}>{countData?.count || 0}</Text>
             </View>
           );
         })}
+
+        {/* Card para Desconhecido (apenas se houver dados) */}
+        {(() => {
+          const unknowData = platformCounts.find(p => p.platform === 'unknow');
+          if (!unknowData || unknowData.count === 0) return null;
+          return (
+            <View
+              key="unknow"
+              style={[styles.platformCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+            >
+              <Icon name="help-circle-outline" size={24} color={colors.unknow} />
+              <Text style={[styles.platformName, { color: colors.textSecondary }]}>Desconhecido</Text>
+              <Text style={[styles.platformCount, { color: colors.primary }]}>{unknowData.count}</Text>
+            </View>
+          );
+        })()}
       </View>
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />

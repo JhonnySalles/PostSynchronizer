@@ -28,11 +28,24 @@ const PieChartComponent: React.FC<PieChartComponentProps> = ({ data }) => {
     );
   }
 
-  const chartData = data.map(item => ({
-    value: item.value,
-    color: item.color,
-    text: `${item.value}`,
-  }));
+  const getContrastColor = (color: string) => {
+    if (!color || !color.startsWith('#')) return '#FFF';
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 155 ? '#000' : '#FFF';
+  };
+
+  const chartData = data.map(item => {
+    const sliceColor = (colors as any)[item.platformName] || item.color;
+    return {
+      value: item.value,
+      color: sliceColor,
+      text: `${item.value}`,
+      textColor: getContrastColor(sliceColor),
+    };
+  });
 
   return (
     <View style={styles.container}>
@@ -40,7 +53,6 @@ const PieChartComponent: React.FC<PieChartComponentProps> = ({ data }) => {
         data={chartData}
         donut
         showText
-        textColor="white"
         radius={120}
         innerRadius={60}
         textSize={14}
@@ -63,9 +75,9 @@ const PieChartComponent: React.FC<PieChartComponentProps> = ({ data }) => {
 
           return (
             <View key={index} style={styles.legendItem}>
-              <View style={[styles.colorBox, { backgroundColor: item.color }]} />
+              <View style={[styles.colorBox, { backgroundColor: (colors as any)[item.platformName] || item.color }]} />
               <Text style={[styles.legendText, { color: colors.text }]}>
-                {item.platformName}: <Text style={{ fontWeight: 'bold' }}>{item.value} ({percentage}%)</Text>
+                {item.platformName === 'unknow' ? 'Desconhecido' : item.platformName}: <Text style={{ fontWeight: 'bold' }}>{item.value} ({percentage}%)</Text>
               </Text>
             </View>
           );
