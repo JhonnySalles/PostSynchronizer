@@ -3,12 +3,10 @@ import { renderHook, act } from '@testing-library/react-native';
 import { ProgressProvider, useProgress } from 'src/contexts/ProgressContext';
 
 describe('ProgressContext', () => {
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <ProgressProvider>{children}</ProgressProvider>
-  );
-
   test('deve iniciar com valores padrão', () => {
-    const { result } = renderHook(() => useProgress(), { wrapper });
+    const { result } = renderHook(() => useProgress(), {
+      wrapper: ProgressProvider,
+    });
 
     expect(result.current.progress).toBe(0);
     expect(result.current.isPosting).toBe(false);
@@ -16,40 +14,52 @@ describe('ProgressContext', () => {
   });
 
   test('deve configurar estado inicial ao chamar startPosting', () => {
-    const { result } = renderHook(() => useProgress(), { wrapper });
+    const { result } = renderHook(() => useProgress(), {
+      wrapper: ProgressProvider,
+    });
 
     act(() => {
-      result.current.startPosting(10);
+      result.current.startPosting(5);
     });
 
     expect(result.current.isPosting).toBe(true);
-    expect(result.current.message).toBe('Iniciando postagem...');
     expect(result.current.progress).toBe(0);
+    expect(result.current.message).toBe('Iniciando postagem...');
   });
 
-  test('deve atualizar o progresso proporcionalmente', async () => {
-    const { result } = renderHook(() => useProgress(), { wrapper });
-
-    // Dividimos em dois atos para garantir que o totalSteps seja processado no primeiro render
-    act(() => {
-      result.current.startPosting(10);
+  test('deve atualizar o progresso proporcionalmente', () => {
+    const { result } = renderHook(() => useProgress(), {
+      wrapper: ProgressProvider,
     });
-    
+
+    // Primeiro define o total de passos
     act(() => {
-      result.current.updateProgress(5);
+      result.current.startPosting(4);
+    });
+
+    // Depois atualiza (em outro act para o estado de totalSteps ter atualizado)
+    act(() => {
+      result.current.updateProgress(1);
+    });
+
+    expect(result.current.progress).toBe(0.25);
+    expect(result.current.message).toContain('1 de 4');
+
+    act(() => {
+      result.current.updateProgress(2);
     });
 
     expect(result.current.progress).toBe(0.5);
-    expect(result.current.message).toBe('Postando na plataforma 5 de 10...');
   });
 
-  test('deve finalizar postagem corretamente', async () => {
+  test('deve finalizar postagem corretamente', () => {
     jest.useFakeTimers();
-    const { result } = renderHook(() => useProgress(), { wrapper });
+    const { result } = renderHook(() => useProgress(), {
+      wrapper: ProgressProvider,
+    });
 
     act(() => {
-      result.current.startPosting(10);
-      result.current.updateProgress(10);
+      result.current.startPosting(2);
     });
     
     act(() => {
@@ -59,17 +69,19 @@ describe('ProgressContext', () => {
     expect(result.current.progress).toBe(1);
     expect(result.current.isPosting).toBe(false);
 
-    // Avançar o tempo (timeout de 5s no código real)
+    // Verifica o reset do progresso após o timeout
     act(() => {
       jest.advanceTimersByTime(5000);
     });
-
     expect(result.current.progress).toBe(0);
+    
     jest.useRealTimers();
   });
 
   test('deve configurar mensagem de erro ao chamar failPosting', () => {
-    const { result } = renderHook(() => useProgress(), { wrapper });
+    const { result } = renderHook(() => useProgress(), {
+      wrapper: ProgressProvider,
+    });
 
     act(() => {
       result.current.failPosting('Conexão perdida');
@@ -80,11 +92,12 @@ describe('ProgressContext', () => {
   });
 
   test('deve lançar erro se useProgress for usado fora do ProgressProvider', () => {
+    // Silencia o erro do console para este teste
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     
-    expect(() => renderHook(() => useProgress())).toThrow(
-      'useProgress must be used within a ProgressProvider'
-    );
+    expect(() => {
+      renderHook(() => useProgress());
+    }).toThrow('useProgress must be used within a ProgressProvider');
 
     consoleSpy.mockRestore();
   });

@@ -108,3 +108,4 @@ android/app/build
 compileAndroidSend.bat
 .agent/*
 /android/build
+android/build/generated/autolinking/autolinking.json

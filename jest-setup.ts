@@ -118,18 +118,38 @@ jest.mock('src/theme/ThemeProvider', () => ({
 
 // ─── Mock do DropDownPicker ────────────────────────────────────────────────────
 
-jest.mock('react-native-dropdown-picker', () => () => null);
+jest.mock('react-native-dropdown-picker', () => {
+  const React = require('react');
+  const { View, Text } = require('react-native');
+  return (props: any) => React.createElement(View, { testID: props.testID }, 
+    React.createElement(Text, null, props.value)
+  );
+});
 
 // ─── Mocks de UI e Hardware ────────────────────────────────────────────────────
 
 jest.mock('react-native-vector-icons/Ionicons', () => 'Icon');
 jest.mock('react-native-image-crop-picker', () => ({}));
-jest.mock('react-native-gesture-handler', () => ({
-  GestureHandlerRootView: ({ children }: any) => children,
-  TouchableOpacity: ({ children }: any) => children,
-  FlatList: ({ children }: any) => children,
+jest.mock('react-native-gifted-charts', () => ({
+  LineChart: 'LineChart',
+  BarChart: 'BarChart',
+  PieChart: 'PieChart',
+}), { virtual: true });
+jest.mock('react-native-gesture-handler', () => {
+  const React = require('react');
+  const { TouchableOpacity: RNTouchableOpacity } = require('react-native');
+  return {
+    GestureHandlerRootView: ({ children }: any) => children,
+    TouchableOpacity: RNTouchableOpacity,
+    FlatList: ({ children }: any) => children,
+  };
+});
+jest.mock('react-native-draggable-flatlist', () => ({
+  NestableDraggableFlatList: ({ children }: any) => children,
+  NestableScrollContainer: ({ children }: any) => children,
+  ScaleDecorator: ({ children }: any) => children,
+  __esModule: true,
 }));
-jest.mock('react-native-draggable-flatlist', () => ({ children }: any) => children);
 jest.mock('react-native-toast-message', () => {
   const React = require('react');
   const MockToast = (props: any) => null;
@@ -212,6 +232,19 @@ jest.mock('react-native-screens', () => ({
   Screen: ({ children }: any) => children,
   ScreenContainer: ({ children }: any) => children,
 }));
+
+jest.mock(
+  'react-native-document-picker',
+  () => ({
+    pickSingle: jest.fn(),
+    types: {
+      allFiles: 'allFiles',
+      images: 'images',
+    },
+    isCancel: jest.fn(() => false),
+  }),
+  { virtual: true },
+);
 
 // ─── Outros Mocks Nativos ──────────────────────────────────────────────────────
 

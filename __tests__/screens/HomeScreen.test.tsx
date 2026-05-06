@@ -1,123 +1,220 @@
-/**
- * HomeScreen — Testes de Lógica de Negócio
- *
- * Estratégia: Testar a lógica dos handlers e validações diretamente,
- * sem renderizar o componente completo (evita crashes de deps nativas no Jest).
- */
-import { Alert } from 'react-native';
-import { apiService } from 'src/services/ApiService';
+import React from 'react';
+import { render, act, fireEvent, waitFor } from '@testing-library/react-native';
+import HomeScreen from 'src/screens/HomeScreen';
+import { usePostStore } from 'src/store/usePostStore';
 import PostDao from 'src/dao/PostDao';
 import AuthTokenDao from 'src/dao/AuthTokenDao';
+import { apiService } from 'src/services/ApiService';
+import ImagePicker from 'react-native-image-crop-picker';
+import Toast from 'react-native-toast-message';
+import { TUMBLR, X } from 'src/constants/platforms';
+import { Alert } from 'react-native';
 
-jest.mock('src/services/ApiService');
-jest.mock('src/dao/PostDao');
+// Mocks
 jest.mock('src/dao/AuthTokenDao');
+jest.mock('src/dao/PostDao');
+jest.mock('src/services/ApiService');
+jest.mock('react-native-image-crop-picker', () => ({
+  openPicker: jest.fn(),
+  openCropper: jest.fn(),
+}));
+jest.mock('src/utils/permissions', () => ({
+  requestGalleryPermission: jest.fn(() => Promise.resolve(true)),
+  requestReadPermission: jest.fn(() => Promise.resolve(true)),
+}));
+jest.mock('@react-navigation/native', () => ({
+  useFocusEffect: (cb: any) => {
+    const React = require('react');
+    React.useEffect(cb, []);
+  },
+}));
 
-describe('HomeScreen — Lógica de Negócio', () => {
+// Mock do Zustand store
+const mockSetPostText = jest.fn();
+const mockClearForm = jest.fn();
+const mockAddImages = jest.fn();
+
+let mockStoreState: any = {
+  postText: '',
+  tagsText: '',
+  selectedImages: [],
+  editingPostId: null,
+  connections: [],
+  isPosting: false,
+  postProgress: {},
+  setPostText: mockSetPostText,
+  setTagsText: jest.fn(),
+  addImages: mockAddImages,
+  clearForm: mockClearForm,
+  startPosting: jest.fn(),
+  updatePostProgress: jest.fn(),
+  finishPosting: jest.fn(),
+  mergeConnections: jest.fn(),
+  resetPostStatus: jest.fn(),
+  setSelectedImages: jest.fn(),
+};
+
+jest.mock('src/store/usePostStore', () => ({
+  usePostStore: Object.assign(
+    (selector: any) => (selector ? selector(mockStoreState) : mockStoreState),
+    {
+        getState: () => mockStoreState,
+        setState: (val: any) => {
+            Object.assign(mockStoreState, val);
+        },
+    }
+  ),
+}));
+
+describe('HomeScreen', () => {
+  const mockNavigation = {
+    setOptions: jest.fn(),
+    setParams: jest.fn(),
+    navigate: jest.fn(),
+  };
+
+  const mockRoute = {
+    params: {},
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    mockStoreState.postText = '';
+    mockStoreState.tagsText = '';
+    mockStoreState.selectedImages = [];
+    (AuthTokenDao.getActivePlatforms as jest.Mock).mockResolvedValue([TUMBLR]);
+    (PostDao.getTagSuggestions as jest.Mock).mockResolvedValue(['tag1', 'tag2']);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
+  test('deve renderizar campos básicos', () => {
+    const { getByPlaceholderText } = render(
+      <HomeScreen navigation={mockNavigation as any} route={mockRoute as any} />
+    );
+    expect(getByPlaceholderText('O que você deseja postar?')).toBeTruthy();
   });
 
-  describe('Validação de Postagem', () => {
-    const validateAndPost = (text: string, images: any[], connections: any[]) => {
-      if (!text && images.length === 0) {
-        Alert.alert('Conteúdo Vazio', 'Adicione texto ou imagens antes de postar.');
-        return false;
-      }
-
-      const xActive = connections.find(c => c.platform === 'x' && c.active);
-      if (xActive && images.length > 4) {
-        Alert.alert('Limite de Imagens Excedido', 'X (Twitter) suporta no máximo 4 imagens.');
-        return false;
-      }
-
-      return true;
-    };
-
-    test('deve impedir postagem se texto e imagens estiverem vazios', () => {
-      const result = validateAndPost('', [], [{ platform: 'x', active: true }]);
-
-      expect(result).toBe(false);
-      expect(Alert.alert).toHaveBeenCalledWith('Conteúdo Vazio', expect.any(String));
-    });
-
-    test('deve validar o limite de 4 imagens para o Twitter (X)', () => {
-      const images = Array(5).fill({ path: 'img.jpg', platforms: ['x'] });
-      const connections = [{ platform: 'x', active: true }];
-
-      const result = validateAndPost('Texto de teste', images, connections);
-
-      expect(result).toBe(false);
-      expect(Alert.alert).toHaveBeenCalledWith('Limite de Imagens Excedido', expect.stringContaining('X (Twitter)'));
-    });
-
-    test('deve permitir postagem com conteúdo válido', () => {
-      const result = validateAndPost('Hello World', [], [{ platform: 'x', active: true }]);
-      expect(result).toBe(true);
-      expect(Alert.alert).not.toHaveBeenCalled();
-    });
-
-    test('deve permitir postagem com imagens dentro do limite', () => {
-      const images = Array(4).fill({ path: 'img.jpg', platforms: ['x'] });
-      const result = validateAndPost('Teste', images, [{ platform: 'x', active: true }]);
-      expect(result).toBe(true);
-    });
+  test('deve atualizar texto do post no store ao digitar', () => {
+    const { getByTestId } = render(
+      <HomeScreen navigation={mockNavigation as any} route={mockRoute as any} />
+    );
+    
+    const input = getByTestId('post-text-input');
+    fireEvent.changeText(input, 'Olá mundo');
+    
+    expect(mockSetPostText).toHaveBeenCalledWith('Olá mundo');
   });
 
-  describe('Processamento de Tags', () => {
-    const cleanTags = (tagsText: string) => {
-      return tagsText
-        .split(';')
-        .map(t => t.trim())
-        .filter(Boolean)
-        .join('; ');
-    };
-
-    test('deve limpar espaços extras das tags', () => {
-      const result = cleanTags('tag1; tag2; tag3; ');
-      expect(result).toBe('tag1; tag2; tag3');
+  test('deve abrir seletor de imagem e adicionar ao store', async () => {
+    (ImagePicker.openPicker as jest.Mock).mockResolvedValue([
+      { path: 'file://test.jpg' }
+    ]);
+    
+    const { getByTestId } = render(
+      <HomeScreen navigation={mockNavigation as any} route={mockRoute as any} />
+    );
+    
+    const imageBtn = getByTestId('attach-image-button');
+    await act(async () => {
+      fireEvent.press(imageBtn);
     });
 
-    test('deve remover tags vazias', () => {
-      const result = cleanTags('tag1;;tag2; ;tag3');
-      expect(result).toBe('tag1; tag2; tag3');
-    });
+    expect(ImagePicker.openPicker).toHaveBeenCalled();
+    expect(mockAddImages).toHaveBeenCalled();
   });
 
-  describe('Chamada ao ApiService', () => {
-    test('deve chamar apiService.postAll com o payload correto', async () => {
-      (AuthTokenDao.getCredentialsForPlatform as jest.Mock).mockResolvedValue(null);
-      (PostDao.platformSuccessCount as jest.Mock).mockResolvedValue(0);
-      (apiService.postAll as jest.Mock).mockResolvedValue({ success: true });
+  test('deve salvar rascunho se houver conteúdo', async () => {
+    mockStoreState.postText = 'Conteúdo rascunho';
+    (PostDao.create as jest.Mock).mockResolvedValue(123);
 
-      await apiService.postAll(
-        { text: 'Hello World', tags: ['news', 'tech'] } as any,
-        jest.fn()
-      );
-
-      expect(apiService.postAll).toHaveBeenCalledWith(
-        expect.objectContaining({ text: 'Hello World', tags: ['news', 'tech'] }),
-        expect.any(Function)
-      );
+    const { getByTestId } = render(
+      <HomeScreen navigation={mockNavigation as any} route={mockRoute as any} />
+    );
+    
+    const draftBtn = getByTestId('draft-action-button');
+    await act(async () => {
+      fireEvent.press(draftBtn);
     });
 
-    test('deve salvar post como rascunho no banco de dados', async () => {
-      (PostDao.create as jest.Mock).mockResolvedValue(42);
+    expect(PostDao.create).toHaveBeenCalled();
+    expect(Toast.show).toHaveBeenCalledWith(expect.objectContaining({
+      type: 'success',
+      text1: 'Sucesso!'
+    }));
+  });
 
-      const id = await PostDao.create({
-        content: 'Rascunho de teste',
-        status: 'draft' as any,
-      });
+  test('deve mostrar alerta se tentar salvar rascunho vazio', async () => {
+    mockStoreState.postText = '';
+    mockStoreState.selectedImages = [];
+    const spyAlert = jest.spyOn(Alert, 'alert');
 
-      expect(id).toBe(42);
-      expect(PostDao.create).toHaveBeenCalledWith(
-        expect.objectContaining({ content: 'Rascunho de teste' })
-      );
+    const { getByTestId } = render(
+      <HomeScreen navigation={mockNavigation as any} route={mockRoute as any} />
+    );
+    
+    const draftBtn = getByTestId('draft-action-button');
+    fireEvent.press(draftBtn);
+
+    expect(spyAlert).toHaveBeenCalledWith('Rascunho Vazio', expect.any(String));
+  });
+
+  test('deve executar fluxo de postagem completa', async () => {
+    mockStoreState.postText = 'Texto para postar';
+    mockStoreState.connections = [{ platform: TUMBLR, active: true, postStatus: 'idle' }];
+    (PostDao.create as jest.Mock).mockResolvedValue(456);
+    (AuthTokenDao.getCredentialsForPlatform as jest.Mock).mockResolvedValue({ blogName: 'testblog' });
+    (PostDao.platformSuccessCount as jest.Mock).mockResolvedValue(0);
+
+    const mockStartPosting = jest.fn();
+    const mockUpdatePostProgress = jest.fn();
+    const mockFinishPosting = jest.fn();
+    mockStoreState.startPosting = mockStartPosting;
+    mockStoreState.updatePostProgress = mockUpdatePostProgress;
+    mockStoreState.finishPosting = mockFinishPosting;
+
+    (apiService.postAll as jest.Mock).mockImplementation((payload, onProgress) => {
+      // Simula progresso
+      onProgress({ type: 'progress', postId: 456, progress: 50 });
+      onProgress({ type: 'summary', postId: 456, summary: { successful: [TUMBLR], failed: [] } });
+      return Promise.resolve({ success: true });
     });
+
+    const { getByTestId } = render(
+      <HomeScreen navigation={mockNavigation as any} route={mockRoute as any} />
+    );
+    
+    const postBtn = getByTestId('post-action-button');
+    await act(async () => {
+      fireEvent.press(postBtn);
+    });
+
+    expect(apiService.postAll).toHaveBeenCalled();
+    expect(mockStartPosting).toHaveBeenCalledWith(456, [TUMBLR]);
+    expect(mockUpdatePostProgress).toHaveBeenCalledWith(456, expect.objectContaining({ progress: 50 }));
+    expect(mockFinishPosting).toHaveBeenCalledWith(456, { successful: [TUMBLR], failed: [] });
+    
+    // Verifica persistência final
+    expect(PostDao.update).toHaveBeenCalledWith(456, expect.objectContaining({
+      platformsSuccess: TUMBLR,
+      status: 'posted'
+    }));
+  });
+
+  test('deve postar em plataforma única via clique longo no ícone', async () => {
+    mockStoreState.postText = 'Texto para post único';
+    mockStoreState.connections = [{ platform: TUMBLR, active: true, postStatus: 'idle' }];
+    (PostDao.create as jest.Mock).mockResolvedValue(789);
+    (apiService.postSingle as jest.Mock).mockResolvedValue({ success: true });
+
+    const { getByTestId } = render(
+      <HomeScreen navigation={mockNavigation as any} route={mockRoute as any} />
+    );
+    
+    const tumblrIcon = getByTestId('platform-status-icon-tumblr');
+    await act(async () => {
+      fireEvent(tumblrIcon, 'onLongPress');
+    });
+
+    expect(apiService.postSingle).toHaveBeenCalledWith(TUMBLR, expect.any(Object));
+    expect(PostDao.update).toHaveBeenCalledWith(789, expect.objectContaining({ platformsSuccess: TUMBLR }));
   });
 });

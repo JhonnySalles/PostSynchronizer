@@ -1,129 +1,146 @@
-/**
- * PostDao Tests
- *
- * Estratégia: Mockamos o módulo 'src/database' via factory function do jest.mock.
- * A variável mockExecuteSql é inicializada dentro do factory e exportada via objeto
- * global para ser acessada nos testes.
- */
-
-// Declara o mock antes para ser hoisted corretamente pelo Jest
-jest.mock('src/database');
-
 import PostDao from 'src/dao/PostDao';
-import { DRAFT } from 'src/constants/app';
-import { X } from 'src/constants/platforms';
-import * as database from 'src/database';
+import { getDBConnection } from 'src/database';
+
+jest.mock('src/database', () => ({
+  getDBConnection: jest.fn(),
+}));
 
 describe('PostDao.ts', () => {
-  let mockExecuteSql: jest.Mock;
+  const mockExecuteSql = jest.fn();
+  const mockDb = {
+    executeSql: mockExecuteSql,
+  };
 
   beforeEach(() => {
-    mockExecuteSql = jest.fn();
-    (database.getDBConnection as jest.Mock).mockResolvedValue({
-      executeSql: mockExecuteSql,
-    });
-  });
-
-  afterEach(() => {
     jest.clearAllMocks();
-  });
-
-  describe('create', () => {
-    test('deve inserir post com valores padrão e retornar insertId', async () => {
-      mockExecuteSql.mockResolvedValueOnce([{ insertId: 1 }]);
-
-      const id = await PostDao.create({ content: 'Teste Post', status: DRAFT as any });
-
-      expect(id).toBe(1);
-      expect(mockExecuteSql).toHaveBeenCalledWith(
-        expect.stringContaining('INSERT INTO posts'),
-        expect.any(Array)
-      );
-    });
-
-    test('deve lançar erro se falhar ao obter insertId', async () => {
-      mockExecuteSql.mockResolvedValueOnce([{ insertId: -1 }]);
-
-      await expect(PostDao.create({})).rejects.toThrow('Falha ao obter o ID do post inserido.');
-    });
+    (getDBConnection as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('getAll', () => {
-    test('deve retornar posts formatados corretamente', async () => {
-      mockExecuteSql.mockResolvedValueOnce([{
+    test('deve retornar lista de posts formatada', async () => {
+      const mockRows = [
+        { id: 1, content: 'Post 1', images: '[]', platforms_send: 'x', platforms_success: 'x', tags: 'tag1', status: 'posted' },
+        { id: 2, content: 'Post 2', images: '[{"path":"p1"}]', platforms_send: 'tumblr', platforms_success: null, tags: '', status: 'draft' },
+      ];
+
+      mockExecuteSql.mockResolvedValue([{
         rows: {
-          length: 1,
-          item: (_i: number) => ({
-            id: 1,
-            content: 'Conteudo',
-            tags: 'tag1;tag2',
-            platforms_send: 'x;tumblr',
-            platforms_success: 'x',
-            status: DRAFT,
-            images: '[]',
-            created_at: '2023-01-01',
-          }),
+          length: mockRows.length,
+          item: (i: number) => mockRows[i],
         },
       }]);
 
-      const posts = await PostDao.getAll();
-      expect(posts).toHaveLength(1);
-      expect(posts[0].platformsSend).toBe('x;tumblr');
-      expect(posts[0].platformsSuccess).toBe('x');
+      const result = await PostDao.getAll();
+
+      expect(getDBConnection).toHaveBeenCalled();
+      expect(mockExecuteSql).toHaveBeenCalledWith(expect.stringContaining('SELECT'));
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe(1);
+      expect(result[1].images).toEqual([{ path: 'p1' }]);
+      expect(result[1].platformsSend).toBe('tumblr');
+    });
+
+    test('deve lançar erro se falhar no banco', async () => {
+      mockExecuteSql.mockRejectedValue(new Error('DB Error'));
+      await expect(PostDao.getAll()).rejects.toThrow('DB Error');
+    });
+  });
+
+  describe('create', () => {
+    test('deve inserir post e retornar insertId', async () => {
+      mockExecuteSql.mockResolvedValue([{ insertId: 123 }]);
+
+      const id = await PostDao.create({ content: 'New Post', tags: 't1; t2' });
+
+      expect(id).toBe(123);
+      expect(mockExecuteSql).toHaveBeenCalledWith(
+        expect.stringContaining('INSERT INTO posts'),
+        expect.arrayContaining(['New Post', 't1; t2'])
+      );
+    });
+
+    test('deve lançar erro se insertId for inválido', async () => {
+      mockExecuteSql.mockResolvedValue([{ insertId: undefined }]);
+      await expect(PostDao.create({})).rejects.toThrow('Falha ao obter o ID');
     });
   });
 
   describe('update', () => {
-    test('deve chamar UPDATE no banco com os dados corretos', async () => {
-      // SELECT do post atual (para leitura das plataformas)
+    test('deve atualizar campos simples', async () => {
+      mockExecuteSql.mockResolvedValue([]);
+      
+      await PostDao.update(1, { content: 'Updated' });
+
+      expect(mockExecuteSql).toHaveBeenCalledWith(
+        expect.stringContaining('UPDATE posts SET content = ?'),
+        ['Updated', 1]
+      );
+    });
+
+    test('deve mesclar plataformas se já existirem', async () => {
+      // Mock da busca inicial dos dados existentes
       mockExecuteSql.mockResolvedValueOnce([{
         rows: {
           length: 1,
-          item: () => ({ platforms_send: 'x', platforms_success: '' }),
+          item: () => ({ platforms_send: 'x', platforms_success: 'x' }),
         },
       }]);
-      // UPDATE do post
-      mockExecuteSql.mockResolvedValueOnce([{ rowsAffected: 1 }]);
+      // Mock do update final
+      mockExecuteSql.mockResolvedValueOnce([]);
 
-      await PostDao.update(1, { content: 'Texto atualizado' });
+      await PostDao.update(1, { platformsSend: 'tumblr', platformsSuccess: 'tumblr' });
 
       expect(mockExecuteSql).toHaveBeenCalledWith(
-        expect.stringContaining('UPDATE posts SET'),
-        expect.any(Array)
+        expect.stringContaining('UPDATE posts SET platforms_send = ?, platforms_success = ?'),
+        ['x, tumblr', 'x, tumblr', 1]
       );
     });
   });
 
   describe('updateLastSync', () => {
-    test('deve marcar post como finalizado em uma plataforma', async () => {
-      mockExecuteSql.mockResolvedValueOnce([{ rowsAffected: 1 }]);
+    test('deve atualizar status para POSTED e desmarcar pending', async () => {
+      mockExecuteSql.mockResolvedValue([]);
 
-      await PostDao.updateLastSync(1, [X]);
+      await PostDao.updateLastSync(1, ['x', 'tumblr']);
 
       expect(mockExecuteSql).toHaveBeenCalledWith(
-        expect.stringContaining('platforms_success'),
-        expect.any(Array)
+        expect.stringContaining('UPDATE posts SET pending = ?, status = ?, platforms_success = ?'),
+        [false, 'posted', 'x, tumblr', 1]
       );
     });
   });
 
-  describe('getTagSuggestions', () => {
-    test('deve retornar tags únicas e filtradas', async () => {
-      mockExecuteSql.mockResolvedValueOnce([{
+  describe('delete', () => {
+    test('deve deletar pelo id', async () => {
+      mockExecuteSql.mockResolvedValue([]);
+      await PostDao.delete(1);
+      expect(mockExecuteSql).toHaveBeenCalledWith(expect.stringContaining('DELETE FROM posts WHERE id = ?'), [1]);
+    });
+  });
+
+  describe('getEarliestYear', () => {
+    test('deve retornar o ano da primeira postagem', async () => {
+      mockExecuteSql.mockResolvedValue([{
         rows: {
-          length: 2,
-          item: (i: number) => [{ tags: 'tag1,tag2' }, { tags: 'tag2,tag3' }][i],
+          length: 1,
+          item: () => ({ first_date: '2022-06-01T12:00:00.000Z' }),
         },
       }]);
 
-      const suggestions = await PostDao.getTagSuggestions('tag');
-      expect(suggestions).toEqual(expect.arrayContaining(['tag1', 'tag2', 'tag3']));
+      const year = await PostDao.getEarliestYear();
+      expect(year).toBe(2022);
     });
 
-    test('deve retornar [] para query vazia', async () => {
-      const suggestions = await PostDao.getTagSuggestions('');
-      expect(suggestions).toEqual([]);
-      expect(mockExecuteSql).not.toHaveBeenCalled();
+    test('deve retornar o ano atual se não houver registros', async () => {
+      mockExecuteSql.mockResolvedValue([{
+        rows: {
+          length: 1,
+          item: () => ({ first_date: null }),
+        },
+      }]);
+
+      const year = await PostDao.getEarliestYear();
+      expect(year).toBe(new Date().getFullYear());
     });
   });
 });

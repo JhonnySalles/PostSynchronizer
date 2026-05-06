@@ -1,103 +1,125 @@
-/**
- * SettingsScreen — Testes de Lógica de Negócio
- *
- * Estratégia: Testar a lógica dos handlers diretamente em vez de renderizar o
- * componente completo, evitando problemas de dependências nativas em ambiente Jest.
- */
-import { Alert } from 'react-native';
-import { apiService } from 'src/services/ApiService';
+import React from 'react';
+import { render, act, fireEvent, waitFor } from '@testing-library/react-native';
+import SettingsScreen from 'src/screens/SettingsScreen';
 import AuthTokenDao from 'src/dao/AuthTokenDao';
+import { apiService } from 'src/services/ApiService';
+import * as BackupService from 'src/services/BackupService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TUMBLR, X } from 'src/constants/platforms';
+import { AI_PROMPT_KEY } from 'src/constants/app';
+import { Alert } from 'react-native';
 
-jest.mock('src/services/ApiService');
+// Mocks
 jest.mock('src/dao/AuthTokenDao');
+jest.mock('src/services/ApiService');
+jest.mock('src/services/BackupService');
+jest.mock('@react-navigation/native', () => ({
+  useFocusEffect: (cb: any) => {
+    const React = require('react');
+    React.useEffect(cb, []);
+  },
+}));
 
-describe('SettingsScreen — Lógica de Negócio', () => {
+describe('SettingsScreen', () => {
+  const mockCredentials = [
+    { platform: TUMBLR, active: true, aditional: '', blogName: 'blog1', blogs: [] },
+    { platform: X, active: false, aditional: 'tok' },
+  ];
+
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    (AuthTokenDao.getAllCredentials as jest.Mock).mockResolvedValue(mockCredentials);
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue('Prompt salvo');
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
+  test('deve carregar configurações ao focar na tela', async () => {
+    const { getByText, getByDisplayValue } = render(<SettingsScreen />);
+
+    await waitFor(() => {
+      expect(AuthTokenDao.getAllCredentials).toHaveBeenCalled();
+      expect(AsyncStorage.getItem).toHaveBeenCalledWith(AI_PROMPT_KEY);
+    });
+
+    expect(getByDisplayValue('Prompt salvo')).toBeTruthy();
   });
 
-  describe('handleLoginTest', () => {
-    const handleLoginTest = async () => {
-      try {
-        const success = await apiService.login();
-        if (success)
-          Alert.alert('Login Bem-Sucedido!', 'Login realizado com sucesso na api.');
-        else
-          Alert.alert('Falha no Login', 'Não foi possível realizar o login na api. Verifique sua internet.');
-      } catch (e) {
-        Alert.alert('Erro Crítico no Login', (e as Error).message);
-      }
-    };
-
-    test('deve mostrar alerta de sucesso quando login retorna true', async () => {
-      (apiService.login as jest.Mock).mockResolvedValue(true);
-
-      await handleLoginTest();
-
-      expect(apiService.login).toHaveBeenCalledTimes(1);
-      expect(Alert.alert).toHaveBeenCalledWith('Login Bem-Sucedido!', expect.any(String));
+  test('deve disparar login na API ao clicar no botão', async () => {
+    (apiService.login as jest.Mock).mockResolvedValue(true);
+    const spyAlert = jest.spyOn(Alert, 'alert');
+    
+    const { getByTestId } = render(<SettingsScreen />);
+    
+    const loginBtn = getByTestId('login-api-button');
+    await act(async () => {
+      fireEvent.press(loginBtn);
     });
 
-    test('deve mostrar alerta de falha quando login retorna false', async () => {
-      (apiService.login as jest.Mock).mockResolvedValue(false);
-
-      await handleLoginTest();
-
-      expect(Alert.alert).toHaveBeenCalledWith('Falha no Login', expect.any(String));
-    });
-
-    test('deve mostrar alerta de erro crítico quando login lança exceção', async () => {
-      (apiService.login as jest.Mock).mockRejectedValue(new Error('Sem conexão'));
-
-      await handleLoginTest();
-
-      expect(Alert.alert).toHaveBeenCalledWith('Erro Crítico no Login', 'Sem conexão');
-    });
+    expect(apiService.login).toHaveBeenCalled();
+    expect(spyAlert).toHaveBeenCalledWith('Login Bem-Sucedido!', expect.any(String));
   });
 
-  describe('loadSettings', () => {
-    test('deve carregar credenciais ao montar', async () => {
-      const mockCredentials = [
-        { platform: 'x', active: true, aditional: '' },
-        { platform: 'tumblr', active: false, aditional: '' },
-      ];
-      (AuthTokenDao.getAllCredentials as jest.Mock).mockResolvedValue(mockCredentials);
+  test('deve atualizar o prompt da IA ao digitar', async () => {
+    const { getByDisplayValue } = render(<SettingsScreen />);
+    
+    const input = await waitFor(() => getByDisplayValue('Prompt salvo'));
+    fireEvent.changeText(input, 'Novo Prompt');
 
-      const result = await AuthTokenDao.getAllCredentials();
-
-      expect(AuthTokenDao.getAllCredentials).toHaveBeenCalledTimes(1);
-      expect(result).toHaveLength(2);
-      expect(result[0].platform).toBe('x');
-    });
-
-    test('deve mostrar alerta de erro se carregamento falhar', async () => {
-      (AuthTokenDao.getAllCredentials as jest.Mock).mockRejectedValue(new Error('DB Error'));
-
-      try {
-        await AuthTokenDao.getAllCredentials();
-      } catch {
-        Alert.alert('Erro', 'Não foi possível carregar as configurações salvas.');
-      }
-
-      expect(Alert.alert).toHaveBeenCalledWith('Erro', expect.any(String));
-    });
+    expect(AsyncStorage.setItem).toHaveBeenCalledWith(AI_PROMPT_KEY, 'Novo Prompt');
   });
 
-  describe('handleStatusChange', () => {
-    test('deve chamar updateActiveStatus com as credenciais atualizadas', async () => {
-      const credential = { platform: 'x', active: true, aditional: '' };
-      (AuthTokenDao.updateActiveStatus as jest.Mock).mockResolvedValue(undefined);
+  test('deve iniciar exportação de backup ao clicar no botão', async () => {
+    (BackupService.exportDatabase as jest.Mock).mockResolvedValue(true);
+    const { getByText } = render(<SettingsScreen />);
 
-      await AuthTokenDao.updateActiveStatus({ ...credential, active: false });
-
-      expect(AuthTokenDao.updateActiveStatus).toHaveBeenCalledWith(
-        expect.objectContaining({ platform: 'x', active: false })
-      );
+    const exportBtn = getByText('Gerar Backup');
+    await act(async () => {
+      fireEvent.press(exportBtn);
     });
+
+    expect(BackupService.exportDatabase).toHaveBeenCalled();
+  });
+
+  test('deve mostrar popup de confirmação antes de importar backup', async () => {
+    const { getByText, queryByText } = render(<SettingsScreen />);
+
+    // Garante que o popup não está visível
+    expect(queryByText('Ao importar um backup')).toBeNull();
+
+    const importBtn = getByText('Importar Backup');
+    fireEvent.press(importBtn);
+
+    // Agora deve estar visível (ConfirmPopup renderiza o texto da mensagem)
+    expect(getByText(/Ao importar um backup/)).toBeTruthy();
+  });
+
+  test('deve executar importação ao confirmar no popup', async () => {
+    (BackupService.importDatabase as jest.Mock).mockResolvedValue(true);
+    const { getByText } = render(<SettingsScreen />);
+
+    fireEvent.press(getByText('Importar Backup'));
+    
+    const confirmBtn = getByText('Importar');
+    await act(async () => {
+      fireEvent.press(confirmBtn);
+    });
+
+    expect(BackupService.importDatabase).toHaveBeenCalled();
+  });
+
+  test('deve atualizar status da plataforma via PlatformCard', async () => {
+    (AuthTokenDao.updateActiveStatus as jest.Mock).mockResolvedValue(undefined);
+    const { getByTestId } = render(<SettingsScreen />);
+
+    // Switch do X (que está inativo no mockCredentials)
+    const switchX = getByTestId('platform-switch-x');
+    
+    await act(async () => {
+      fireEvent(switchX, 'onValueChange', true);
+    });
+
+    expect(AuthTokenDao.updateActiveStatus).toHaveBeenCalledWith(expect.objectContaining({
+      platform: X,
+      active: true
+    }));
   });
 });

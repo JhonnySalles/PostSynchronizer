@@ -1,101 +1,144 @@
-import AuthTokenDao from 'src/dao/AuthTokenDao';
+import AuthTokenDao, { Credentials, TumblrCredentials } from 'src/dao/AuthTokenDao';
+import { getDBConnection } from 'src/database';
 import { TUMBLR, X } from 'src/constants/platforms';
 
-// Estado do banco de dados simulado para o mock inteligente
-let nextSelectResult: any = { rows: { length: 0 } };
-
-const mockExecuteSql = jest.fn((sql: string) => {
-  // 1. Ignorar comandos de transação (Return vazio)
-  if (sql.includes('BEGIN') || sql.includes('COMMIT') || sql.includes('ROLLBACK')) {
-    return Promise.resolve([{ rows: { length: 0 } }]);
-  }
-  
-  // 2. Responder a SELECTs com o estado preparado pelo teste
-  if (sql.includes('SELECT')) {
-    return Promise.resolve([nextSelectResult]);
-  }
-  
-  // 3. Responder a INSERT/UPDATE/DELETE com sucesso genérico
-  return Promise.resolve([{}]);
-});
-
-const mockDB = {
-  executeSql: mockExecuteSql,
-  transaction: jest.fn(cb => cb({ executeSql: mockExecuteSql })),
-  close: jest.fn(),
-};
-
 jest.mock('src/database', () => ({
-  getDBConnection: jest.fn(() => Promise.resolve(mockDB)),
-  closeDBConnection: jest.fn(() => Promise.resolve()),
+  getDBConnection: jest.fn(),
 }));
 
 describe('AuthTokenDao.ts', () => {
+  const mockExecuteSql = jest.fn();
+  const mockDb = {
+    executeSql: mockExecuteSql,
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-    // Default: Banco vazio para novos SELECTs
-    nextSelectResult = { rows: { length: 0 } };
+    (getDBConnection as jest.Mock).mockResolvedValue(mockDb);
   });
 
   describe('saveCredentials', () => {
-    test('deve inserir nova plataforma quando não existe', async () => {
-      nextSelectResult = { rows: { length: 0 } }; 
+    test('deve inserir novas credenciais se não existirem', async () => {
+      // Mock Transaction
+      mockExecuteSql.mockResolvedValueOnce([]); // BEGIN
+      // Mock SELECT platform (não existe)
+      mockExecuteSql.mockResolvedValueOnce([{ rows: { length: 0 } }]);
+      // Mock INSERT
+      mockExecuteSql.mockResolvedValueOnce([]);
+      // Mock COMMIT
+      mockExecuteSql.mockResolvedValueOnce([]);
 
-      await AuthTokenDao.saveCredentials({ platform: X, aditional: 'test', active: true });
+      const creds: Credentials = { platform: X, active: true, aditional: 'token123' };
+      await AuthTokenDao.saveCredentials(creds);
 
-      const insertCall = mockExecuteSql.mock.calls.find(c => c[0].includes('INSERT INTO auth_tokens'));
-      expect(insertCall).toBeDefined();
+      expect(mockExecuteSql).toHaveBeenCalledWith(expect.stringContaining('INSERT INTO auth_tokens'), expect.arrayContaining([X, 'token123', 1]));
+      expect(mockExecuteSql).toHaveBeenCalledWith('COMMIT;');
     });
 
-    test('deve atualizar plataforma existente', async () => {
-      // Configuramos o banco para "ter" a plataforma X
-      nextSelectResult = { 
-        rows: { length: 1, item: () => ({ platform: X }) } 
-      };
+    test('deve atualizar credenciais se já existirem', async () => {
+      mockExecuteSql.mockResolvedValueOnce([]); // BEGIN
+      mockExecuteSql.mockResolvedValueOnce([{ rows: { length: 1 } }]); // Existe
+      mockExecuteSql.mockResolvedValueOnce([]); // UPDATE
+      mockExecuteSql.mockResolvedValueOnce([]); // COMMIT
 
-      await AuthTokenDao.saveCredentials({ platform: X, aditional: 'new_token', active: false });
+      const creds: Credentials = { platform: X, active: false, aditional: 'new-token' };
+      await AuthTokenDao.saveCredentials(creds);
 
-      const updateCall = mockExecuteSql.mock.calls.find(c => c[0].includes('UPDATE auth_tokens SET'));
-      expect(updateCall).toBeDefined();
+      expect(mockExecuteSql).toHaveBeenCalledWith(expect.stringContaining('UPDATE auth_tokens SET'), expect.arrayContaining(['new-token', 0, X]));
     });
 
-    test('deve tratar campos especiais do Tumblr', async () => {
-      nextSelectResult = { rows: { length: 0 } };
+    test('deve formatar aditional como JSON para Tumblr', async () => {
+      mockExecuteSql.mockResolvedValueOnce([]); // BEGIN
+      mockExecuteSql.mockResolvedValueOnce([{ rows: { length: 1 } }]); 
+      mockExecuteSql.mockResolvedValueOnce([]); // UPDATE
+      mockExecuteSql.mockResolvedValueOnce([]); // COMMIT
 
-      const tumblrCreds = {
-        platform: TUMBLR,
-        blogs: [{ name: 'blog1', title: 'T1' }],
-        active: true,
-        aditional: ''
+      const tumblrCreds: TumblrCredentials = { 
+        platform: TUMBLR, 
+        active: true, 
+        aditional: '', 
+        blogs: [{ name: 'blog1', title: 'B1', selected: true }],
+        blogName: 'blog1'
       };
 
       await AuthTokenDao.saveCredentials(tumblrCreds);
-      
-      const insertCall = mockExecuteSql.mock.calls.find(c => c[0].includes('INSERT INTO auth_tokens'));
-      expect(insertCall[1][1]).toBe(JSON.stringify(tumblrCreds.blogs));
+
+      const jsonStr = JSON.stringify(tumblrCreds.blogs);
+      expect(mockExecuteSql).toHaveBeenCalledWith(
+        expect.stringContaining('UPDATE auth_tokens'),
+        expect.arrayContaining([jsonStr, 1, TUMBLR])
+      );
+    });
+
+    test('deve dar ROLLBACK em caso de erro', async () => {
+      mockExecuteSql.mockResolvedValueOnce([]); // BEGIN
+      mockExecuteSql.mockRejectedValueOnce(new Error('Insert Fail'));
+      mockExecuteSql.mockResolvedValueOnce([]); // ROLLBACK
+
+      await expect(AuthTokenDao.saveCredentials({ platform: X })).rejects.toThrow('Insert Fail');
+      expect(mockExecuteSql).toHaveBeenCalledWith('ROLLBACK;');
     });
   });
 
   describe('getCredentialsForPlatform', () => {
-    test('deve parsear Tumblr corretamente', async () => {
-      const blogs = [{ name: 'b1', title: 'T1', selected: true }];
-      nextSelectResult = {
-        rows: { 
-          length: 1, 
-          item: () => ({ platform: TUMBLR, aditional: JSON.stringify(blogs), active: 1 }) 
-        }
-      };
+    test('deve retornar credenciais simples (X)', async () => {
+      mockExecuteSql.mockResolvedValue([{
+        rows: {
+          length: 1,
+          item: () => ({ platform: X, aditional: 'tok', active: 1 }),
+        },
+      }]);
 
-      const result = await AuthTokenDao.getCredentialsForPlatform(TUMBLR) as any;
-      
-      expect(result).not.toBeNull();
-      expect(result.blogName).toBe('b1');
+      const result = await AuthTokenDao.getCredentialsForPlatform<Credentials>(X);
+
+      expect(result).toEqual({ platform: X, aditional: 'tok', active: 1 });
+    });
+
+    test('deve parsear blogs para Tumblr', async () => {
+      const blogs = [{ name: 'myblog', selected: true }];
+      mockExecuteSql.mockResolvedValue([{
+        rows: {
+          length: 1,
+          item: () => ({ platform: TUMBLR, aditional: JSON.stringify(blogs), active: 1 }),
+        },
+      }]);
+
+      const result = await AuthTokenDao.getCredentialsForPlatform<TumblrCredentials>(TUMBLR);
+
+      expect(result?.blogName).toBe('myblog');
+      expect(result?.blogs).toEqual(blogs);
     });
 
     test('deve retornar null se não encontrar', async () => {
-      nextSelectResult = { rows: { length: 0 } };
+      mockExecuteSql.mockResolvedValue([{ rows: { length: 0 } }]);
       const result = await AuthTokenDao.getCredentialsForPlatform(X);
       expect(result).toBeNull();
+    });
+  });
+
+  describe('getActivePlatforms', () => {
+    test('deve retornar lista de nomes de plataformas ativas', async () => {
+      mockExecuteSql.mockResolvedValue([{
+        rows: {
+          length: 2,
+          item: (i: number) => [{ platform: 'x' }, { platform: 'tumblr' }][i],
+        },
+      }]);
+
+      const result = await AuthTokenDao.getActivePlatforms();
+      expect(result).toEqual(['x', 'tumblr']);
+      expect(mockExecuteSql).toHaveBeenCalledWith(expect.stringContaining('WHERE active = 1'));
+    });
+  });
+
+  describe('updateActiveStatus', () => {
+    test('deve atualizar apenas campo active', async () => {
+      mockExecuteSql.mockResolvedValue([]);
+      await AuthTokenDao.updateActiveStatus({ platform: X, active: true, aditional: '' });
+      expect(mockExecuteSql).toHaveBeenCalledWith(
+        expect.stringContaining('UPDATE auth_tokens SET active = ?'),
+        [1, X]
+      );
     });
   });
 });

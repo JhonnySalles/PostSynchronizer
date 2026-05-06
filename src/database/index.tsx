@@ -41,6 +41,7 @@ export const closeDBConnection = async (): Promise<void> => {
   if (dbInstance) {
     await dbInstance.close();
     dbInstance = null;
+    openingPromise = null;
     Logger.debug('[DB] Conexão com o banco de dados fechada.');
   }
 };
