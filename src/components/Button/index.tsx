@@ -13,6 +13,7 @@ interface ButtonProps {
   textStyle?: StyleProp<TextStyle>;
   disabled?: boolean;
   isLoading?: boolean;
+  testID?: string;
 }
 
 const Button = ({
@@ -24,6 +25,7 @@ const Button = ({
   textStyle,
   disabled = false,
   isLoading = false,
+  testID,
 }: ButtonProps) => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
@@ -38,7 +40,13 @@ const Button = ({
   const contentTextStyle = [styles.baseText, styles[`${variant}Text`], textStyle];
 
   return (
-    <TouchableOpacity style={containerStyle} onPress={onPress} disabled={disabled || isLoading} activeOpacity={0.8}>
+    <TouchableOpacity 
+      style={containerStyle} 
+      onPress={onPress} 
+      disabled={disabled || isLoading} 
+      activeOpacity={0.8}
+      testID={testID}
+    >
       {icon && (
         <Icon
           name={icon}

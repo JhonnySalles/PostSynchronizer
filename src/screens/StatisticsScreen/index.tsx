@@ -206,6 +206,7 @@ const StatisticsScreen = () => {
               <TouchableOpacity
                 style={[styles.dateButton, { backgroundColor: colors.background, borderColor: colors.border }]}
                 onPress={() => showDatepicker(true)}
+                testID="btn-filter-start-date"
               >
                 <Text style={[styles.dateButtonLabel, { color: colors.textSecondary }]}>Início</Text>
                 <Text style={[styles.dateButtonValue, { color: colors.text }]}>
@@ -216,6 +217,7 @@ const StatisticsScreen = () => {
               <TouchableOpacity
                 style={[styles.dateButton, { backgroundColor: colors.background, borderColor: colors.border }]}
                 onPress={() => showDatepicker(false)}
+                testID="btn-filter-end-date"
               >
                 <Text style={[styles.dateButtonLabel, { color: colors.textSecondary }]}>Fim</Text>
                 <Text style={[styles.dateButtonValue, { color: colors.text }]}>
@@ -241,6 +243,7 @@ const StatisticsScreen = () => {
               textStyle={{ color: colors.text }}
               arrowIconStyle={{ tintColor: colors.textSecondary }}
               tickIconStyle={{ tintColor: colors.primary }}
+              testID="platform-filter-dropdown"
             />
           </View>
 

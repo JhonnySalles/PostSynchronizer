@@ -69,6 +69,7 @@ export const ApiStatusIcon = () => {
       onPress={handlePress} 
       style={styles.container}
       disabled={isChecking}
+      testID="api-status-icon-button"
     >
       <Icon 
         name={isChecking ? "sync-outline" : "server"} 

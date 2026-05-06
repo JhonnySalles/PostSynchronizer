@@ -63,7 +63,11 @@ const ConfirmPopup: React.FC<ConfirmPopupProps> = ({
               
               <View style={[styles.footer, singleButton && { justifyContent: 'center' }]}>
                 {!singleButton && (
-                  <TouchableOpacity style={styles.cancelButton} onPress={handleClose}>
+                  <TouchableOpacity 
+                    style={styles.cancelButton} 
+                    onPress={handleClose}
+                    testID="confirm-popup-cancel-button"
+                  >
                     <Text style={[styles.cancelText, { color: colors.textSecondary }]}>{cancelLabel}</Text>
                   </TouchableOpacity>
                 )}
@@ -73,6 +77,7 @@ const ConfirmPopup: React.FC<ConfirmPopupProps> = ({
                   onPress={onConfirm}
                   variant={isDestructive ? 'destructive' : 'primary'}
                   style={[styles.confirmButton, singleButton && { flex: 1, minWidth: '100%' }]}
+                  testID="confirm-popup-confirm-button"
                 />
               </View>
             </View>

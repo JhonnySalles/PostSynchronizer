@@ -27,7 +27,7 @@ const StatisticsSummary: React.FC<StatisticsSummaryProps> = ({ platformCounts, p
   const COLUMN_WIDTH = (width - 48) / 3;
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="stats-summary-container">
       {/* Setor 1.1: Quantidade por plataforma */}
       <Text style={[styles.sectionTitle, { color: colors.text }]}>Postagens por Plataforma</Text>
       <View style={styles.platformGrid}>
@@ -40,7 +40,7 @@ const StatisticsSummary: React.FC<StatisticsSummaryProps> = ({ platformCounts, p
             >
               <Icon name={platform.icon} size={24} color={(colors as any)[platform.name] || colors.primary} />
               <Text style={[styles.platformName, { color: colors.textSecondary }]}>{platform.name}</Text>
-              <Text style={[styles.platformCount, { color: colors.primary }]}>{countData?.count || 0}</Text>
+              <Text style={[styles.platformCount, { color: colors.primary }]} testID={`platform-count-${platform.name}`}>{countData?.count || 0}</Text>
             </View>
           );
         })}
@@ -68,15 +68,15 @@ const StatisticsSummary: React.FC<StatisticsSummaryProps> = ({ platformCounts, p
       <View style={styles.periodContainer}>
         <View style={[styles.periodCard, { backgroundColor: colors.card, width: COLUMN_WIDTH }]}>
           <Text style={[styles.periodLabel, { color: colors.textSecondary }]}>Semana</Text>
-          <Text style={[styles.periodValue, { color: colors.primary }]}>{periodStats.weekly}</Text>
+          <Text style={[styles.periodValue, { color: colors.primary }]} testID="stats-period-weekly">{periodStats.weekly}</Text>
         </View>
         <View style={[styles.periodCard, { backgroundColor: colors.card, width: COLUMN_WIDTH }]}>
           <Text style={[styles.periodLabel, { color: colors.textSecondary }]}>Mês</Text>
-          <Text style={[styles.periodValue, { color: colors.primary }]}>{periodStats.monthly}</Text>
+          <Text style={[styles.periodValue, { color: colors.primary }]} testID="stats-period-monthly">{periodStats.monthly}</Text>
         </View>
         <View style={[styles.periodCard, { backgroundColor: colors.card, width: COLUMN_WIDTH }]}>
           <Text style={[styles.periodLabel, { color: colors.textSecondary }]}>Ano</Text>
-          <Text style={[styles.periodValue, { color: colors.primary }]}>{periodStats.yearly}</Text>
+          <Text style={[styles.periodValue, { color: colors.primary }]} testID="stats-period-yearly">{periodStats.yearly}</Text>
         </View>
       </View>
     </View>

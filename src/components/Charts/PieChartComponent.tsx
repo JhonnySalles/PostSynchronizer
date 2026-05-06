@@ -48,7 +48,7 @@ const PieChartComponent: React.FC<PieChartComponentProps> = ({ data }) => {
   });
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="pie-chart-container">
       <PieChart
         data={chartData}
         donut

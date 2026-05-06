@@ -994,6 +994,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         onPress={() => handleToggleDisable(platformInfo.name)}
         onLongPress={() => handlePostToSingle(platformInfo.name)}
         delayLongPress={500}
+        testID={`platform-status-icon-${platformInfo.name.toLowerCase()}`}
       >
         <Icon name={platformInfo.icon} size={30} color={getIconColor(platformInfo.name)} />
       </TouchableOpacity>

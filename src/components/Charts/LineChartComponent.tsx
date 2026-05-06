@@ -68,6 +68,7 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({ data }) => {
       <View 
         collapsable={false}
         style={[styles.container, { width: width - SCREEN_PADDING }]}
+        testID="line-chart-container"
       >
         <LineChart
           areaChart

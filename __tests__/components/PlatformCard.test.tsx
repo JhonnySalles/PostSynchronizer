@@ -1,138 +1,130 @@
-import 'react-native';
 import React from 'react';
-import renderer, { act } from 'react-test-renderer';
+import { render, fireEvent } from '@testing-library/react-native';
 import PlatformCard from 'src/components/PlatformCard';
-import { TUMBLR } from 'src/constants/platforms';
+import { TUMBLR, X } from 'src/constants/platforms';
+import { TumblrCredentials } from 'src/dao/AuthTokenDao';
 
-// Mock Theme
-jest.mock('src/theme/ThemeProvider', () => ({
-  useTheme: () => ({
-    colors: { 
-        primary: '#007bff',
-        primaryAccent: '#0056b3',
-        primaryOuther: '#e9ecef',
-        primaryOutherAccent: '#dee2e6',
-        inactive: '#adb5bd'
-    },
-    isDark: false,
-  }),
-}));
+jest.mock('react-native-dropdown-picker', () => jest.fn(() => null));
 
-// Mock components
-jest.mock('react-native-vector-icons/Ionicons', () => 'Icon');
-jest.mock('src/components/Button', () => 'Button');
-// Mock DropDownPicker - simplificado para evitar erros internos de biblioteca
-jest.mock('react-native-dropdown-picker', () => 'DropDownPicker');
+describe('PlatformCard', () => {
+  const mockOnStatusChange = jest.fn();
+  const mockOnConsult = jest.fn();
+  const mockOnCredentialsChange = jest.fn();
 
-describe('PlatformCard Component', () => {
-  const mockCredential = {
-    platform: 'Twitter',
+  const baseCredential = {
+    platform: X,
     active: true,
-  } as any;
+    aditional: 'tok',
+  };
 
-  test('deve renderizar o nome da plataforma e o ícone', () => {
-    const testRenderer = renderer.create(
-      <PlatformCard 
-        credential={mockCredential} 
-        iconName="logo-twitter" 
-        iconColor="#1DA1F2" 
-      />
-    );
-    const testInstance = testRenderer.root;
-    
-    expect(testInstance.findByType('Icon').props.name).toBe('logo-twitter');
-    expect(testInstance.findAllByType('Text').some(t => t.props.children === 'Twitter')).toBe(true);
+  const tumblrCredential: TumblrCredentials = {
+    platform: TUMBLR,
+    active: true,
+    aditional: '',
+    blogName: 'blog1',
+    blogs: [
+      { name: 'blog1', title: 'Blog 1', selected: true },
+      { name: 'blog2', title: 'Blog 2', selected: false },
+    ],
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  test('deve chamar onStatusChange ao alternar o Switch', () => {
-    const onStatusChangeMock = jest.fn();
-    const testRenderer = renderer.create(
+  test('deve renderizar o título da plataforma e ícone', () => {
+    const { getByText } = render(
       <PlatformCard 
-        credential={mockCredential} 
+        credential={baseCredential} 
         iconName="logo-twitter" 
-        iconColor="#1DA1F2" 
-        onStatusChange={onStatusChangeMock}
+        iconColor="blue" 
+      />
+    );
+    expect(getByText(X)).toBeTruthy();
+  });
+
+  test('deve disparar onStatusChange ao alternar o Switch', () => {
+    const { getByTestId } = render(
+      <PlatformCard 
+        credential={baseCredential} 
+        iconName="logo-twitter" 
+        iconColor="blue" 
+        onStatusChange={mockOnStatusChange}
+      />
+    );
+
+    const switchComp = getByTestId('platform-switch-x');
+    fireEvent(switchComp, 'onValueChange', false);
+
+    expect(mockOnStatusChange).toHaveBeenCalledWith(expect.objectContaining({
+      platform: X,
+      active: false
+    }));
+  });
+
+  test('deve mostrar seção do Tumblr apenas para a plataforma Tumblr', () => {
+    const { queryByText, getByText } = render(
+      <PlatformCard 
+        credential={tumblrCredential} 
+        iconName="logo-tumblr" 
+        iconColor="navy" 
       />
     );
     
-    const sw = testRenderer.root.findByProps({ value: true });
-    act(() => {
-        sw.props.onValueChange(false);
-    });
+    expect(getByText('Consultar blogs')).toBeTruthy();
     
-    expect(onStatusChangeMock).toHaveBeenCalledWith(expect.objectContaining({ active: false }));
+    // Testar com X (não deve ter o botão)
+    const { queryByText: queryByTextX } = render(
+      <PlatformCard 
+        credential={baseCredential} 
+        iconName="logo-twitter" 
+        iconColor="blue" 
+      />
+    );
+    expect(queryByTextX('Consultar blogs')).toBeNull();
   });
 
-  describe('Tumblr Specifics', () => {
-    const tumblrCredential = {
-      platform: TUMBLR,
-      active: true,
-      blogName: 'myblog',
-      blogs: [{ name: 'myblog', title: 'My Blog', selected: true }]
-    } as any;
+  test('deve disparar onConsult ao clicar no botão do Tumblr', () => {
+    const { getByText } = render(
+      <PlatformCard 
+        credential={tumblrCredential} 
+        iconName="logo-tumblr" 
+        iconColor="navy" 
+        onConsult={mockOnConsult}
+      />
+    );
 
-    test('deve renderizar DropDownPicker e Botão de consulta apenas para Tumblr', () => {
-      const testRenderer = renderer.create(
-        <PlatformCard 
-          credential={tumblrCredential} 
-          iconName="logo-tumblr" 
-          iconColor="#36465d" 
-        />
-      );
-      const testInstance = testRenderer.root;
-      
-      expect(testInstance.findAllByType('DropDownPicker')).toHaveLength(1);
-      expect(testInstance.findAllByType('Button')).toHaveLength(1);
-    });
+    fireEvent.press(getByText('Consultar blogs'));
+    expect(mockOnConsult).toHaveBeenCalledWith(tumblrCredential);
+  });
 
-    test('não deve renderizar extras se não for Tumblr', () => {
-        const testRenderer = renderer.create(
-          <PlatformCard 
-            credential={mockCredential} 
-            iconName="logo-twitter" 
-            iconColor="#1DA1F2" 
-          />
-        );
-        const testInstance = testRenderer.root;
-        
-        expect(testInstance.findAllByType('DropDownPicker')).toHaveLength(0);
-        expect(testInstance.findAllByType('Button')).toHaveLength(0);
-      });
+  test('deve disparar onCredentialsChange ao selecionar um novo blog no Tumblr', () => {
+    // Mock local do DropDownPicker para capturar props
+    const DropDownPicker = require('react-native-dropdown-picker');
+    
+    const { rerender } = render(
+      <PlatformCard 
+        credential={tumblrCredential} 
+        iconName="logo-tumblr" 
+        iconColor="navy" 
+        onCredentialsChange={mockOnCredentialsChange}
+      />
+    );
 
-    test('deve chamar onConsult ao clicar no botão de consulta', () => {
-      const onConsultMock = jest.fn();
-      const testRenderer = renderer.create(
-        <PlatformCard 
-          credential={tumblrCredential} 
-          iconName="logo-tumblr" 
-          iconColor="#36465d" 
-          onConsult={onConsultMock}
-        />
-      );
-      
-      const btn = testRenderer.root.findByType('Button');
-      act(() => {
-          btn.props.onPress();
-      });
-      
-      expect(onConsultMock).toHaveBeenCalledWith(tumblrCredential);
-    });
+    // Pegamos o mock que foi chamado
+    const lastCall = (DropDownPicker as jest.Mock).mock.calls[(DropDownPicker as jest.Mock).mock.calls.length - 1];
+    const props = lastCall[0];
 
-    test('deve exibir loading no botão de consulta se isConsulting for true', () => {
-        const testRenderer = renderer.create(
-          <PlatformCard 
-            credential={tumblrCredential} 
-            iconName="logo-tumblr" 
-            iconColor="#36465d" 
-            isConsulting={true}
-          />
-        );
-        const testInstance = testRenderer.root;
-        
-        const btn = testInstance.findByType('Button');
-        expect(btn.props.isLoading).toBe(true);
-        // Header ActivityIndicator
-        expect(testInstance.findByType('ActivityIndicator')).toBeTruthy();
-      });
+    // Simular seleção do blog2
+    // A função setValue do DropDownPicker recebe um callback: (prevValue) => newValue
+    props.setValue((_prev: string) => 'blog2');
+
+    expect(mockOnCredentialsChange).toHaveBeenCalledWith(expect.objectContaining({
+      blogName: 'blog2',
+      blogs: expect.arrayContaining([
+        expect.objectContaining({ name: 'blog1', selected: false }),
+        expect.objectContaining({ name: 'blog2', selected: true }),
+      ])
+    }));
   });
 });

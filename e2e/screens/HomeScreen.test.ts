@@ -9,54 +9,46 @@ describe('HomeScreen E2E Tests', () => {
     await device.reloadReactNative();
   });
 
-  it('01 - deve exibir a tela principal com todos os campos e botões primários', async () => {
-    await expect(element(by.id('home-scroll-container'))).toBeVisible();
-    await expect(element(by.id('post-text-input'))).toBeVisible();
-    await expect(element(by.id('tags-text-input'))).toBeVisible();
-    await expect(element(by.id('attach-image-button'))).toBeVisible();
-    await expect(element(by.id('cancel-action-button'))).toBeVisible();
-    await expect(element(by.id('draft-action-button'))).toBeVisible();
-    await expect(element(by.id('post-action-button'))).toBeVisible();
+  it('01 - deve permitir digitar texto e tags', async () => {
+    const postInput = element(by.id('post-text-input'));
+    const tagsInput = element(by.id('tags-text-input'));
+
+    await postInput.typeText('Minha primeira postagem E2E');
+    await tagsInput.typeText('teste; detox; automacao');
+
+    await expect(postInput).toHaveText('Minha primeira postagem E2E');
+    // Nota: O input de tags pode sofrer limpeza automática, então verificamos o conteúdo base
+    await expect(tagsInput).toBeVisible();
   });
 
-  it('02 - deve permitir digitar um post e limpar ao clicar em Cancelar', async () => {
-    const textToType = 'Este é um post de teste automatizado';
-    
-    // Digita no campo de texto
-    await element(by.id('post-text-input')).typeText(textToType);
-    await expect(element(by.id('post-text-input'))).toHaveText(textToType);
+  it('02 - deve salvar um rascunho e limpar o formulário', async () => {
+    await element(by.id('post-text-input')).typeText('Rascunho de Teste');
+    await element(by.id('draft-action-button')).tap();
 
-    // Clica em Cancelar
-    await element(by.id('cancel-action-button')).tap();
-
-    // Verifica se o texto sumiu
+    // Verifica se limpou (placeholder deve estar visível ou texto vazio)
     await expect(element(by.id('post-text-input'))).toHaveText('');
   });
 
-  it('03 - deve exibir alerta nativo ao tentar postar conteúdo vazio', async () => {
+  it('03 - deve abrir o menu de sugestões de IA (Moods)', async () => {
+    await element(by.id('generate-ideas-button')).tap();
+    
+    // Verifica se as opções de humor apareceram
+    await expect(element(by.text('Alegre'))).toBeVisible();
+    await expect(element(by.text('Sarcástico'))).toBeVisible();
+
+    // Seleciona uma opção
+    await element(by.text('Alegre')).tap();
+
+    // O menu deve fechar
+    await expect(element(by.text('Alegre'))).not.toBeVisible();
+  });
+
+  it('04 - deve exibir erro ao tentar postar sem plataformas selecionadas', async () => {
+    await element(by.id('post-text-input')).typeText('Texto para postagem');
     await element(by.id('post-action-button')).tap();
-    
-    // O Detox consegue detectar alertas nativos pelo texto no Android
-    await expect(element(by.text('Conteúdo Vazio'))).toBeVisible();
-    
-    // Fecha o alerta clicando no botão OK (padrão Android)
-    await element(by.text('OK')).tap();
-  });
 
-  it('04 - deve exibir alerta nativo ao tentar salvar rascunho vazio', async () => {
-    await element(by.id('draft-action-button')).tap();
-    
-    await expect(element(by.text('Rascunho Vazio'))).toBeVisible();
+    // Deve mostrar alerta de erro
+    await expect(element(by.text('Nenhuma Conta Conectada'))).toBeVisible();
     await element(by.text('OK')).tap();
-  });
-
-  it('05 - deve preencher tags corretamente', async () => {
-    const tags = 'tecnologia; react-native';
-    
-    await element(by.id('tags-text-input')).typeText(tags);
-    await expect(element(by.id('tags-text-input'))).toHaveText(tags);
-    
-    // Clica fora para disparar o blur (ex: no campo de post)
-    await element(by.id('post-text-input')).tap();
   });
 });

@@ -118,11 +118,11 @@ const DateInput: React.FC<DateInputProps> = ({
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
-            <View style={[styles.container, { backgroundColor: colors.card, width: containerWidth }]}>
+            <View style={[styles.container, { backgroundColor: colors.card, width: containerWidth }]} testID="date-input-modal">
               {/* Restored Header with Arrows and Text */}
               <View style={styles.header}>
                 <View style={styles.headerNav}>
-                  <TouchableOpacity onPress={handlePrevMonth} style={styles.navButton}>
+                  <TouchableOpacity testID="btn-prev-month" onPress={handlePrevMonth} style={styles.navButton}>
                     <Icon name="chevron-back" size={24} color={colors.primary} />
                   </TouchableOpacity>
                   
@@ -130,12 +130,12 @@ const DateInput: React.FC<DateInputProps> = ({
                     {months[viewDate.getMonth()]} {viewDate.getFullYear()}
                   </Text>
                   
-                  <TouchableOpacity onPress={handleNextMonth} style={styles.navButton}>
+                  <TouchableOpacity testID="btn-next-month" onPress={handleNextMonth} style={styles.navButton}>
                     <Icon name="chevron-forward" size={24} color={colors.primary} />
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity onPress={() => setShowDirectInput(!showDirectInput)} style={styles.iconButton}>
+                <TouchableOpacity testID="btn-toggle-input" onPress={() => setShowDirectInput(!showDirectInput)} style={styles.iconButton}>
                   <Icon name={showDirectInput ? "calendar" : "calendar-outline"} size={22} color={colors.primary} />
                 </TouchableOpacity>
               </View>
@@ -199,7 +199,7 @@ const DateInput: React.FC<DateInputProps> = ({
                 })}
               </View>
 
-              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              <TouchableOpacity style={styles.closeButton} onPress={onClose} testID="btn-close-modal">
                 <Text style={[styles.closeButtonText, { color: colors.primary }]}>Cancelar</Text>
               </TouchableOpacity>
             </View>

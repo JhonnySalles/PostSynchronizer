@@ -59,4 +59,32 @@ describe('HistoryScreen E2E Tests', () => {
     // 6. Verificar que voltou a ficar vazio (ou o item sumiu)
     await expect(element(by.text(postContent))).not.toExist();
   });
+
+  it('03 - deve exibir sugestões ao digitar prefixos de filtro', async () => {
+    await element(by.id('history-tab-button')).tap();
+    await element(by.id('history-search-input')).typeText('st');
+    
+    // Deve sugerir "status:"
+    await expect(element(by.text('status:'))).toBeVisible();
+    await element(by.text('status:')).tap();
+    
+    // Agora deve sugerir opções de status
+    await expect(element(by.text('status:"postado"'))).toBeVisible();
+    await element(by.text('status:"postado"')).tap();
+    
+    await expect(element(by.id('history-search-input'))).toHaveText('status:"postado" ');
+  });
+
+  it('04 - deve disparar compartilhamento via clique longo no item', async () => {
+    // Cria um item primeiro para garantir que existe
+    await element(by.id('home-tab-button')).tap();
+    await element(by.id('post-text-input')).typeText('Post para compartilhar');
+    await element(by.id('draft-action-button')).tap();
+    
+    await element(by.id('history-tab-button')).tap();
+    await element(by.text('Post para compartilhar')).longPress();
+    
+    // Verifica se o Toast de "Copiado!" aparece (detecção de texto)
+    await expect(element(by.text('Copiado!'))).toBeVisible();
+  });
 });

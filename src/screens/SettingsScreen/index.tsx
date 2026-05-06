@@ -237,6 +237,7 @@ const SettingsScreen = () => {
               style={styles.dataButton}
               icon="cloud-upload-outline"
               variant="secondary"
+              testID="generate-backup-button"
             />
             <Button
               title="Importar Backup"
@@ -244,6 +245,7 @@ const SettingsScreen = () => {
               style={styles.dataButton}
               icon="cloud-download-outline"
               variant="secondary"
+              testID="import-backup-button"
             />
           </View>
           <Text style={styles.dataHint}>
@@ -261,6 +263,7 @@ const SettingsScreen = () => {
             onChangeText={handleSavePrompt}
             placeholder="Digite o modelo de prompt aqui..."
             placeholderTextColor={colors.textSecondary}
+            testID="ai-prompt-input"
           />
           <Button
             title="Limpar"
