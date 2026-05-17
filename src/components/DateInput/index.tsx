@@ -60,8 +60,20 @@ const DateInput: React.FC<DateInputProps> = ({
     const firstDayOfMonth = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const days = [];
+    
+    // Células em branco para preencher o início do mês (dias da semana anteriores)
     for (let i = 0; i < firstDayOfMonth; i++) days.push(null);
+    
+    // Dias reais do mês
     for (let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i));
+    
+    // Preenche com células vazias no final até totalizar exatamente 42 células (6 linhas completas de 7 dias)
+    // Isso garante que o grid do calendário mantenha sempre a mesma altura física e o modal nunca mude de tamanho.
+    const totalCells = 42;
+    while (days.length < totalCells) {
+      days.push(null);
+    }
+    
     return days;
   }, [viewDate]);
 

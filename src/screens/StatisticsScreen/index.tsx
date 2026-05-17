@@ -123,31 +123,122 @@ const StatisticsScreen = () => {
         .includes(selectedPlatform);
     });
 
-    // 1. Dados para o Gráfico de Linha (Postagens por dia)
-    const daysMap: Record<string, number> = {};
-    const iterDate = new Date(startDate);
     const dayDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    while (iterDate <= endDate) {
-      // Usar YYYY-MM-DD como chave interna para evitar colisões
-      const isoKey = iterDate.toISOString().split('T')[0];
-      daysMap[isoKey] = 0;
-      iterDate.setDate(iterDate.getDate() + 1);
-    }
 
-    filtered.forEach(post => {
-      const postIso = new Date(post.created_at).toISOString().split('T')[0];
-      if (daysMap[postIso] !== undefined) {
-        daysMap[postIso]++;
+    // 1. Agrupamento por DIA
+    const buildDayData = () => {
+      const lineDataMap: Record<string, { value: number; label: string }> = {};
+      const iterDate = new Date(startDate);
+      while (iterDate <= endDate) {
+        const isoKey = iterDate.toISOString().split('T')[0];
+        const [year, month, day] = isoKey.split('-');
+        const label = dayDiff <= 7 ? `${day}/${month}/${year.slice(2)}` : `${day}/${month}`;
+        lineDataMap[isoKey] = { value: 0, label };
+        iterDate.setDate(iterDate.getDate() + 1);
       }
-    });
 
-    const lineData = Object.entries(daysMap).map(([isoKey, value]) => {
-      const [year, month, day] = isoKey.split('-');
-      // Formato inteligente: dd/MM/yy se período curto (<= 7 dias) ou dd/MM se longo
-      const label = dayDiff <= 7 ? `${day}/${month}/${year.slice(2)}` : `${day}/${month}`;
-      return { label, value };
-    });
+      filtered.forEach(post => {
+        const postIso = new Date(post.created_at).toISOString().split('T')[0];
+        if (lineDataMap[postIso] !== undefined) {
+          lineDataMap[postIso].value++;
+        }
+      });
+
+      return Object.entries(lineDataMap)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([_, item]) => item);
+    };
+
+    // 2. Agrupamento por SEMANA
+    const buildWeekData = () => {
+      const lineDataMap: Record<string, { value: number; label: string }> = {};
+      const getMonday = (d: Date) => {
+        const date = new Date(d);
+        const day = date.getDay();
+        const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+        return new Date(date.setDate(diff));
+      };
+
+      const iterDate = new Date(startDate);
+      while (iterDate <= endDate) {
+        const monday = getMonday(iterDate);
+        const isoKey = monday.toISOString().split('T')[0];
+        
+        if (!lineDataMap[isoKey]) {
+          const [_, m, d] = isoKey.split('-');
+          lineDataMap[isoKey] = { value: 0, label: `Sem ${d}/${m}` };
+        }
+        iterDate.setDate(iterDate.getDate() + 7);
+      }
+
+      filtered.forEach(post => {
+        const monday = getMonday(new Date(post.created_at));
+        const postIso = monday.toISOString().split('T')[0];
+        if (lineDataMap[postIso] !== undefined) {
+          lineDataMap[postIso].value++;
+        } else {
+          const [_, m, d] = postIso.split('-');
+          lineDataMap[postIso] = { value: 1, label: `Sem ${d}/${m}` };
+        }
+      });
+
+      return Object.entries(lineDataMap)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([_, item]) => item);
+    };
+
+    // 3. Agrupamento por MÊS
+    const buildMonthData = () => {
+      const lineDataMap: Record<string, { value: number; label: string }> = {};
+      const iterDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+      const endMonthDate = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+      const monthNamesAbbr = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+      while (iterDate <= endMonthDate) {
+        const year = iterDate.getFullYear();
+        const month = iterDate.getMonth();
+        const key = `${year}-${String(month + 1).padStart(2, '0')}`;
+        
+        lineDataMap[key] = { 
+          value: 0, 
+          label: `${monthNamesAbbr[month]}/${String(year).slice(2)}`
+        };
+        
+        iterDate.setMonth(iterDate.getMonth() + 1);
+      }
+
+      filtered.forEach(post => {
+        const date = new Date(post.created_at);
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        if (lineDataMap[key] !== undefined) {
+          lineDataMap[key].value++;
+        } else {
+          const month = date.getMonth();
+          lineDataMap[key] = {
+            value: 1,
+            label: `${monthNamesAbbr[month]}/${String(date.getFullYear()).slice(2)}`
+          };
+        }
+      });
+
+      return Object.entries(lineDataMap)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([_, item]) => item);
+    };
+
+    const dayData = buildDayData();
+    const weekData = buildWeekData();
+    const monthData = buildMonthData();
+
+    const lineLevels = [];
+    if (dayData.length >= 2) lineLevels.push({ data: dayData, label: 'Diário' });
+    if (weekData.length >= 2) lineLevels.push({ data: weekData, label: 'Semanal' });
+    if (monthData.length >= 2) lineLevels.push({ data: monthData, label: 'Mensal' });
+
+    // Fallback se nenhuma camada se qualificar
+    if (lineLevels.length === 0 && dayData.length > 0) {
+      lineLevels.push({ data: dayData, label: 'Diário' });
+    }
 
     // 2. Dados para o Gráfico de Pizza (Sucesso por plataforma no período)
     const pieCounts: Record<string, number> = {};
@@ -171,8 +262,8 @@ const StatisticsScreen = () => {
       };
     });
 
-    return { lineData, pieData };
-  }, [history, startDate, endDate, selectedPlatform, colors.primary]);
+    return { lineLevels, pieData };
+  }, [history, startDate, endDate, selectedPlatform, colors]);
 
   const onChangeStart = (event: any, selectedDate?: Date) => {
     setShowStartPicker(false);
@@ -267,8 +358,8 @@ const StatisticsScreen = () => {
           />
 
           {/* Gráfico de Linha */}
-          <Text style={styles.chartLabel}>Volume de Postagens por Dia</Text>
-          <LineChartComponent data={chartData.lineData} />
+          <Text style={styles.chartLabel}>Volume de Postagens por Período</Text>
+          <LineChartComponent levels={chartData.lineLevels} />
 
           <View style={styles.divider} />
 
