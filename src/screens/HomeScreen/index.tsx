@@ -134,12 +134,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (appState.current.match(/inactive|background/)) {
-        // prettier-ignore
-        if (nextAppState === 'active') 
-          apiService.startHealthCheckLoop();
-        else 
-          apiService.stopHealthCheckLoop();
+      if (nextAppState === 'active') {
+        apiService.startHealthCheckLoop();
+      } else if (nextAppState.match(/inactive|background/)) {
+        apiService.stopHealthCheckLoop();
       }
 
       appState.current = nextAppState;

@@ -112,6 +112,10 @@ class ApiService {
     this.socket.on('disconnect', () => {
       Logger.warn('[ApiService] Desconectado do servidor WebSocket.');
     });
+
+    this.socket.on('connect_error', (error: Error) => {
+      Logger.warn('[ApiService] Erro de conexão do WebSocket:', error.message);
+    });
   }
 
   /**

@@ -19,6 +19,23 @@ Sentry.init({
   environment: SENTRY_ENVIRONMENT,
 
   sendDefaultPii: true,
+  enableTombstone: true,
+
+  beforeSend(event: any, hint: any) {
+    const error = hint?.originalException;
+    if (error) {
+      const message = String(error.message || error);
+      // Ignorar erros de conexão WebSocket esperados enquanto a API está offline/reiniciando
+      if (message.includes('websocket error')) {
+        return null;
+      }
+      // Ignorar erros de rede do Axios esperados durante a inicialização (cold start) ou instabilidade de conexão
+      if (message.includes('Network Error')) {
+        return null;
+      }
+    }
+    return event;
+  },
 
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
@@ -34,19 +51,20 @@ const AppContent = () => {
     success: (props: any) => (
       <BaseToast
         {...props}
-        style={{ backgroundColor: colors.card, 
-            ...Platform.select({
-              windows: {
-                borderLeftWidth: 5,
-                borderColor: colors.success,
-              },
-              default: {
-                borderLeftWidth: 5,
-                borderLeftColor: colors.success,
-              }
-            })
-         }}
-        contentContainerStyle={{ 
+        style={{
+          backgroundColor: colors.card,
+          ...Platform.select({
+            windows: {
+              borderLeftWidth: 5,
+              borderColor: colors.success,
+            },
+            default: {
+              borderLeftWidth: 5,
+              borderLeftColor: colors.success,
+            },
+          }),
+        }}
+        contentContainerStyle={{
           ...Platform.select({
             windows: {
               marginStart: 15,
@@ -54,8 +72,8 @@ const AppContent = () => {
             },
             default: {
               paddingHorizontal: 15,
-            }
-          }) 
+            },
+          }),
         }}
         text1Style={{
           fontSize: 16,
@@ -71,19 +89,20 @@ const AppContent = () => {
     error: (props: any) => (
       <ErrorToast
         {...props}
-        style={{ backgroundColor: colors.card,
-            ...Platform.select({
-              windows: {
-                borderLeftWidth: 5,
-                borderColor: colors.error,
-              },
-              default: {
-                borderLeftWidth: 5,
-                borderLeftColor: colors.error,
-              }
-            })
-         }}
-        contentContainerStyle={{ 
+        style={{
+          backgroundColor: colors.card,
+          ...Platform.select({
+            windows: {
+              borderLeftWidth: 5,
+              borderColor: colors.error,
+            },
+            default: {
+              borderLeftWidth: 5,
+              borderLeftColor: colors.error,
+            },
+          }),
+        }}
+        contentContainerStyle={{
           ...Platform.select({
             windows: {
               marginStart: 15,
@@ -91,8 +110,8 @@ const AppContent = () => {
             },
             default: {
               paddingHorizontal: 15,
-            }
-          }) 
+            },
+          }),
         }}
         text1Style={{
           fontSize: 16,
@@ -108,20 +127,21 @@ const AppContent = () => {
     info: (props: any) => (
       <BaseToast
         {...props}
-        style={{ borderColor: colors.primary,  
-            backgroundColor: colors.card,
-            ...Platform.select({
-              windows: {
-                borderLeftWidth: 5,
-                borderColor: colors.primary,
-              },
-              default: {
-                borderLeftWidth: 5,
-                borderLeftColor: colors.primary,
-              }
-            })
-         }}
-        contentContainerStyle={{ 
+        style={{
+          borderColor: colors.primary,
+          backgroundColor: colors.card,
+          ...Platform.select({
+            windows: {
+              borderLeftWidth: 5,
+              borderColor: colors.primary,
+            },
+            default: {
+              borderLeftWidth: 5,
+              borderLeftColor: colors.primary,
+            },
+          }),
+        }}
+        contentContainerStyle={{
           ...Platform.select({
             windows: {
               marginStart: 15,
@@ -129,8 +149,8 @@ const AppContent = () => {
             },
             default: {
               paddingHorizontal: 15,
-            }
-          }) 
+            },
+          }),
         }}
         text1Style={{
           fontSize: 16,
