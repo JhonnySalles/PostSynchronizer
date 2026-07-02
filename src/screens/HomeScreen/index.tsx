@@ -400,6 +400,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         path: image.path,
         mediaType: 'photo',
         cropping: true,
+        freeStyleCropEnabled: true,
+        enableRotationGesture: true,
         compressImageMaxWidth: 1000,
         compressImageMaxHeight: 1000,
         compressImageQuality: 0.8,
