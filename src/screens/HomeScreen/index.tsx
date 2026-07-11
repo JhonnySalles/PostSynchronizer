@@ -45,7 +45,17 @@ import { requestGalleryPermission, requestReadPermission } from 'src/utils/permi
 import { getMimeType } from 'src/utils/util';
 import Logger from 'src/services/LoggerService';
 import Toast from 'react-native-toast-message';
-import { AI_PROMPT_KEY, DEFAULT_PROMPT, DRAFT, ERROR, IDLE, PENDING, POSTED, PostType, SUCCESS } from 'src/constants/app';
+import {
+  AI_PROMPT_KEY,
+  DEFAULT_PROMPT,
+  DRAFT,
+  ERROR,
+  IDLE,
+  PENDING,
+  POSTED,
+  PostType,
+  SUCCESS,
+} from 'src/constants/app';
 import { cleanTags, formatarData } from 'src/utils/util';
 
 type SelectedImage = {
@@ -337,11 +347,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
       addImages(newImages, activePlatforms);
     } catch (error: Error | any) {
-      // prettier-ignore
-      if (error.message === 'User cancelled image selection')
+      if (error.message === 'User cancelled image selection' || error.code === 'E_NO_IMAGE_DATA_FOUND') {
         Logger.info('[Home Screen] Usuário cancelou a seleção de imagem.');
-      else
-        Logger.error(error, { message: '[Home Screen] Erro ao selecionar imagem existente:', });
+      } else {
+        Logger.error(error, { message: '[Home Screen] Erro ao selecionar imagem existente:' });
+      }
     }
   };
 
@@ -414,11 +424,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       );
       usePostStore.setState({ selectedImages: updatedImages });
     } catch (error: Error | any) {
-      // prettier-ignore
-      if (error.message === 'User cancelled image selection')
+      if (error.message === 'User cancelled image selection' || error.code === 'E_NO_IMAGE_DATA_FOUND') {
         Logger.info('[Home Screen] Usuário cancelou a recorte de imagem.');
-      else
-        Logger.error(error, { message: '[Home Screen] Erro ao recortar imagem existente:', });
+      } else {
+        Logger.error(error, { message: '[Home Screen] Erro ao recortar imagem existente:' });
+      }
     }
   };
 
@@ -1005,9 +1015,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={() => setShowMoodSuggestions(false)}>
         <SafeAreaView style={styles.safeArea}>
-          <NestableScrollContainer 
-            ref={scrollRef} 
-            style={styles.container} 
+          <NestableScrollContainer
+            ref={scrollRef}
+            style={styles.container}
             nestedScrollEnabled={true}
             testID="home-scroll-container"
           >

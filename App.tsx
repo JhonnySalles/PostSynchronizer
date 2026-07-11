@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { StatusBar, Platform } from 'react-native';
+import { StatusBar, Platform, AppState } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigation';
-import { getDBConnection } from './src/database';
+import { getDBConnection, closeDBConnection } from './src/database';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
 import { AppLightTheme, AppDarkTheme } from './src/navigation/NavigationTheme';
 import * as Sentry from '@sentry/react-native';
@@ -24,6 +24,11 @@ Sentry.init({
   beforeSend(event: any, hint: any) {
     const error = hint?.originalException;
     if (error) {
+      // Ignorar erros do endpoint de Health Check
+      if (error.config?.url?.includes('/health') || error.message?.includes('/health')) {
+        return null;
+      }
+
       const message = String(error.message || error);
       // Ignorar erros de conexão WebSocket esperados enquanto a API está offline/reiniciando
       if (message.includes('websocket error')) {
@@ -188,6 +193,25 @@ const App = () => {
     };
     initializeDB();
     firebaseService.initialize();
+  }, []);
+
+  useEffect(() => {
+    const handleAppStateChange = async (nextAppState: string) => {
+      if (nextAppState.match(/inactive|background/)) {
+        try {
+          await closeDBConnection();
+        } catch (error) {
+          Logger.error(error as Error, {
+            message: '[App Lifecycle] Erro ao fechar banco de dados ao ir para segundo plano',
+          });
+        }
+      }
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   useEffect(() => {
