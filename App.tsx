@@ -229,6 +229,29 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const checkThreadsTokenExpiry = async () => {
+      try {
+        const { threadsAuthService } = require('./src/services/ThreadsAuthService');
+        const expiryInfo = await threadsAuthService.checkTokenExpiry();
+        if (expiryInfo.isExpiringSoon) {
+          Toast.show({
+            type: 'info',
+            text1: 'Token do Threads expirando',
+            text2: `Seu token do Threads expira em ${expiryInfo.daysRemaining} dia(s). Renove nas configurações.`,
+            position: 'top',
+            visibilityTime: 6000,
+          });
+        }
+      } catch (error) {
+        Logger.warn('[App Startup] Erro ao verificar validade do token do Threads:', error);
+      }
+    };
+    const timer = setTimeout(checkThreadsTokenExpiry, 4000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <ThemeProvider>
       <ProgressProvider>

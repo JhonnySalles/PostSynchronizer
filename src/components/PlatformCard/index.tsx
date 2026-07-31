@@ -18,6 +18,16 @@ interface PlatformCardProps {
   buttonTextStyle?: StyleProp<TextStyle>;
   onStatusChange?: (credentials: Credentials) => void;
   onCredentialsChange?: (credentials: Credentials) => void;
+  extraAction?: {
+    title: string;
+    icon?: string;
+    onPress: () => void;
+    isLoading?: boolean;
+  };
+  statusBadge?: {
+    text: string;
+    type: 'success' | 'warning' | 'error' | 'info';
+  } | null;
 }
 
 const PlatformCard = ({
@@ -28,6 +38,8 @@ const PlatformCard = ({
   isConsulting = false,
   onStatusChange,
   onCredentialsChange,
+  extraAction,
+  statusBadge,
 }: PlatformCardProps) => {
   const [isOpening, setIsOpening] = useState(false);
   const [blogItems, setBlogItems] = useState<{ label: string; value: string }[]>([]);
@@ -49,11 +61,34 @@ const PlatformCard = ({
         onConsult(credential);
   };
 
+  const getBadgeStyle = () => {
+    switch (statusBadge?.type) {
+      case 'success': return { color: colors.success, borderColor: colors.success };
+      case 'warning': return { color: colors.tertiary, borderColor: colors.tertiary };
+      case 'error': return { color: colors.error, borderColor: colors.error };
+      case 'info':
+      default: return { color: colors.primary, borderColor: colors.primary };
+    }
+  };
+
   return (
     <View style={styles.cardContainer}>
       <View style={styles.header}>
         <Icon name={iconName} size={30} color={iconColor} />
         <Text style={[styles.title, { color: iconColor }]}>{credential.platform}</Text>
+        
+        {statusBadge && (
+          <View style={{
+            marginStart: 10,
+            paddingHorizontal: 8,
+            paddingVertical: 2,
+            borderRadius: 4,
+            borderWidth: 1,
+            ...getBadgeStyle()
+          }}>
+            <Text style={{ fontSize: 11, fontWeight: 'bold', ...getBadgeStyle() }}>{statusBadge.text}</Text>
+          </View>
+        )}
 
         {isConsulting && (
           <View style={styles.activityIndicatorContainer}>
@@ -123,6 +158,21 @@ const PlatformCard = ({
             disabled={isConsulting}
             style={{ flex: 1, marginRight: 10 }}
             testID={`platform-consult-button-${credential.platform.toLowerCase()}`}
+          />
+        </View>
+      )}
+
+      {extraAction && (
+        <View style={{ flexDirection: 'row', marginTop: 10 }}>
+          <Button
+            title={extraAction.title}
+            variant="secondary"
+            icon={extraAction.icon}
+            onPress={extraAction.onPress}
+            isLoading={extraAction.isLoading}
+            disabled={extraAction.isLoading}
+            style={{ flex: 1 }}
+            testID={`platform-extra-button-${credential.platform.toLowerCase()}`}
           />
         </View>
       )}

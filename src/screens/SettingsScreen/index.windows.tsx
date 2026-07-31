@@ -14,9 +14,12 @@ import { DARK, LIGHT, SYSTEM } from 'src/constants/themes';
 import Button from 'src/components/Button';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { AI_PROMPT_KEY, DEFAULT_PROMPT } from 'src/constants/app';
+import { useCallback, useState } from 'react';
 import { exportDatabase, importDatabase } from 'src/services/BackupService.windows';
 import Toast from 'react-native-toast-message';
 import ConfirmPopup from 'src/components/ConfirmPopup';
+import { Linking } from 'react-native';
+import { threadsAuthService } from 'src/services/ThreadsAuthService';
 
 const DEFAULT: Credentials = {
   platform: UNKNOW,
@@ -30,6 +33,8 @@ const SettingsScreen = () => {
   const [connections, setConnections] = useState<Credentials[]>([]);
   const [aiPrompt, setAiPrompt] = useState('');
   const [showImportConfirm, setShowImportConfirm] = useState(false);
+  const [isThreadsLogging, setIsThreadsLogging] = useState(false);
+  const [threadsTokenStatus, setThreadsTokenStatus] = useState<{ text: string; type: 'success' | 'warning' | 'error' | 'info' } | null>(null);
 
   const { themeMode, setThemeMode, colors, isDark } = useTheme();
   const styles = getStyles(colors);
@@ -40,6 +45,21 @@ const SettingsScreen = () => {
     { label: 'Modo Claro', value: LIGHT },
     { label: 'Modo Escuro', value: DARK },
   ]);
+
+  const loadThreadsExpiryStatus = async () => {
+    const info = await threadsAuthService.checkTokenExpiry();
+    if (!info.expiryDate) {
+      setThreadsTokenStatus(null);
+      return;
+    }
+    if (info.daysRemaining <= 0) {
+      setThreadsTokenStatus({ text: 'Token expirado', type: 'error' });
+    } else if (info.isExpiringSoon) {
+      setThreadsTokenStatus({ text: `Expira em ${info.daysRemaining}d`, type: 'warning' });
+    } else {
+      setThreadsTokenStatus({ text: `Token OK (${info.daysRemaining}d)`, type: 'success' });
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -62,11 +82,90 @@ const SettingsScreen = () => {
         } catch (error) {
           Logger.error(error, { msg: '[Settings Screen] Erro ao carregar prompt da IA.' });
         }
+
+        await loadThreadsExpiryStatus();
       };
 
       loadSettings();
     }, []),
   );
+
+  const handleThreadsLogin = async () => {
+    setIsThreadsLogging(true);
+    try {
+      // 1. Tentar renovação inteligente primeiro
+      Toast.show({
+        type: 'info',
+        text1: 'Verificando Token',
+        text2: 'Tentando renovar token atual sem login...',
+      });
+
+      const refreshSuccess = await threadsAuthService.tryTokenRefreshFlow();
+      if (refreshSuccess) {
+        Toast.show({
+          type: 'success',
+          text1: 'Sucesso',
+          text2: 'Token renovado e deploy no Render iniciado!',
+        });
+        await loadThreadsExpiryStatus();
+        return;
+      }
+
+      // 2. Se falhar, segue com Linking e Alert.prompt
+      const authUrl = threadsAuthService.getAuthorizationUrl();
+      
+      // No Windows, Linking para abrir o navegador padrão do sistema é mais seguro e compatível
+      const supported = await Linking.canOpenURL(authUrl);
+      if (supported) {
+        // Mostramos um alert instruindo o usuário a copiar o código retornado ou interagir com o terminal / localhost
+        Alert.alert(
+          'OAuth no Windows',
+          'Não foi possível renovar o token atual de forma automática. O navegador será aberto para autenticar com o Threads. Copie o código retornado na URL.',
+          [
+            {
+              text: 'Abrir Navegador',
+              onPress: async () => {
+                await Linking.openURL(authUrl);
+                // Prompt subsequente para inserir o code retornado se necessário
+                setTimeout(() => {
+                  Alert.prompt(
+                    'Código de Autorização',
+                    'Insira o parâmetro code da URL de callback:',
+                    async (code) => {
+                      if (code) {
+                        setIsLoading(true);
+                        try {
+                          await threadsAuthService.handleFullLoginFlow(code);
+                          Toast.show({
+                            type: 'success',
+                            text1: 'Sucesso',
+                            text2: 'Token atualizado e deploy no Render iniciado!',
+                          });
+                          await loadThreadsExpiryStatus();
+                        } catch (err: any) {
+                          Alert.alert('Erro', err.message || 'Falha ao processar token.');
+                        } finally {
+                          setIsLoading(false);
+                        }
+                      }
+                    }
+                  );
+                }, 2000);
+              }
+            },
+            { text: 'Cancelar', style: 'cancel' }
+          ]
+        );
+      } else {
+        Alert.alert('Erro', 'Não foi possível abrir o navegador para login.');
+      }
+    } catch (error: any) {
+      Logger.error(error, { msg: '[Settings Screen Windows] Erro no login do Threads' });
+      Alert.alert('Erro no Login Threads', error.message || 'Erro inesperado durante a autenticação.');
+    } finally {
+      setIsThreadsLogging(false);
+    }
+  };
 
   const handleConsultBlogs = async (credentials: Credentials) => {
     setIsConsulting(credentials.platform);
@@ -301,8 +400,8 @@ const SettingsScreen = () => {
             }
           }
           iconName="logo-twitter"
-          iconColor={colors.twitter}
-          buttonStyle={{ backgroundColor: colors.twitter }}
+          iconColor={colors.x}
+          buttonStyle={{ backgroundColor: colors.x }}
           onStatusChange={credentials => handleStatusChange(credentials)}
         />
 
@@ -316,7 +415,13 @@ const SettingsScreen = () => {
           iconName="at-sharp"
           iconColor={colors.threads}
           buttonStyle={{ backgroundColor: colors.threads }}
-          onStatusChange={credentials => handleStatusChange(credentials)}
+          extraAction={{
+            title: isThreadsLogging ? 'Conectando...' : (threadsTokenStatus && threadsTokenStatus.type === 'success' ? 'Logado' : 'Login no Threads'),
+            icon: 'logo-instagram',
+            onPress: handleThreadsLogin,
+            isLoading: isThreadsLogging,
+          }}
+          statusBadge={threadsTokenStatus}
         />
 
         <PlatformCard
