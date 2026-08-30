@@ -23,7 +23,20 @@ npm-debug.log*
 .idea/
 *.sublime-project
 *.sublime-workspace
-android/app/build/outputs/apk/debug/app-debug.apk
+# Build outputs e intermediários do Android
+android/app/build/
+android/build/
+android/.gradle/
+android/.idea/
+android/.kotlin/
+**/build/intermediates/
+
+# Arquivos locais e segredos de configuração do Android
+android/local.properties
+android/sentry.properties
+android/app/google-services.json
+android/app/*.keystore
+!android/app/debug.keystore
 
 # dependencies
 /node_modules
@@ -35,6 +48,7 @@ android/app/build/outputs/apk/debug/app-debug.apk
 
 # production
 /android/app/build
+/android/build
 /ios/build
 /ios/Pods/
 /ios/.xcode.env.local
@@ -93,19 +107,16 @@ yarn-error.log*
 *.xccheckout
 *.xcscmblueprint
 *.xcuserstate
+stdc++.h
+*.pdb
+*.binlog
 xcuserdata/
 DerivedData/
 build/
 fastlane/report.xml
 fastlane/Preview.html
 ios/sentry.properties
-android/sentry.properties
-android/app/google-services.json
 firebase-service-account.json
-android/.gradle
-android/app/build
-/android/build
 compileAndroidSend.bat
 .agent/*
-/android/build
 android/build/generated/autolinking/autolinking.json
