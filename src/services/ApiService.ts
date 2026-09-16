@@ -343,7 +343,7 @@ class ApiService {
     platform: PlatformType,
     payload: Omit<SinglePostPayload, 'platforms'>,
     isFirst: boolean = true,
-  ): Promise<{ success: boolean; scheduled?: boolean; message?: string }> {
+  ): Promise<{ success: boolean; scheduled?: boolean; queued?: boolean; jobId?: string; message?: string }> {
     try {
       Logger.info(`[ApiService] Enviando post individual para: ${platform}`);
 
@@ -355,13 +355,22 @@ class ApiService {
       const endpoint = `/${platform}/post`;
       const response = await this.axiosInstance.post(endpoint, backendPayload);
 
-      if (response.status === 200 || response.status === 201) {
-        Logger.info(`[ApiService] Post individual para ${platform} bem-sucedido.`);
-        const scheduled = response.status === 201 || response.data.scheduled === true;
+      if (response.status === 200 || response.status === 201 || response.status === 202) {
+        Logger.info(`[ApiService] Post individual para ${platform} bem-sucedido (status ${response.status}).`);
+        const scheduled = response.status === 201 || response.data?.scheduled === true;
+        const queued = response.status === 202 || response.data?.status === 'queued' || !!response.data?.jobId;
+        const jobId = response.data?.jobId;
+
         return {
           success: true,
           scheduled,
-          message: scheduled ? `Agendado para ${formatarData(response.data.publishTime)}.` : undefined,
+          queued,
+          jobId,
+          message: scheduled
+            ? `Agendado para ${formatarData(response.data.publishTime)}.`
+            : queued
+            ? 'Adicionado à fila de processamento em segundo plano.'
+            : undefined,
         };
       } else {
         const errorMsg = `Status inesperado ao postar em ${platform}: ${response.status}`;
@@ -378,6 +387,27 @@ class ApiService {
       const errorMsg = error.response?.data?.message || error.message;
       Logger.error(error, { message: `[ApiService] Falha ao enviar post individual para ${platform}: ${errorMsg}` });
       return { success: false, message: errorMsg };
+    }
+  }
+
+  /**
+   * Consulta o status de um job de postagem no Threads
+   */
+  async getThreadsJobStatus(
+    jobId: string,
+  ): Promise<{ success: boolean; status?: 'queued' | 'processing' | 'success' | 'error'; error?: string; data?: any }> {
+    try {
+      const response = await this.axiosInstance.get(`/threads/status/${jobId}`, { timeout: 10000 });
+      return {
+        success: true,
+        status: response.data?.status,
+        error: response.data?.error,
+        data: response.data,
+      };
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message;
+      Logger.warn(`[ApiService] Falha ao consultar status do job Threads ${jobId}: ${msg}`);
+      return { success: false, error: msg };
     }
   }
 

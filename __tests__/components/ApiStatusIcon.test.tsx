@@ -15,6 +15,13 @@ jest.mock('src/services/ApiService', () => ({
     }
 }));
 
+// Mock do ThreadsJobService
+jest.mock('src/services/ThreadsJobService', () => ({
+    threadsJobService: {
+        manualSync: jest.fn().mockResolvedValue({ activeJobsChecked: 1 }),
+    }
+}));
+
 describe('ApiStatusIcon Component', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -23,9 +30,8 @@ describe('ApiStatusIcon Component', () => {
 
     test('deve inicializar com o status atual do apiService', () => {
         const { getByTestId } = render(<ApiStatusIcon />);
-        // Como o mock do Icon em jest-setup é simples, 
-        // mas o index.tsx usa um TouchableOpacity, podemos testar via style se houver
-        // ou apenas garantir que renderizou.
+        expect(getByTestId('api-status-icon-button')).toBeTruthy();
+        expect(getByTestId('manual-sync-button')).toBeTruthy();
     });
 
     test('deve atualizar a cor quando o status mudar', () => {
@@ -39,8 +45,6 @@ describe('ApiStatusIcon Component', () => {
         act(() => {
             if (capturedCallback) capturedCallback(OFFLINE);
         });
-        
-        // Verificamos se o estado interno mudou (indiretamente via renderização se possível)
     });
 
     test('deve disparar checkHealth e mostrar Toast ao clicar', async () => {
@@ -73,4 +77,21 @@ describe('ApiStatusIcon Component', () => {
             text1: 'API Offline'
         }));
     });
+
+    test('deve disparar manualSync ao clicar no botão de sincronização manual', async () => {
+        const { threadsJobService } = require('src/services/ThreadsJobService');
+        const { getByTestId } = render(<ApiStatusIcon />);
+
+        const syncBtn = getByTestId('manual-sync-button');
+        await act(async () => {
+            fireEvent.press(syncBtn);
+        });
+
+        expect(threadsJobService.manualSync).toHaveBeenCalled();
+        expect(Toast.show).toHaveBeenCalledWith(expect.objectContaining({
+            type: 'success',
+            text1: 'Sincronização Concluída',
+        }));
+    });
 });
+

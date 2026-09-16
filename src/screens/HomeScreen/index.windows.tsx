@@ -25,6 +25,7 @@ import Button from '../../components/Button';
 
 import PostDao from '../../dao/PostDao';
 import { apiService, PostPayload, ProgressUpdate, SinglePostPayload } from '../../services/ApiService';
+import { threadsJobService } from '../../services/ThreadsJobService';
 import ImageProcessingService from '../../services/ImageService.windows';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../../navigation/types';
@@ -733,15 +734,26 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
       const result = await apiService.postSingle(platform, payload);
       if (result.success) {
-        Toast.show({
-          type: result.scheduled ? 'info' : 'success',
-          text1: result.scheduled ? `Postagem agendada (${platform})` : `Postagem enviada (${platform})`,
-          text2: result.scheduled ? result.message : `Postagem enviada com sucesso para ${platform}.`,
-          position: 'top',
-          visibilityTime: 4000,
-        });
-        PostDao.update(postId!, { platformsSuccess: platform, status: POSTED as PostType });
-        updatePostProgress(postId, { platform, status: SUCCESS });
+        if (result.queued && result.jobId) {
+          await threadsJobService.addJob(result.jobId, postId!);
+          Toast.show({
+            type: 'info',
+            text1: `Postagem na fila (${platform})`,
+            text2: 'Postagem adicionada à fila. O app verificará o status automaticamente.',
+            position: 'top',
+            visibilityTime: 4000,
+          });
+        } else {
+          Toast.show({
+            type: result.scheduled ? 'info' : 'success',
+            text1: result.scheduled ? `Postagem agendada (${platform})` : `Postagem enviada (${platform})`,
+            text2: result.scheduled ? result.message : `Postagem enviada com sucesso para ${platform}.`,
+            position: 'top',
+            visibilityTime: 4000,
+          });
+          PostDao.update(postId!, { platformsSuccess: platform, status: POSTED as PostType });
+          updatePostProgress(postId, { platform, status: SUCCESS });
+        }
       } else {
         updatePostProgress(postId, { platform, status: ERROR });
         Toast.show({

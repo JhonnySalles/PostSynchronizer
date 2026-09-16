@@ -12,6 +12,7 @@ import Logger from './src/services/LoggerService';
 import { ProgressProvider } from './src/contexts/ProgressContext';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import { firebaseService } from './src/services/FirebaseService';
+import { threadsJobService } from './src/services/ThreadsJobService';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 Sentry.init({
@@ -193,6 +194,7 @@ const App = () => {
     };
     initializeDB();
     firebaseService.initialize();
+    threadsJobService.initialize();
   }, []);
 
   useEffect(() => {
