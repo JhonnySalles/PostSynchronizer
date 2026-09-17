@@ -582,7 +582,8 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           if (update.type === 'progress' && update.progress) {
             updatePostProgress(update.postId, { progress: update.progress });
             if (update.platform && update.status) {
-              updatePostProgress(update.postId, { platform: update.platform as PlatformType, status: update.status });
+              const statusToSet = update.status === 'scheduled' ? PENDING : update.status;
+              updatePostProgress(update.postId, { platform: update.platform as PlatformType, status: statusToSet });
 
               switch (update.status) {
                 case 'error':
@@ -743,11 +744,23 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
+          PostDao.update(postId!, { platformsSuccess: platform, status: PENDING as PostType });
+          updatePostProgress(postId, { platform, status: PENDING });
+        } else if (result.scheduled) {
+          Toast.show({
+            type: 'info',
+            text1: `Postagem agendada (${platform})`,
+            text2: result.message || `Postagem agendada para ${platform}.`,
+            position: 'top',
+            visibilityTime: 4000,
+          });
+          PostDao.update(postId!, { platformsSuccess: platform, status: PENDING as PostType });
+          updatePostProgress(postId, { platform, status: PENDING });
         } else {
           Toast.show({
-            type: result.scheduled ? 'info' : 'success',
-            text1: result.scheduled ? `Postagem agendada (${platform})` : `Postagem enviada (${platform})`,
-            text2: result.scheduled ? result.message : `Postagem enviada com sucesso para ${platform}.`,
+            type: 'success',
+            text1: `Postagem enviada (${platform})`,
+            text2: `Postagem enviada com sucesso para ${platform}.`,
             position: 'top',
             visibilityTime: 4000,
           });
