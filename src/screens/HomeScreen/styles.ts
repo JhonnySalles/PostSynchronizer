@@ -344,4 +344,8 @@ export const getStyles = (colors: ColorsType) =>
       paddingHorizontal: 16,
       width: '100%',
     },
+    backdropOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      zIndex: 999,
+    },
   });

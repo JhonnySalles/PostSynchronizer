@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Alert,
   FlatList,
   Image,
@@ -22,6 +23,7 @@ import { ApiStatusIcon } from 'src/components/ApiStatusIcon';
 import OpenRouterChatScreen from '../OpenRouterChatScreen';
 
 import { usePostStore } from '../../store/usePostStore';
+import { useChatStore } from '../../store/useChatStore';
 
 import { getStyles } from './styles';
 import { useTheme } from '../../theme/ThemeProvider';
@@ -127,10 +129,17 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity
             style={styles.ideaButton}
+            onPress={() => setShowOpenRouterChat(true)}
+            testID="open-chat-button-windows"
+          >
+            <Icon name="chatbubble-ellipses-outline" size={26} color={colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.ideaButton}
             onPress={() => setShowMoodSuggestions(prev => !prev)}
             testID="generate-ideas-button"
           >
-            <Icon name="chatbubble-ellipses-outline" size={26} color={colors.primary} />
+            <Icon name="happy-outline" size={26} color={colors.primary} />
           </TouchableOpacity>
           <ApiStatusIcon />
         </View>
@@ -947,7 +956,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const handleMoodClick = async (mood: string) => {
     setShowMoodSuggestions(false);
     const prompt = await generatePromptForMood(mood);
-    setInitialChatPrompt(prompt);
+    useChatStore.getState().setInputText(prompt);
     setShowOpenRouterChat(true);
   };
 
@@ -1066,10 +1075,11 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} nestedScrollEnabled={true}>
-        <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
-
-        {showMoodSuggestions && (
+      {showMoodSuggestions && (
+        <>
+          <TouchableWithoutFeedback onPress={() => setShowMoodSuggestions(false)}>
+            <View style={styles.backdropOverlay} />
+          </TouchableWithoutFeedback>
           <View style={styles.moodDropdownContainer}>
             {MOODS.map((mood, index) => (
               <TouchableOpacity
@@ -1084,7 +1094,10 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
               </TouchableOpacity>
             ))}
           </View>
-        )}
+        </>
+      )}
+      <ScrollView style={styles.container} nestedScrollEnabled={true}>
+        <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
 
         <TextInput
           style={styles.textArea}

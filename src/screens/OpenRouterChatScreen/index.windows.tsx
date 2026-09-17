@@ -23,17 +23,11 @@ import { openRouterService, OpenRouterModel } from 'src/services/OpenRouterServi
 import { fileService } from 'src/services/FileService';
 import { getMimeType } from 'src/utils/util';
 import ModelSelector from 'src/components/ModelSelector';
+import ConfirmPopup from 'src/components/ConfirmPopup';
 import Logger from 'src/services/LoggerService';
 import { usePostStore } from 'src/store/usePostStore';
+import { useChatStore, ChatMessage } from 'src/store/useChatStore';
 import { getStyles } from './styles';
-
-interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  model?: string;
-  content: string;
-  timestamp: Date;
-}
 
 interface OpenRouterChatWindowsProps {
   visible?: boolean;
@@ -49,18 +43,19 @@ const OpenRouterChatScreen: React.FC<OpenRouterChatWindowsProps> = ({
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
-  const { postText, tagsText, connections, selectedImages } = usePostStore();
+  const { connections, selectedImages } = usePostStore();
+  const { history, inputText, addMessage, setInputText, clearChat } = useChatStore();
 
   const [apiKey, setApiKey] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
   const [models, setModels] = useState<OpenRouterModel[]>([]);
-  const [history, setHistory] = useState<ChatMessage[]>([]);
-  const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [showApiKeyPopup, setShowApiKeyPopup] = useState(false);
+  const [showModelPopup, setShowModelPopup] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
-  const initialPromptProcessed = useRef(false);
 
   useEffect(() => {
     if (visible) {
@@ -69,11 +64,10 @@ const OpenRouterChatScreen: React.FC<OpenRouterChatWindowsProps> = ({
   }, [visible]);
 
   useEffect(() => {
-    if (visible && initialPrompt && !initialPromptProcessed.current && apiKey && selectedModel) {
-      initialPromptProcessed.current = true;
-      handleSendMessage(initialPrompt);
+    if (visible && initialPrompt) {
+      setInputText(initialPrompt);
     }
-  }, [visible, initialPrompt, apiKey, selectedModel]);
+  }, [visible, initialPrompt]);
 
   const loadSettings = async () => {
     setIsInitializing(true);
@@ -94,11 +88,6 @@ const OpenRouterChatScreen: React.FC<OpenRouterChatWindowsProps> = ({
         activeModelId = availableModels[0].id;
       }
       setSelectedModel(activeModelId);
-
-      if (initialPrompt && !initialPromptProcessed.current && savedApiKey && activeModelId) {
-        initialPromptProcessed.current = true;
-        handleSendMessage(initialPrompt, savedApiKey, activeModelId);
-      }
     } catch (error) {
       Logger.error(error as Error, { message: '[OpenRouterChatScreen.windows] Erro ao carregar configurações.' });
     } finally {
@@ -125,16 +114,12 @@ const OpenRouterChatScreen: React.FC<OpenRouterChatWindowsProps> = ({
     const currentModel = overrideModel || selectedModel;
 
     if (!currentKey || !currentKey.trim()) {
-      Alert.alert(
-        'Chave da API Necessária',
-        'Por favor, cadastre sua chave gratuita da API do OpenRouter na tela de Configurações para continuar.',
-        [{ text: 'Entendi' }],
-      );
+      setShowApiKeyPopup(true);
       return;
     }
 
     if (!currentModel) {
-      Alert.alert('Modelo Não Selecionado', 'Selecione um modelo da lista para gerar a sugestão.');
+      setShowModelPopup(true);
       return;
     }
 
@@ -145,7 +130,7 @@ const OpenRouterChatScreen: React.FC<OpenRouterChatWindowsProps> = ({
       timestamp: new Date(),
     };
 
-    setHistory(prev => [...prev, userMessage]);
+    addMessage(userMessage);
     if (!customPrompt) {
       setInputText('');
     }
@@ -179,7 +164,7 @@ const OpenRouterChatScreen: React.FC<OpenRouterChatWindowsProps> = ({
         timestamp: new Date(),
       };
 
-      setHistory(prev => [...prev, assistantMessage]);
+      addMessage(assistantMessage);
 
       setTimeout(() => {
         scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -209,11 +194,22 @@ const OpenRouterChatScreen: React.FC<OpenRouterChatWindowsProps> = ({
               <Icon name="sparkles" size={22} color={colors.primary} />
               <Text style={styles.headerTitle}>Sugestões com IA (OpenRouter)</Text>
             </View>
-            {onClose && (
-              <TouchableOpacity onPress={onClose} style={styles.backButton}>
-                <Icon name="close" size={24} color={colors.text} />
-              </TouchableOpacity>
-            )}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              {history.length > 0 && (
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={() => setShowClearConfirm(true)}
+                  testID="openrouter-chat-clear-button-windows"
+                >
+                  <Icon name="trash-outline" size={20} color={colors.textSecondary} />
+                </TouchableOpacity>
+              )}
+              {onClose && (
+                <TouchableOpacity onPress={onClose} style={styles.backButton}>
+                  <Icon name="close" size={24} color={colors.text} />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
 
           {/* Model Selector Bar */}
@@ -295,7 +291,9 @@ const OpenRouterChatScreen: React.FC<OpenRouterChatWindowsProps> = ({
                       </View>
                       <View style={styles.cardHeaderRight}>
                         <Text style={styles.cardTime}>
-                          {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {item.timestamp instanceof Date
+                            ? item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                            : new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </Text>
                         <TouchableOpacity
                           style={styles.copyIconBtn}
@@ -347,6 +345,40 @@ const OpenRouterChatScreen: React.FC<OpenRouterChatWindowsProps> = ({
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Popup: Limpar Histórico */}
+        <ConfirmPopup
+          visible={showClearConfirm}
+          title="Limpar Conversas"
+          message="Deseja apagar o histórico de mensagens desta sessão?"
+          confirmLabel="Limpar"
+          cancelLabel="Cancelar"
+          onConfirm={() => {
+            clearChat();
+            setShowClearConfirm(false);
+          }}
+          onCancel={() => setShowClearConfirm(false)}
+        />
+
+        {/* Popup: Chave da API Necessária */}
+        <ConfirmPopup
+          visible={showApiKeyPopup}
+          title="Chave da API Necessária"
+          message="Por favor, cadastre sua chave gratuita da API do OpenRouter na tela de Configurações para continuar gerando sugestões com IA."
+          confirmLabel="Entendi"
+          singleButton
+          onConfirm={() => setShowApiKeyPopup(false)}
+        />
+
+        {/* Popup: Modelo Não Selecionado */}
+        <ConfirmPopup
+          visible={showModelPopup}
+          title="Modelo Não Selecionado"
+          message="Selecione um modelo da lista no topo da tela para gerar a sugestão."
+          confirmLabel="Entendi"
+          singleButton
+          onConfirm={() => setShowModelPopup(false)}
+        />
       </SafeAreaView>
     </Modal>
   );

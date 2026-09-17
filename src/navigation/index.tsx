@@ -85,6 +85,7 @@ const AppNavigator = () => {
           title: 'Sugestões',
           headerShown: false,
           tabBarButton: () => null,
+          tabBarItemStyle: { display: 'none' },
           tabBarStyle: { display: 'none' },
         }}
       />

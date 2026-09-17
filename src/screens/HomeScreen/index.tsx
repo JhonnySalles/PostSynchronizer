@@ -26,6 +26,7 @@ import NestableDraggableFlatList, {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { usePostStore } from '../../store/usePostStore';
+import { useChatStore } from '../../store/useChatStore';
 
 import { getStyles } from './styles';
 import { useTheme } from '../../theme/ThemeProvider';
@@ -137,10 +138,17 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity
             style={styles.ideaButton}
+            onPress={() => navigation.navigate('OpenRouterChat')}
+            testID="open-chat-button"
+          >
+            <Icon name="chatbubble-ellipses-outline" size={26} color={colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.ideaButton}
             onPress={() => setShowMoodSuggestions(prev => !prev)}
             testID="generate-ideas-button"
           >
-            <Icon name="chatbubble-ellipses-outline" size={26} color={colors.primary} />
+            <Icon name="happy-outline" size={26} color={colors.primary} />
           </TouchableOpacity>
           <ApiStatusIcon />
         </View>
@@ -961,7 +969,8 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
   const handleMoodClick = async (mood: string) => {
     setShowMoodSuggestions(false);
     const prompt = await generatePromptForMood(mood);
-    navigation.navigate('OpenRouterChat', { initialPrompt: prompt });
+    useChatStore.getState().setInputText(prompt);
+    navigation.navigate('OpenRouterChat');
   };
 
   const handleSharePrompt = async (mood: string) => {
@@ -1131,32 +1140,35 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TouchableWithoutFeedback onPress={() => setShowMoodSuggestions(false)}>
-        <SafeAreaView style={styles.safeArea}>
-          <NestableScrollContainer
-            ref={scrollRef}
-            style={styles.container}
-            nestedScrollEnabled={true}
-            testID="home-scroll-container"
-          >
-            <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
-
-            {showMoodSuggestions && (
-              <View style={styles.moodDropdownContainer}>
-                {MOODS.map((mood, index) => (
-                  <TouchableOpacity
-                    key={mood.id}
-                    style={[styles.moodOption, index === MOODS.length - 1 && styles.moodOptionLast]}
-                    onPress={() => handleMoodClick(mood.label)}
-                    onLongPress={() => handleSharePrompt(mood.label)}
-                    delayLongPress={500}
-                  >
-                    <Icon name={mood.icon} size={20} color={colors.text} style={styles.moodIcon} />
-                    <Text style={styles.moodText}>{mood.label}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
+      <SafeAreaView style={styles.safeArea}>
+        {showMoodSuggestions && (
+          <>
+            <TouchableWithoutFeedback onPress={() => setShowMoodSuggestions(false)}>
+              <View style={styles.backdropOverlay} />
+            </TouchableWithoutFeedback>
+            <View style={styles.moodDropdownContainer}>
+              {MOODS.map((mood, index) => (
+                <TouchableOpacity
+                  key={mood.id}
+                  style={[styles.moodOption, index === MOODS.length - 1 && styles.moodOptionLast]}
+                  onPress={() => handleMoodClick(mood.label)}
+                  onLongPress={() => handleSharePrompt(mood.label)}
+                  delayLongPress={500}
+                >
+                  <Icon name={mood.icon} size={20} color={colors.text} style={styles.moodIcon} />
+                  <Text style={styles.moodText}>{mood.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        )}
+        <NestableScrollContainer
+          ref={scrollRef}
+          style={styles.container}
+          nestedScrollEnabled={true}
+          testID="home-scroll-container"
+        >
+          <View style={styles.statusContainer}>{SOCIAL_PLATFORMS.map(renderStatusIcon)}</View>
 
             <TextInput
               style={styles.textArea}
@@ -1312,7 +1324,6 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
             />
           </View>
         </SafeAreaView>
-      </TouchableWithoutFeedback>
     </GestureHandlerRootView>
   );
 };
