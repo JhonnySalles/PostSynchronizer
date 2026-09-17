@@ -6,13 +6,16 @@ import Toast from 'react-native-toast-message';
 import PostDao from 'src/dao/PostDao';
 import { PlatformType } from 'src/constants/platforms';
 import { usePostStore } from 'src/store/usePostStore';
+import { threadsJobService } from './ThreadsJobService';
 
 export type FirebasePostUpdate = {
   isFinish: boolean;
-  data: Record<PlatformType, { status: 'success' | 'error'; error?: string }>;
+  data: Record<PlatformType, { status: 'success' | 'error' | 'queued' | 'scheduled'; error?: string }>;
   summary?: {
-    successful: PlatformType[];
-    failed: PlatformType[];
+    successful: (PlatformType | { platform: PlatformType; [key: string]: any })[];
+    failed: (PlatformType | { platform: PlatformType; reason?: string; [key: string]: any })[];
+    scheduled?: (PlatformType | { platform: PlatformType; jobId?: string; [key: string]: any })[];
+    queued?: (PlatformType | { platform: PlatformType; jobId?: string; [key: string]: any })[];
   };
 };
 
@@ -95,6 +98,33 @@ class FirebaseService {
     this.isListening = false;
   }
 
+  public async syncAllPosts(): Promise<void> {
+    if (!this.appInstanceId) {
+      Logger.warn('[FirebaseService] Não é possível sincronizar posts sem um appInstanceId.');
+      return;
+    }
+
+    try {
+      Logger.info(`[FirebaseService] Sincronizando todos os posts do Firebase para /${BASE_DOCUMENT}/${this.appInstanceId}...`);
+      const snapshot = await database().ref(`/${BASE_DOCUMENT}/${this.appInstanceId}`).once('value');
+      if (!snapshot.exists()) {
+        Logger.info('[FirebaseService] Nenhum post pendente no Firebase.');
+        return;
+      }
+
+      const promises: Promise<void>[] = [];
+      snapshot.forEach((childSnapshot: any) => {
+        promises.push(this.processPosts(childSnapshot));
+        return undefined;
+      });
+
+      await Promise.all(promises);
+      Logger.info('[FirebaseService] Sincronização manual de todos os posts concluída.');
+    } catch (error) {
+      Logger.error(error as Error, { message: '[FirebaseService] Erro ao sincronizar todos os posts.' });
+    }
+  }
+
   private processPosts = async (snapshot: any) => {
     // prettier-ignore
     if (!snapshot.exists()) 
@@ -128,16 +158,44 @@ class FirebaseService {
       if (typeof item === 'string') return item as PlatformType;
       return (item?.platform || item?.name || '') as PlatformType;
     };
+
+    // Extrair jobIds do Threads se houver em scheduled ou queued
+    const extractAndRegisterThreadsJobs = (items: any[]) => {
+      if (!Array.isArray(items)) return;
+      for (const item of items) {
+        if (typeof item === 'object' && item !== null) {
+          const platform = (item.platform || item.name || '').toLowerCase();
+          if (platform === 'threads' && item.jobId) {
+            threadsJobService.addJob(item.jobId, postId);
+          }
+        }
+      }
+    };
+
+    extractAndRegisterThreadsJobs(summary.scheduled || []);
+    extractAndRegisterThreadsJobs(summary.queued || []);
+
     const successfulPlatforms: PlatformType[] = (summary.successful || []).map(extractPlatformName).filter(Boolean);
     const failedPlatforms: PlatformType[] = (summary.failed || []).map(extractPlatformName).filter(Boolean);
-    await this.finalizePostSync(postId, successfulPlatforms);
+    const scheduledPlatforms: PlatformType[] = (summary.scheduled || []).map(extractPlatformName).filter(Boolean);
+    const queuedPlatforms: PlatformType[] = (summary.queued || []).map(extractPlatformName).filter(Boolean);
+    const combinedQueuedPlatforms = Array.from(new Set([...queuedPlatforms, ...scheduledPlatforms]));
+
+    await this.finalizePostSync(postId, successfulPlatforms, combinedQueuedPlatforms, failedPlatforms);
+
+    const updatedPost = await PostDao.getById(postId);
+    const allSuccessfulPlatforms: PlatformType[] = updatedPost?.platformsSuccess
+      ? (updatedPost.platformsSuccess.split(',').map((p: string) => p.trim()).filter(Boolean) as PlatformType[])
+      : successfulPlatforms;
 
     try {
       await snapshot.ref.remove();
       // eslint-disable-next-line no-empty
     } catch (_) {}
 
-    removePendingPost(postId);
+    if (combinedQueuedPlatforms.length === 0) {
+      removePendingPost(postId);
+    }
     this.lastProcessedState.delete(postId);
     setTimeout(() => this.processingFinish.delete(postId), 5000);
 
@@ -152,14 +210,33 @@ class FirebaseService {
     }
 
     if (isCurrentPost) {
-      finishPosting(postId, { successful: successfulPlatforms, failed: failedPlatforms });
+      finishPosting(postId, {
+        successful: allSuccessfulPlatforms,
+        failed: failedPlatforms,
+        scheduled: scheduledPlatforms,
+        queued: queuedPlatforms,
+      });
       resetPostStatus(postId);
     }
   };
 
-  private async finalizePostSync(postId: number, successfulPlatforms: string[]) {
-    await PostDao.updateLastSync(postId, successfulPlatforms);
+  private async finalizePostSync(postId: number, successfulPlatforms: string[], queuedPlatforms: string[] = [], failedPlatforms: string[] = []) {
+    await PostDao.updateLastSync(postId, successfulPlatforms, queuedPlatforms, failedPlatforms);
+    usePostStore.getState().triggerHistoryUpdate();
     Logger.info(`[FirebaseService] Post ${postId} finalizado e sincronizado.`);
+  }
+
+  public async updateThreadsToken(token: string, expiresAt: string): Promise<void> {
+    try {
+      await database().ref('/chaves').update({
+        THREADS_ACCESS_TOKEN: token,
+        THREADS_TOKEN_EXPIRES_AT: expiresAt,
+      });
+      Logger.info('[FirebaseService] Tokens do Threads atualizados com sucesso no nó /chaves.');
+    } catch (error) {
+      Logger.error(error as Error, { message: '[FirebaseService] Erro ao atualizar tokens do Threads no Firebase.' });
+      throw error;
+    }
   }
 }
 

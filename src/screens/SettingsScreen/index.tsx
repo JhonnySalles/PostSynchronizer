@@ -12,13 +12,15 @@ import { useTheme } from '../../theme/ThemeProvider';
 import { DARK, LIGHT, SYSTEM } from 'src/constants/themes';
 import Button from 'src/components/Button';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { AI_PROMPT_KEY, DEFAULT_PROMPT } from 'src/constants/app';
+import { AI_PROMPT_KEY, DEFAULT_PROMPT, OPENROUTER_API_KEY, OPENROUTER_DEFAULT_MODEL_KEY } from 'src/constants/app';
 import { useCallback, useState } from 'react';
 import { exportDatabase, importDatabase } from 'src/services/BackupService';
 import Toast from 'react-native-toast-message';
 import ConfirmPopup from 'src/components/ConfirmPopup';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import { threadsAuthService } from 'src/services/ThreadsAuthService';
+import { openRouterService, OpenRouterModel } from 'src/services/OpenRouterService';
+import ModelSelector from 'src/components/ModelSelector';
 
 const DEFAULT: Credentials = {
   platform: UNKNOW,
@@ -31,6 +33,9 @@ const SettingsScreen = () => {
   const [isConsulting, setIsConsulting] = useState<string | null>(null);
   const [connections, setConnections] = useState<Credentials[]>([]);
   const [aiPrompt, setAiPrompt] = useState('');
+  const [openRouterApiKey, setOpenRouterApiKey] = useState('');
+  const [openRouterModel, setOpenRouterModel] = useState('');
+  const [openRouterModels, setOpenRouterModels] = useState<OpenRouterModel[]>([]);
   const [showImportConfirm, setShowImportConfirm] = useState(false);
   const [isThreadsLogging, setIsThreadsLogging] = useState(false);
   const [threadsTokenStatus, setThreadsTokenStatus] = useState<{
@@ -82,7 +87,27 @@ const SettingsScreen = () => {
           const savedPrompt = await AsyncStorage.getItem(AI_PROMPT_KEY);
           setAiPrompt(savedPrompt || DEFAULT_PROMPT);
         } catch (error) {
-          Logger.error(error, { msg: '[Settings Screen] Erro ao carregar prompt da IA.' });
+          Logger.error(error as Error, { msg: '[Settings Screen] Erro ao carregar prompt da IA.' });
+        }
+
+        try {
+          const savedApiKey = await AsyncStorage.getItem(OPENROUTER_API_KEY);
+          if (savedApiKey) {
+            setOpenRouterApiKey(savedApiKey);
+          }
+          const savedModel = await AsyncStorage.getItem(OPENROUTER_DEFAULT_MODEL_KEY);
+
+          const models = await openRouterService.getFreeModels();
+          setOpenRouterModels(models);
+
+          if (savedModel) {
+            setOpenRouterModel(savedModel);
+          } else if (models.length > 0) {
+            setOpenRouterModel(models[0].id);
+            await AsyncStorage.setItem(OPENROUTER_DEFAULT_MODEL_KEY, models[0].id);
+          }
+        } catch (error) {
+          Logger.error(error as Error, { msg: '[Settings Screen] Erro ao carregar configurações do OpenRouter.' });
         }
 
         await loadThreadsExpiryStatus();
@@ -260,6 +285,24 @@ const SettingsScreen = () => {
     }
   };
 
+  const handleSaveOpenRouterApiKey = async (text: string) => {
+    setOpenRouterApiKey(text);
+    try {
+      await AsyncStorage.setItem(OPENROUTER_API_KEY, text);
+    } catch (error) {
+      Logger.error(error as Error, { message: '[Settings Screen] Erro ao salvar chave do OpenRouter.' });
+    }
+  };
+
+  const handleSelectOpenRouterModel = async (modelId: string) => {
+    setOpenRouterModel(modelId);
+    try {
+      await AsyncStorage.setItem(OPENROUTER_DEFAULT_MODEL_KEY, modelId);
+    } catch (error) {
+      Logger.error(error as Error, { message: '[Settings Screen] Erro ao salvar modelo padrão do OpenRouter.' });
+    }
+  };
+
   const handleExportBackup = async () => {
     setIsLoading(true);
     try {
@@ -389,6 +432,32 @@ const SettingsScreen = () => {
             ::plataformas - Redes sociais ativas{'\n'}
             ::emocao - Humor selecionado
           </Text>
+        </View>
+
+        {/* 4. Conexão OpenRouter (IA Gratuita) */}
+        <View style={styles.openRouterContainer}>
+          <Text style={styles.openRouterLabel}>Conexão OpenRouter (IA Gratuita)</Text>
+
+          <Text style={styles.openRouterFieldLabel}>Chave da API (API Key)</Text>
+          <TextInput
+            style={styles.openRouterInput}
+            value={openRouterApiKey}
+            onChangeText={handleSaveOpenRouterApiKey}
+            placeholder="sk-or-v1-..."
+            placeholderTextColor={colors.textSecondary}
+            secureTextEntry
+            autoCapitalize="none"
+            autoCorrect={false}
+            testID="openrouter-api-key-input"
+          />
+
+          <Text style={styles.openRouterFieldLabel}>Modelo Padrão</Text>
+          <ModelSelector
+            models={openRouterModels}
+            selectedModelId={openRouterModel}
+            onSelectModel={handleSelectOpenRouterModel}
+            testID="openrouter-model-selector"
+          />
         </View>
 
         <PlatformCard

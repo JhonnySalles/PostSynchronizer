@@ -6,6 +6,7 @@ export type RootTabParamList = {
   History: undefined;
   Statistics: undefined;
   Settings: undefined;
+  OpenRouterChat: { initialPrompt?: string } | undefined;
 };
 
 export interface PostDraftData {

@@ -18,6 +18,8 @@ export const OFFLINE = 'offline';
 export type ApiStatusType = typeof CONNECTING | typeof ONLINE | typeof OFFLINE;
 
 export const AI_PROMPT_KEY = '@ai_prompt_template';
+export const OPENROUTER_API_KEY = '@openrouter_api_key';
+export const OPENROUTER_DEFAULT_MODEL_KEY = '@openrouter_default_model';
 export const THREADS_TOKEN_EXPIRY_KEY = '@threads_token_expiry';
 export const THREADS_ACCESS_TOKEN_KEY = '@threads_access_token';
 export const THREADS_TOKEN_WARNING_DAYS = 3;

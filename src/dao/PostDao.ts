@@ -1,4 +1,4 @@
-import { DRAFT, POSTED, PostType } from 'src/constants/app';
+import { DRAFT, POSTED, PENDING, PostType } from 'src/constants/app';
 import { getDBConnection } from '../database';
 import Logger from 'src/services/LoggerService';
 import { PlatformType } from 'src/constants/platforms';
@@ -11,6 +11,7 @@ export interface Post {
   status: PostType;
   platformsSend: string | null;
   platformsSuccess: string | null;
+  platformsError: string | null;
   tags: string | null;
   pending: boolean;
   created_at: string;
@@ -36,7 +37,7 @@ class PostDao {
     const db = await getDBConnection();
     try {
       const results = await db.executeSql(
-        'SELECT id, content, images, status, platforms_send, platforms_success, created_at, tags FROM posts ORDER BY created_at DESC',
+        'SELECT id, content, images, status, platforms_send, platforms_success, platforms_error, created_at, tags, pending FROM posts ORDER BY created_at DESC',
       );
 
       const posts: Post[] = [];
@@ -48,6 +49,8 @@ class PostDao {
             images: JSON.parse(row.images || '[]'),
             platformsSend: row.platforms_send,
             platformsSuccess: row.platforms_success,
+            platformsError: row.platforms_error || '',
+            pending: Boolean(row.pending),
           });
         }
       });
@@ -55,6 +58,35 @@ class PostDao {
     } catch (error) {
       Logger.error(error as Error, { message: '[Post Dao] Erro ao buscar todos os posts:' });
       throw error;
+    }
+  }
+
+  /**
+   * Busca um post específico pelo ID.
+   * @param {number} postId - O ID do post.
+   * @returns {Promise<Post | null>} O post encontrado ou null.
+   */
+  public async getById(postId: number): Promise<Post | null> {
+    const db = await getDBConnection();
+    try {
+      const [result] = await db.executeSql(
+        'SELECT id, content, images, status, platforms_send, platforms_success, platforms_error, created_at, tags, pending FROM posts WHERE id = ?',
+        [postId],
+      );
+
+      if (result.rows.length === 0) return null;
+      const row = result.rows.item(0);
+      return {
+        ...row,
+        images: JSON.parse(row.images || '[]'),
+        platformsSend: row.platforms_send,
+        platformsSuccess: row.platforms_success,
+        platformsError: row.platforms_error || '',
+        pending: Boolean(row.pending),
+      };
+    } catch (error) {
+      Logger.error(error as Error, { message: `[Post Dao] Erro ao buscar post ID ${postId}` });
+      return null;
     }
   }
 
@@ -100,6 +132,7 @@ class PostDao {
       status = DRAFT,
       platformsSend: platforms_send = '',
       platformsSuccess: platforms_success = '',
+      platformsError: platforms_error = '',
       tags = '',
       pending = false,
     } = postData;
@@ -110,8 +143,8 @@ class PostDao {
 
     try {
       const [result] = await db.executeSql(
-        'INSERT INTO posts (content, images, status, platforms_send, platforms_success, tags, pending) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [content, imagesJson, status, platforms_send, platforms_success, cleanedTags, pending],
+        'INSERT INTO posts (content, images, status, platforms_send, platforms_success, platforms_error, tags, pending) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [content, imagesJson, status, platforms_send, platforms_success, platforms_error, cleanedTags, pending ? 1 : 0],
       );
       const insertId = result.insertId;
       // prettier-ignore
@@ -131,13 +164,13 @@ class PostDao {
    * @param {number} postId - O ID do post a ser atualizado.
    * @param {PostDataPayload} postData - Os novos dados do post.
    */
-  public async update(postId: number, postData: PostDataPayload): Promise<void> {
+  public async update(postId: number, postData: PostDataPayload, overwritePlatforms: boolean = false): Promise<void> {
     const db = await getDBConnection();
 
-    if (postData.platformsSend || postData.platformsSuccess) {
+    if (!overwritePlatforms && (postData.platformsSend || postData.platformsSuccess || postData.platformsError)) {
       try {
         const [currentDataResult] = await db.executeSql(
-          'SELECT platforms_send, platforms_success FROM posts WHERE id = ?',
+          'SELECT platforms_send, platforms_success, platforms_error FROM posts WHERE id = ?',
           [postId],
         );
 
@@ -150,10 +183,12 @@ class PostDao {
                 return undefined;
             // prettier-ignore
             if (!current) 
-                return incoming;
+                return incoming.split(',').map(p => p.trim()).filter(p => Boolean(p) && p !== 'unknow').join(', ');
 
-            const currentSet = new Set(current.split(',').map(p => p.trim()));
-            const incomingValues = incoming.split(',').map(p => p.trim());
+            const currentSet = new Set(
+              current.split(',').map(p => p.trim()).filter(p => Boolean(p) && p !== 'unknow')
+            );
+            const incomingValues = incoming.split(',').map(p => p.trim()).filter(p => Boolean(p) && p !== 'unknow');
             incomingValues.forEach(p => currentSet.add(p));
 
             return Array.from(currentSet).join(', ');
@@ -168,6 +203,11 @@ class PostDao {
           // prettier-ignore
           if (newPlatformsSuccess !== undefined)
             postData.platformsSuccess = newPlatformsSuccess;
+
+          const newPlatformsError = mergePlatforms(currentData.platforms_error, postData.platformsError);
+          // prettier-ignore
+          if (newPlatformsError !== undefined)
+            postData.platformsError = newPlatformsError;
         }
       } catch (error) {
         Logger.error(error as Error, {
@@ -190,17 +230,21 @@ class PostDao {
     const setClauses = fields.map(field => {
       // prettier-ignore
       if (field === 'platformsSend') 
-       return 'platforms_send = ?';
-     else if (field === 'platformsSuccess') 
-       return 'platforms_success = ?';
-     else
-       return `${field} = ?`;
+        return 'platforms_send = ?';
+      else if (field === 'platformsSuccess') 
+        return 'platforms_success = ?';
+      else if (field === 'platformsError') 
+        return 'platforms_error = ?';
+      else
+        return `${field} = ?`;
     });
 
     const values = fields.map(field => {
       // prettier-ignore
       if (field === 'images')
         return JSON.stringify(postData[field]);
+      else if (field === 'pending')
+        return postData[field] ? 1 : 0;
       else
         return postData[field];
     });
@@ -217,21 +261,59 @@ class PostDao {
   }
 
   /**
-   * Finaliza o post atualizando os campos de envio e sucesso com base no sumário final.
+   * Finaliza o post atualizando os campos de envio, sucesso e erro com base no sumário final.
    * A lista 'platformsSend' conterá todas as plataformas tentadas (sucesso + falha).
    * A lista 'platformsSuccess' conterá apenas as que tiveram sucesso.
-   *
-   * @param {number} postId - O ID do post a ser atualizado.
-   * @param {string[]} successfulPlatforms - Array com o nome das plataformas que tiveram sucesso.
+   * A lista 'platformsError' conterá apenas as que falharam.
    */
-  public async updateLastSync(postId: number, successfulPlatforms: string[]): Promise<void> {
-    const db = await getDBConnection();
-
+  public async updateLastSync(
+    postId: number,
+    successfulPlatforms: string[],
+    queuedPlatforms: string[] = [],
+    failedPlatforms: string[] = [],
+  ): Promise<void> {
     try {
-      const platformsSuccess = Array.from(new Set(successfulPlatforms)).join(', ');
-      await db.executeSql(
-        `UPDATE posts SET pending = ?, status = ?, platforms_success = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
-        [false, POSTED, platformsSuccess, postId],
+      const existingPost = await this.getById(postId);
+      const platformsSend = existingPost?.platformsSend?.split(',').map(p => p.trim()).filter(Boolean) || [];
+
+      // Preserva sucessos anteriores limpando valores espúrios como 'unknow'
+      const existingSuccess = existingPost?.platformsSuccess
+        ? existingPost.platformsSuccess.split(',').map(p => p.trim()).filter(p => Boolean(p) && p !== 'unknow')
+        : [];
+      const validIncomingSuccess = successfulPlatforms.filter(p => Boolean(p) && p !== 'unknow');
+      const combinedSuccess = Array.from(new Set([...existingSuccess, ...validIncomingSuccess]));
+
+      // Preserva erros anteriores
+      const existingError = existingPost?.platformsError
+        ? existingPost.platformsError.split(',').map(p => p.trim()).filter(p => Boolean(p) && p !== 'unknow')
+        : [];
+      const validIncomingError = failedPlatforms.filter(p => Boolean(p) && p !== 'unknow');
+      const combinedError = Array.from(new Set([...existingError, ...validIncomingError]));
+
+      // Verifica se há plataformas enviadas que ainda não foram contabilizadas como sucesso ou falha
+      const hasUnaccounted = platformsSend.some(
+        p => !combinedSuccess.includes(p) && !combinedError.includes(p)
+      );
+
+      const hasQueued = queuedPlatforms.length > 0 || hasUnaccounted;
+      const isAlreadyPosted = existingPost?.status === POSTED;
+      const hasSuccessful = combinedSuccess.length > 0;
+      const platformsSuccess = combinedSuccess.join(', ');
+      const platformsError = combinedError.join(', ');
+      
+      const newStatus: PostType = (hasSuccessful || isAlreadyPosted) 
+        ? POSTED 
+        : (hasQueued ? PENDING : (existingPost?.status || POSTED));
+
+      await this.update(
+        postId,
+        {
+          pending: hasQueued ? true : false,
+          status: newStatus,
+          platformsSuccess: platformsSuccess,
+          platformsError: platformsError,
+        },
+        true,
       );
 
       Logger.info(`[Post Dao] Post ID ${postId} sincronizado a partir do sumário com sucesso.`);

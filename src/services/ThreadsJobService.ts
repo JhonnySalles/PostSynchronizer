@@ -12,7 +12,7 @@ import { firebaseService } from 'src/services/FirebaseService';
 export interface ThreadsJobItem {
   jobId: string;
   postId: number;
-  status: 'queued' | 'processing' | 'success' | 'error';
+  status: 'queued' | 'processing' | 'success' | 'error' | 'failed';
   createdAt: number;
 }
 
@@ -162,25 +162,48 @@ class ThreadsJobService {
   private async checkJobStatus(job: ThreadsJobItem): Promise<void> {
     try {
       const response = await apiService.getThreadsJobStatus(job.jobId);
+      if (response.notFound) {
+        Logger.info(
+          `[ThreadsJobService] Job ${job.jobId} não encontrado na API (expirado/concluído). Removendo da fila...`,
+        );
+        await this.removeJob(job.jobId);
+        return;
+      }
+
       if (!response.success && !response.status) {
         // Falha de rede ou timeout, manter na fila e tentar no próximo ciclo
         return;
       }
 
-      const status = response.status;
+      let status = response.status;
+      const data = response.data || {};
+
+      // Se a API retornar error/failed mas ainda houver tentativas restantes,
+      // consideramos que o job ainda está em processamento (retentativa).
+      if (
+        (status === 'error' || status === 'failed') &&
+        data.attempts !== undefined &&
+        data.maxAttempts !== undefined &&
+        data.attempts < data.maxAttempts
+      ) {
+        Logger.info(
+          `[ThreadsJobService] Job ${job.jobId} falhou na tentativa ${data.attempts}/${data.maxAttempts}. Mantendo em processamento para retentativa...`,
+        );
+        status = 'processing';
+      }
+
       if (status === 'success') {
         Logger.info(`[ThreadsJobService] Job ${job.jobId} (Post ${job.postId}) concluído com SUCESSO.`);
         
-        await PostDao.update(job.postId, {
-          platformsSuccess: THREADS,
-          status: POSTED as PostType,
-        });
+        await PostDao.updateLastSync(job.postId, [THREADS], [], []);
 
-        const { updatePostProgress, finishPosting, editingPostId, oldPostId } = usePostStore.getState();
+        const { updatePostProgress, finishPosting, editingPostId, oldPostId, triggerHistoryUpdate } = usePostStore.getState();
         updatePostProgress(job.postId, { platform: THREADS, status: SUCCESS });
 
         if (editingPostId === job.postId || oldPostId === job.postId) {
           finishPosting(job.postId, { successful: [THREADS], failed: [] });
+        } else {
+          triggerHistoryUpdate();
         }
 
         Toast.show({
@@ -192,24 +215,25 @@ class ThreadsJobService {
         });
 
         await this.removeJob(job.jobId);
-      } else if (status === 'error') {
-        Logger.warn(`[ThreadsJobService] Job ${job.jobId} (Post ${job.postId}) finalizado com ERRO: ${response.error}`);
+      } else if (status === 'error' || status === 'failed') {
+        const errorMsg = response.error || response.data?.error || 'Ocorreu um erro no processamento do Threads.';
+        Logger.warn(`[ThreadsJobService] Job ${job.jobId} (Post ${job.postId}) finalizado com ERRO: ${errorMsg}`);
 
-        await PostDao.update(job.postId, {
-          status: POSTED as PostType,
-        });
+        await PostDao.updateLastSync(job.postId, [], [], [THREADS]);
 
-        const { updatePostProgress, finishPosting, editingPostId, oldPostId } = usePostStore.getState();
+        const { updatePostProgress, finishPosting, editingPostId, oldPostId, triggerHistoryUpdate } = usePostStore.getState();
         updatePostProgress(job.postId, { platform: THREADS, status: ERROR });
 
         if (editingPostId === job.postId || oldPostId === job.postId) {
           finishPosting(job.postId, { successful: [], failed: [THREADS] });
+        } else {
+          triggerHistoryUpdate();
         }
 
         Toast.show({
           type: 'error',
           text1: 'Threads: Falha na Publicação',
-          text2: response.error || 'Ocorreu um erro no processamento do Threads.',
+          text2: errorMsg,
           position: 'top',
           visibilityTime: 5000,
         });
@@ -235,6 +259,9 @@ class ThreadsJobService {
 
     // Reativa o listener do Firebase para garantir captura de atualizações
     firebaseService.listenForPostUpdates();
+
+    // Sincroniza todos os registros pendentes do Firebase baixando e processando
+    await firebaseService.syncAllPosts();
 
     // Executa verificação em todos os jobs ativos
     const activeCount = this.activeJobs.size;

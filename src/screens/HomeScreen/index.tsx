@@ -32,7 +32,14 @@ import { useTheme } from '../../theme/ThemeProvider';
 import Button from '../../components/Button';
 
 import PostDao from '../../dao/PostDao';
-import { apiService, PostPayload, ProgressUpdate, SinglePostPayload } from '../../services/ApiService';
+import {
+  apiService,
+  PlatformSummaryItem,
+  PostPayload,
+  ProgressSummary,
+  ProgressUpdate,
+  SinglePostPayload,
+} from '../../services/ApiService';
 import { threadsJobService } from '../../services/ThreadsJobService';
 import { ApiStatusIcon } from 'src/components/ApiStatusIcon';
 import { shareService } from '../../services/ShareService';
@@ -80,12 +87,14 @@ const MOODS = [
   { id: 'engracado', label: 'Engraçado', icon: 'happy-outline' },
 ];
 
-const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
+const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
+  const appState = useRef(AppState.currentState);
   const { colors } = useTheme();
   const styles = getStyles(colors);
-  const appState = useRef(AppState.currentState);
 
+  // Estados do Zustand
   const {
+    // Dados do Post
     postText,
     tagsText,
     selectedImages,
@@ -387,7 +396,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     try {
       setImagesProgress(0);
       const imagePaths = selectedImages.map(img => img.path);
-      const newImagePaths = await ImageProcessingService.processImageList(imagePaths, p => setImagesProgress(p));
+      const newImagePaths = await ImageProcessingService.processImageList(imagePaths, (p: number) => setImagesProgress(p));
       const currentImages = usePostStore.getState().selectedImages;
       const updatedImages = currentImages.map((img, i) => ({ ...img, path: newImagePaths[i] }));
       usePostStore.setState({ selectedImages: updatedImages });
@@ -608,10 +617,13 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
 
       const postWithoutFeedback = async () => {
         setAwaitPosting(false);
-        startPosting(postId, platformsToPost);
+        if (postId != null) startPosting(postId, platformsToPost);
         const result = await apiService.postAll(payload, () => {}, { forceNoWebSocket: true });
         // prettier-ignore
         if (result.success) {
+          if (result.queued && result.jobId) {
+            await threadsJobService.addJob(result.jobId, postId!);
+          }
           Toast.show({
             type: 'success',
             text1: 'Processo Finalizado',
@@ -633,11 +645,12 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       };
 
       const postWithFeedback = async () => {
-        const handleProgressUpdate = (update: ProgressUpdate) => {
+        const handleProgressUpdate = async (update: ProgressUpdate) => {
           if (update.type === 'progress' && update.progress) {
             updatePostProgress(update.postId, { progress: update.progress });
             if (update.platform && update.status) {
-              const statusToSet = update.status === 'scheduled' ? PENDING : update.status;
+              const statusToSet =
+                update.status === 'scheduled' || update.status === 'queued' ? PENDING : update.status;
               updatePostProgress(update.postId, { platform: update.platform as PlatformType, status: statusToSet });
 
               switch (update.status) {
@@ -659,21 +672,87 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                     visibilityTime: 4000,
                   });
                   break;
+                case 'queued':
+                  Toast.show({
+                    type: 'info',
+                    text1: `Postagem na fila (${update.platform})`,
+                    text2: 'Postagem adicionada à fila de processamento.',
+                    position: 'top',
+                    visibilityTime: 4000,
+                  });
+                  break;
                 default:
               }
             }
           } else if (update.type === 'summary') {
             Logger.info('[Post Flow] Sumário final recebido:', JSON.stringify(update));
-            const finalResults = update.summary! as { successful: PlatformType[]; failed: PlatformType[] };
+            const rawSummary: ProgressSummary = update.summary || {
+              successful: [],
+              failed: [],
+            };
+
+            const extractPlatformName = (item: PlatformSummaryItem): PlatformType => {
+              if (typeof item === 'string') return item as PlatformType;
+              if (typeof item === 'object' && item !== null) {
+                return ((item.platform || item.name || '') as PlatformType);
+              }
+              return '' as PlatformType;
+            };
+
+            const numericPostId = update.postId ? Number.parseInt(String(update.postId), 10) : NaN;
+
+            // Extrai e registra jobIds se houver
+            const extractAndRegisterJobs = (items?: PlatformSummaryItem[]) => {
+              if (!Array.isArray(items) || isNaN(numericPostId)) return;
+              for (const item of items) {
+                if (typeof item === 'object' && item !== null) {
+                  const platform = String(item.platform || item.name || '').toLowerCase();
+                  if (platform === 'threads' && item.jobId) {
+                    threadsJobService.addJob(item.jobId, numericPostId);
+                  }
+                }
+              }
+            };
+
+            extractAndRegisterJobs(rawSummary.scheduled);
+            extractAndRegisterJobs(rawSummary.queued);
+
+            const successfulPlatforms: PlatformType[] = (rawSummary.successful || []).map(extractPlatformName).filter(Boolean);
+            const failedPlatforms: PlatformType[] = (rawSummary.failed || []).map(extractPlatformName).filter(Boolean);
+            const scheduledPlatforms: PlatformType[] = (rawSummary.scheduled || []).map(extractPlatformName).filter(Boolean);
+            const queuedPlatforms: PlatformType[] = (rawSummary.queued || []).map(extractPlatformName).filter(Boolean);
+
+            const finalResults = {
+              successful: successfulPlatforms,
+              failed: failedPlatforms,
+              scheduled: scheduledPlatforms,
+              queued: queuedPlatforms,
+            };
+
             finishPosting(update.postId, finalResults);
 
-            if (update.postId) {
-              const id = Number.parseInt(update.postId, 10);
-              if (!isNaN(id))
-                PostDao.update(id, {
-                  platformsSuccess: finalResults.successful.join(', '),
-                  status: POSTED as PostType,
-                });
+            if (!isNaN(numericPostId)) {
+              const existingPost = await PostDao.getById(numericPostId);
+              const platformsSend = existingPost?.platformsSend?.split(',').map(p => p.trim()).filter(Boolean) || [];
+              const hasUnaccounted = platformsSend.some(
+                p => !finalResults.successful.includes(p) && !finalResults.failed.includes(p)
+              );
+
+              const hasPending =
+                (finalResults.scheduled && finalResults.scheduled.length > 0) ||
+                (finalResults.queued && finalResults.queued.length > 0) ||
+                hasUnaccounted;
+              const hasSuccess = finalResults.successful && finalResults.successful.length > 0;
+              const isAlreadyPosted = existingPost?.status === POSTED;
+              const newStatus: PostType = (hasSuccess || isAlreadyPosted)
+                ? POSTED
+                : (hasPending ? PENDING : (existingPost?.status || POSTED));
+
+              await PostDao.update(numericPostId, {
+                platformsSuccess: finalResults.successful.join(', '),
+                status: newStatus,
+                pending: hasPending ? true : false,
+              });
             }
 
             resetPostStatus();
@@ -702,6 +781,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           });
           resetPostStatus();
         } else {
+          if (result.queued && result.jobId) {
+            await threadsJobService.addJob(result.jobId, postId!);
+          }
           Toast.show({
             type: 'success',
             text1: 'Processo Finalizado',
@@ -709,7 +791,6 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-          PostDao.update(postId!, { platformsSuccess: UNKNOW, status: POSTED as PostType });
         }
       };
 
@@ -799,7 +880,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-          PostDao.update(postId!, { status: PENDING as PostType });
+          const existingPost = await PostDao.getById(postId!);
+          const newStatus = existingPost?.status === POSTED ? POSTED : (PENDING as PostType);
+          await PostDao.update(postId!, { status: newStatus, pending: true });
           updatePostProgress(postId, { platform, status: PENDING });
         } else if (result.scheduled) {
           Toast.show({
@@ -809,7 +892,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-          PostDao.update(postId!, { status: PENDING as PostType });
+          const existingPost = await PostDao.getById(postId!);
+          const newStatus = existingPost?.status === POSTED ? POSTED : (PENDING as PostType);
+          await PostDao.update(postId!, { status: newStatus, pending: true });
           updatePostProgress(postId, { platform, status: PENDING });
         } else {
           Toast.show({
@@ -819,7 +904,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-          PostDao.update(postId!, { platformsSuccess: platform, status: POSTED as PostType });
+          PostDao.update(postId!, { platformsSuccess: platform, status: POSTED as PostType, pending: false });
           updatePostProgress(postId, { platform, status: SUCCESS });
         }
       } else {
@@ -850,6 +935,35 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     toggleImagePlatform(imageIndex, platform);
   };
 
+  const generatePromptForMood = async (mood: string): Promise<string> => {
+    const platforms = connections
+      .filter(c => c.active)
+      .map(c => c.platform)
+      .join(', ');
+
+    try {
+      const savedTemplate = await AsyncStorage.getItem(AI_PROMPT_KEY);
+      const template = savedTemplate !== null ? savedTemplate : DEFAULT_PROMPT;
+      return template
+        .replace(/::texto/g, postText || 'Nenhum texto base fornecido.')
+        .replace(/::tags/g, tagsText || 'Nenhuma tag fornecida.')
+        .replace(/::plataformas/g, platforms || 'Tumblr, Twitter, Threads, Bluesky')
+        .replace(/::emocao/g, mood);
+    } catch (error: any) {
+      Logger.error(error, { message: '[Home Screen] Erro ao carregar template de prompt.' });
+      return DEFAULT_PROMPT.replace(/::texto/g, postText || 'Nenhum texto base fornecido.')
+        .replace(/::tags/g, tagsText || 'Nenhuma tag fornecida.')
+        .replace(/::plataformas/g, platforms || 'Tumblr, Twitter, Threads, Bluesky')
+        .replace(/::emocao/g, mood);
+    }
+  };
+
+  const handleMoodClick = async (mood: string) => {
+    setShowMoodSuggestions(false);
+    const prompt = await generatePromptForMood(mood);
+    navigation.navigate('OpenRouterChat', { initialPrompt: prompt });
+  };
+
   const handleSharePrompt = async (mood: string) => {
     setShowMoodSuggestions(false);
     const hasPermission = await requestReadPermission();
@@ -858,28 +972,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       return;
     }
 
-    const platforms = connections
-      .filter(c => c.active)
-      .map(c => c.platform)
-      .join(', ');
-
-    let prompt = '';
-    try {
-      const savedTemplate = await AsyncStorage.getItem(AI_PROMPT_KEY);
-      const template = savedTemplate !== null ? savedTemplate : DEFAULT_PROMPT;
-      prompt = template
-        .replace(/::texto/g, postText || 'Nenhum texto base fornecido.')
-        .replace(/::tags/g, tagsText || 'Nenhuma tag fornecida.')
-        .replace(/::plataformas/g, platforms || 'Tumblr, Twitter, Threads')
-        .replace(/::emocao/g, mood);
-    } catch (error) {
-      Logger.error(error, { message: '[Home Screen] Erro ao carregar template de prompt.' });
-      // Fallback em caso de erro no AsyncStorage
-      prompt = DEFAULT_PROMPT.replace(/::texto/g, postText || 'Nenhum texto base fornecido.')
-        .replace(/::tags/g, tagsText || 'Nenhuma tag fornecida.')
-        .replace(/::plataformas/g, platforms || 'Tumblr, Twitter, Threads')
-        .replace(/::emocao/g, mood);
-    }
+    const prompt = await generatePromptForMood(mood);
 
     Clipboard.setString(prompt);
     Toast.show({
@@ -1054,7 +1147,9 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
                   <TouchableOpacity
                     key={mood.id}
                     style={[styles.moodOption, index === MOODS.length - 1 && styles.moodOptionLast]}
-                    onPress={() => handleSharePrompt(mood.label)}
+                    onPress={() => handleMoodClick(mood.label)}
+                    onLongPress={() => handleSharePrompt(mood.label)}
+                    delayLongPress={500}
                   >
                     <Icon name={mood.icon} size={20} color={colors.text} style={styles.moodIcon} />
                     <Text style={styles.moodText}>{mood.label}</Text>

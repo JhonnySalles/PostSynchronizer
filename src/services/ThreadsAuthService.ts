@@ -13,6 +13,7 @@ import {
   THREADS_TOKEN_WARNING_DAYS,
 } from '../constants/app';
 import Logger from './LoggerService';
+import { firebaseService } from './FirebaseService';
 
 export interface ExpiryInfo {
   isExpiringSoon: boolean;
@@ -85,10 +86,17 @@ class ThreadsAuthService {
   async saveToken(token: string): Promise<void> {
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 60); // 60 dias de validade
+    const expiryIso = expiryDate.toISOString();
     
     await AsyncStorage.setItem(THREADS_ACCESS_TOKEN_KEY, token);
-    await AsyncStorage.setItem(THREADS_TOKEN_EXPIRY_KEY, expiryDate.toISOString());
+    await AsyncStorage.setItem(THREADS_TOKEN_EXPIRY_KEY, expiryIso);
     Logger.info('[ThreadsAuthService] Token e expiração salvos localmente.');
+
+    try {
+      await firebaseService.updateThreadsToken(token, expiryIso);
+    } catch (error) {
+      Logger.error(error as Error, { message: '[ThreadsAuthService] Falha ao sincronizar token do Threads no Firebase' });
+    }
   }
 
   /**

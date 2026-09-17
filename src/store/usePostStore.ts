@@ -21,6 +21,7 @@ interface PostState {
   isPosting: boolean;
   postProgress: number;
   pendingPosts: Record<number, PendingPostProgress>;
+  historyUpdateTrigger: number;
 
   // Ações para modificar o estado
   setPostText: (text: string) => void;
@@ -30,17 +31,18 @@ interface PostState {
   removeImage: (index: number) => void;
   clearForm: () => void;
   setSelectedImages: (images: SelectedImage[]) => void;
+  triggerHistoryUpdate: () => void;
 
   // Ações para o fluxo de postagem
   startPosting: (postId: number, platformsToPost: PlatformType[]) => void;
   updatePostProgress: (
     postId: number | string | undefined | null,
-    update: { platform: PlatformType; status: 'success' | 'scheduled' | 'error' } | { progress: number },
+    update: { platform: PlatformType; status: 'success' | 'scheduled' | 'queued' | 'error' | typeof PENDING } | { progress: number },
   ) => void;
   mergeConnections: (allPlatforms: PlatformType[], activePlatforms: PlatformType[]) => void;
   finishPosting: (
     postId: number | string | undefined | null,
-    summary: { successful: PlatformType[]; failed: PlatformType[] },
+    summary: { successful: PlatformType[]; failed: PlatformType[]; scheduled?: PlatformType[]; queued?: PlatformType[] },
   ) => void;
   resetPostStatus: (postId?: number | null) => void;
   removePendingPost: (postId: number) => void;
@@ -74,10 +76,12 @@ export const usePostStore = create<PostState>((set, get) => ({
   isPosting: false,
   postProgress: 0,
   pendingPosts: {},
+  historyUpdateTrigger: 0,
 
   // Ações
   setPostText: text => set({ postText: text }),
   setTagsText: text => set({ tagsText: text }),
+  triggerHistoryUpdate: () => set(state => ({ historyUpdateTrigger: state.historyUpdateTrigger + 1 })),
   addImages: (newImages, _activePlatforms) =>
     set(state => {
       const allImages = [...state.selectedImages, ...newImages];
@@ -160,6 +164,8 @@ export const usePostStore = create<PostState>((set, get) => ({
             status = SUCCESS;
             break;
           case 'scheduled':
+          case 'queued':
+          case 'pending':
             status = PENDING;
             break;
           default:
@@ -186,7 +192,8 @@ export const usePostStore = create<PostState>((set, get) => ({
         pendingPosts: newPendingPosts,
         postProgress: hasRemaining ? globalProgress(newPendingPosts) : 0,
         isPosting: hasRemaining,
-        oldPostId: state.oldPostId === postId ? null : state.oldPostId,
+        oldPostId: state.oldPostId,
+        historyUpdateTrigger: state.historyUpdateTrigger + 1,
       };
     }),
   finishPosting: (postId: number | string | undefined | null, summary) =>
@@ -201,14 +208,20 @@ export const usePostStore = create<PostState>((set, get) => ({
       if (isNaN(id)) 
         return {};
 
+      const hasQueued = (summary.scheduled && summary.scheduled.length > 0) || (summary.queued && summary.queued.length > 0);
       const newPendingPosts = { ...state.pendingPosts };
-      delete newPendingPosts[id];
+      if (!hasQueued) {
+        delete newPendingPosts[id];
+      }
       const hasRemaining = Object.keys(newPendingPosts).length > 0;
 
       let newConnections = state.connections;
 
       if (state.oldPostId === id && state.oldPostId !== null) {
         newConnections = state.connections.map(c => {
+          if (summary.scheduled?.includes(c.platform) || summary.queued?.includes(c.platform)) {
+            return { ...c, postStatus: PENDING as PostStatusType };
+          }
           if (summary.successful.includes(c.platform)) return { ...c, postStatus: SUCCESS as PostStatusType };
           if (summary.failed.includes(c.platform)) return { ...c, postStatus: ERROR as PostStatusType };
           return c;
@@ -220,7 +233,8 @@ export const usePostStore = create<PostState>((set, get) => ({
         postProgress: hasRemaining ? globalProgress(newPendingPosts) : 0,
         connections: newConnections,
         isPosting: hasRemaining,
-        oldPostId: !hasRemaining || state.oldPostId == postId ? null : state.oldPostId,
+        oldPostId: state.oldPostId,
+        historyUpdateTrigger: state.historyUpdateTrigger + 1,
       };
     }),
   mergeConnections: (allPlatforms, activePlatforms) =>

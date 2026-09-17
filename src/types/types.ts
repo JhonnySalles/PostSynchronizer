@@ -25,9 +25,11 @@ export type SelectedImage = {
  */
 export type FirebasePostUpdate = {
   isFinish: boolean;
-  data: Record<PlatformType, { status: 'success' | 'error'; error?: string }>;
+  data: Record<PlatformType, { status: 'success' | 'error' | 'queued' | 'scheduled'; error?: string }>;
   summary?: {
     successful: PlatformType[];
     failed: PlatformType[];
+    scheduled?: PlatformType[];
+    queued?: PlatformType[];
   };
 };

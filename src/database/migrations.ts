@@ -27,6 +27,7 @@ const MIGRATIONS = [
     );`,
   `ALTER TABLE posts ADD COLUMN pending INTEGER DEFAULT 0 NOT NULL;`,
   `UPDATE posts SET pending = 0;`,
+  `ALTER TABLE posts ADD COLUMN platforms_error TEXT DEFAULT '';`,
 ];
 
 export const runMigrations = async (db: SQLiteDatabase): Promise<void> => {

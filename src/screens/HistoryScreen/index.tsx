@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  Modal,
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -31,6 +32,9 @@ import { requestReadPermission } from 'src/utils/permissions';
 import { getMimeType } from 'src/utils/util';
 import { SOCIAL_PLATFORMS } from 'src/constants/platforms';
 import { DRAFT, PENDING, POSTED } from 'src/constants/app';
+import { usePostStore } from 'src/store/usePostStore';
+import { firebaseService } from 'src/services/FirebaseService';
+import { threadsJobService } from 'src/services/ThreadsJobService';
 
 type HistoryScreenNavigationProp = BottomTabNavigationProp<RootTabParamList, 'History'>;
 
@@ -49,13 +53,24 @@ const HistoryScreen = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
+  const [editingPost, setEditingPost] = useState<PostHistoryItem | null>(null);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
   const navigation = useNavigation<HistoryScreenNavigationProp>();
+  const historyUpdateTrigger = usePostStore(state => state.historyUpdateTrigger);
+  const pendingPosts = usePostStore(state => state.pendingPosts);
 
   useFocusEffect(
     useCallback(() => {
       const fetchHistory = async () => {
         setIsLoading(true);
         try {
+          // Sincroniza dados pendentes do Firebase e jobs do Threads ao entrar na tela
+          await firebaseService.syncAllPosts();
+          if (threadsJobService.hasActiveJobs()) {
+            await threadsJobService.checkAllActiveJobs();
+          }
+
           const items = await PostDao.getAll();
           setHistory(items);
         } catch (error: Error | any) {
@@ -66,7 +81,7 @@ const HistoryScreen = () => {
       };
 
       fetchHistory();
-    }, []),
+    }, [historyUpdateTrigger, pendingPosts]),
   );
 
   useEffect(() => {
@@ -211,6 +226,108 @@ const HistoryScreen = () => {
     );
   };
 
+  const handleEditPress = (item: PostHistoryItem) => {
+    setEditingPost({
+      ...item,
+      images: item.images ? [...item.images] : [],
+    });
+    setIsEditModalVisible(true);
+  };
+
+  const handleToggleStatus = () => {
+    if (!editingPost) return;
+    const nextStatus = editingPost.status === POSTED ? DRAFT : POSTED;
+    setEditingPost({ ...editingPost, status: nextStatus });
+  };
+
+  const handleContentChange = (text: string) => {
+    if (!editingPost) return;
+    setEditingPost({ ...editingPost, content: text });
+  };
+
+  const handleTagsChange = (text: string) => {
+    if (!editingPost) return;
+    setEditingPost({ ...editingPost, tags: text });
+  };
+
+  const handleDeleteImage = (indexToRemove: number) => {
+    if (!editingPost || !editingPost.images) return;
+    const newImages = editingPost.images.filter((_, index) => index !== indexToRemove);
+    setEditingPost({ ...editingPost, images: newImages });
+  };
+
+  const handlePlatformToggle = (platformName: string) => {
+    if (!editingPost) return;
+    const currentSuccess = editingPost.platformsSuccess
+      ? editingPost.platformsSuccess.split(',').map(p => p.trim()).filter(Boolean)
+      : [];
+
+    let newSuccess: string[];
+    if (currentSuccess.includes(platformName)) {
+      newSuccess = currentSuccess.filter(p => p !== platformName);
+    } else {
+      newSuccess = [...currentSuccess, platformName];
+    }
+
+    setEditingPost({
+      ...editingPost,
+      platformsSuccess: newSuccess.join(', '),
+    });
+  };
+
+  const handlePlatformLongPress = (platformName: string) => {
+    if (!editingPost) return;
+    const currentSuccess = editingPost.platformsSuccess
+      ? editingPost.platformsSuccess.split(',').map(p => p.trim()).filter(Boolean)
+      : [];
+
+    if (!currentSuccess.includes(platformName)) {
+      setEditingPost({
+        ...editingPost,
+        platformsSuccess: [...currentSuccess, platformName].join(', '),
+      });
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingPost) return;
+    try {
+      await PostDao.update(
+        editingPost.id,
+        {
+          content: editingPost.content,
+          tags: editingPost.tags,
+          images: editingPost.images,
+          status: editingPost.status,
+          platformsSend: editingPost.platformsSend,
+          platformsSuccess: editingPost.platformsSuccess,
+        },
+        true,
+      );
+
+      setHistory(prev =>
+        prev.map(item => (item.id === editingPost.id ? { ...editingPost } : item)),
+      );
+      setIsEditModalVisible(false);
+      setEditingPost(null);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Post atualizado',
+        text2: 'As alterações foram salvas com sucesso.',
+        position: 'top',
+      });
+    } catch (error: Error | any) {
+      Logger.error(error, { message: '[History Screen] Erro ao salvar edição do post:' });
+      Alert.alert('Erro', 'Não foi possível salvar as alterações.');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditModalVisible(false);
+    setEditingPost(null);
+  };
+
   const handleCopyTags = (tags: string) => {
     if (tags && tags.trim().length > 0) {
       Clipboard.setString(tags);
@@ -331,7 +448,14 @@ const HistoryScreen = () => {
               onPress={() => handleDeletePress(item.id)}
               testID={`delete-item-button-${item.id}`}
             >
-              <Icon name="trash-outline" size={24} color={colors.delete} />
+              <Icon name="trash-outline" size={22} color={colors.delete} />
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.editButton} 
+              onPress={() => handleEditPress(item)}
+              testID={`edit-item-button-${item.id}`}
+            >
+              <Icon name="pencil-outline" size={22} color={colors.primary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -463,6 +587,127 @@ const HistoryScreen = () => {
           testID="history-list"
         />
       )}
+
+      <Modal
+        visible={isEditModalVisible && !!editingPost}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={handleCancelEdit}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.modalContainer}>
+                {editingPost && (
+                  <>
+                    <View style={styles.modalHeader}>
+                      <TouchableOpacity
+                        onPress={handleToggleStatus}
+                        style={[
+                          styles.statusBadge,
+                          editingPost.status === POSTED ? styles.postedBadge : styles.draftBadge,
+                        ]}
+                        testID="modal-status-badge"
+                      >
+                        <Text style={styles.statusText}>
+                          {editingPost.status === POSTED ? 'Postado' : editingPost.status === PENDING ? 'Pendente' : 'Rascunho'}
+                        </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.dateText}>
+                        {new Date(editingPost.created_at).toLocaleString('pt-BR')}
+                      </Text>
+                    </View>
+
+                    <TextInput
+                      style={styles.modalContentInput}
+                      placeholder="Conteúdo da postagem..."
+                      placeholderTextColor={colors.textSecondary}
+                      value={editingPost.content || ''}
+                      onChangeText={handleContentChange}
+                      multiline
+                      testID="modal-content-input"
+                    />
+
+                    {editingPost.images && editingPost.images.length > 0 && (
+                      <FlatList
+                        data={editingPost.images}
+                        renderItem={({ item: { path }, index }) => (
+                          <View style={styles.modalImageWrapper}>
+                            <Image source={{ uri: path }} style={styles.imageThumbnail} />
+                            <TouchableOpacity
+                              style={styles.modalImageDeleteBadge}
+                              onPress={() => handleDeleteImage(index)}
+                              testID={`modal-delete-image-${index}`}
+                            >
+                              <Icon name="close" size={14} color="#FFFFFF" />
+                            </TouchableOpacity>
+                          </View>
+                        )}
+                        keyExtractor={(image, index) => image.path + '-' + index}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        style={{ marginBottom: 12 }}
+                      />
+                    )}
+
+                    <TextInput
+                      style={styles.modalTagsInput}
+                      placeholder="Tags (separadas por ponto e vírgula)"
+                      placeholderTextColor={colors.textSecondary}
+                      value={editingPost.tags || ''}
+                      onChangeText={handleTagsChange}
+                      testID="modal-tags-input"
+                    />
+
+                    <View style={styles.modalSeparator} />
+
+                    <View style={styles.modalPlatformsContainer}>
+                      {(editingPost.platformsSend?.split(',').map(p => p.trim()).filter(Boolean) || []).map(platformName => {
+                        const platformInfo = SOCIAL_PLATFORMS.find(p => p.name === platformName);
+                        if (!platformInfo) return null;
+
+                        const platformsWithSuccess = editingPost.platformsSuccess?.split(',').map(p => p.trim()) || [];
+                        const wasSuccessful = platformsWithSuccess.includes(platformName);
+                        const iconColor = wasSuccessful ? colors.success : colors.tertiary;
+
+                        return (
+                          <TouchableOpacity
+                            key={platformName}
+                            onPress={() => handlePlatformToggle(platformName)}
+                            onLongPress={() => handlePlatformLongPress(platformName)}
+                            delayLongPress={300}
+                            style={styles.modalPlatformIconWrapper}
+                            testID={`modal-platform-${platformName}`}
+                          >
+                            <Icon name={platformInfo.icon} size={24} color={iconColor} />
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
+
+                    <View style={styles.modalActions}>
+                      <TouchableOpacity
+                        style={[styles.modalButton, styles.modalCancelButton]}
+                        onPress={handleCancelEdit}
+                        testID="modal-cancel-button"
+                      >
+                        <Text style={styles.modalCancelText}>Cancelar</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.modalButton, styles.modalSaveButton]}
+                        onPress={handleSaveEdit}
+                        testID="modal-save-button"
+                      >
+                        <Text style={styles.modalSaveText}>Salvar</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </SafeAreaView>
   );
 };

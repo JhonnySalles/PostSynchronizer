@@ -42,18 +42,34 @@ export interface SinglePostPayload {
   blogName: string | null;
 }
 
+export type PlatformSummaryItem =
+  | PlatformType
+  | string
+  | {
+      platform?: PlatformType | string;
+      name?: PlatformType | string;
+      jobId?: string;
+      reason?: string;
+      error?: string;
+      [key: string]: unknown;
+    };
+
+export interface ProgressSummary {
+  successful: PlatformSummaryItem[];
+  failed: PlatformSummaryItem[];
+  scheduled?: PlatformSummaryItem[];
+  queued?: PlatformSummaryItem[];
+}
+
 export interface ProgressUpdate {
   postId?: string;
   type: 'progress' | 'summary';
   platform?: string;
-  status?: 'success' | 'scheduled' | 'error';
+  status?: 'success' | 'scheduled' | 'queued' | 'error';
   progress?: number;
   error?: string | null;
   publishTime?: string | null;
-  summary?: {
-    successful: string[];
-    failed: string[];
-  };
+  summary?: ProgressSummary;
 }
 
 export type ProgressCallback = (update: ProgressUpdate) => void;
@@ -233,7 +249,7 @@ class ApiService {
     onProgress: ProgressCallback,
     options: { forceNoWebSocket?: boolean } = {},
     isFirst: boolean = true,
-  ): Promise<{ success: boolean; message?: string; isWebSocket?: boolean }> {
+  ): Promise<{ success: boolean; scheduled?: boolean; queued?: boolean; jobId?: string; message?: string; isWebSocket?: boolean }> {
     const platforms = payload.platforms.filter(p => p !== THREADS);
     // prettier-ignore
     if (payload.platforms.includes(THREADS)) 
@@ -258,9 +274,12 @@ class ApiService {
 
         const response = await this.axiosInstance.post('/publish-all/post', backendPayload);
         // prettier-ignore
-        if (response.status === 202) {
+        if (response.status === 200 || response.status === 202) {
             Logger.info('[ApiService] Requisição de postagem aceita pelo backend.');
-            return { success: true };
+            const jobId = response.data?.data?.jobId || response.data?.jobId;
+            const queued = response.status === 202 || response.data?.status === 'queued' || response.data?.data?.status === 'queued' || !!jobId;
+            const scheduled = response.data?.scheduled === true;
+            return { success: true, scheduled, queued, jobId };
         } else
             return { success: false, message: `Status inesperado: ${response.status}` };
       } catch (error: Error | any) {
@@ -306,9 +325,12 @@ class ApiService {
 
       const response = await this.axiosInstance.post('/publish-all/post', backendPayload);
 
-      if (response.status === 202) {
+      if (response.status === 200 || response.status === 202) {
         Logger.info('[ApiService] Requisição de postagem aceita pelo backend.');
-        return { success: true };
+        const jobId = response.data?.data?.jobId || response.data?.jobId;
+        const queued = response.status === 202 || response.data?.status === 'queued' || response.data?.data?.status === 'queued' || !!jobId;
+        const scheduled = response.data?.scheduled === true;
+        return { success: true, scheduled, queued, jobId };
       } else {
         this.eventEmitter.removeListener('post_update', progressListener);
         return { success: false, message: `Status inesperado: ${response.status}` };
@@ -358,8 +380,8 @@ class ApiService {
       if (response.status === 200 || response.status === 201 || response.status === 202) {
         Logger.info(`[ApiService] Post individual para ${platform} bem-sucedido (status ${response.status}).`);
         const scheduled = response.status === 201 || response.data?.scheduled === true;
-        const queued = response.status === 202 || response.data?.status === 'queued' || !!response.data?.jobId;
-        const jobId = response.data?.jobId;
+        const jobId = response.data?.data?.jobId || response.data?.jobId;
+        const queued = response.status === 202 || response.data?.status === 'queued' || response.data?.data?.status === 'queued' || !!jobId;
 
         return {
           success: true,
@@ -395,7 +417,13 @@ class ApiService {
    */
   async getThreadsJobStatus(
     jobId: string,
-  ): Promise<{ success: boolean; status?: 'queued' | 'processing' | 'success' | 'error'; error?: string; data?: any }> {
+  ): Promise<{
+    success: boolean;
+    notFound?: boolean;
+    status?: 'queued' | 'processing' | 'success' | 'error' | 'failed';
+    error?: string;
+    data?: any;
+  }> {
     try {
       const response = await this.axiosInstance.get(`/threads/status/${jobId}`, { timeout: 10000 });
       return {
@@ -405,9 +433,15 @@ class ApiService {
         data: response.data,
       };
     } catch (error: any) {
-      const msg = error.response?.data?.message || error.message;
+      const msg = error.response?.data?.message || error.response?.data?.error || error.message;
+      const isNotFound =
+        error.response?.status === 404 ||
+        (typeof msg === 'string' &&
+          (msg.toLowerCase().includes('não encontrado') ||
+            msg.toLowerCase().includes('not found') ||
+            msg.toLowerCase().includes('expirado')));
       Logger.warn(`[ApiService] Falha ao consultar status do job Threads ${jobId}: ${msg}`);
-      return { success: false, error: msg };
+      return { success: false, notFound: isNotFound, error: msg };
     }
   }
 

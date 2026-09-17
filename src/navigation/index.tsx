@@ -7,6 +7,7 @@ import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import HistoryScreen from '../screens/HistoryScreen';
 import StatisticsScreen from '../screens/StatisticsScreen';
+import OpenRouterChatScreen from '../screens/OpenRouterChatScreen';
 
 import { RootTabParamList } from './types';
 import { useTheme } from 'src/theme/ThemeProvider';
@@ -75,6 +76,16 @@ const AppNavigator = () => {
           title: 'Configurações', 
           headerRight: () => <ApiStatusIcon />,
           tabBarTestID: 'settings-tab-button'
+        }}
+      />
+      <Tab.Screen
+        name="OpenRouterChat"
+        component={OpenRouterChatScreen}
+        options={{
+          title: 'Sugestões',
+          headerShown: false,
+          tabBarButton: () => null,
+          tabBarStyle: { display: 'none' },
         }}
       />
     </Tab.Navigator>
