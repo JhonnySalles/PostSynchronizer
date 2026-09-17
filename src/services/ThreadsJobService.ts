@@ -176,10 +176,10 @@ class ThreadsJobService {
           status: POSTED as PostType,
         });
 
-        const { updatePostProgress, finishPosting, editingPostId } = usePostStore.getState();
+        const { updatePostProgress, finishPosting, editingPostId, oldPostId } = usePostStore.getState();
         updatePostProgress(job.postId, { platform: THREADS, status: SUCCESS });
 
-        if (editingPostId === job.postId) {
+        if (editingPostId === job.postId || oldPostId === job.postId) {
           finishPosting(job.postId, { successful: [THREADS], failed: [] });
         }
 
@@ -195,8 +195,16 @@ class ThreadsJobService {
       } else if (status === 'error') {
         Logger.warn(`[ThreadsJobService] Job ${job.jobId} (Post ${job.postId}) finalizado com ERRO: ${response.error}`);
 
-        const { updatePostProgress } = usePostStore.getState();
+        await PostDao.update(job.postId, {
+          status: POSTED as PostType,
+        });
+
+        const { updatePostProgress, finishPosting, editingPostId, oldPostId } = usePostStore.getState();
         updatePostProgress(job.postId, { platform: THREADS, status: ERROR });
+
+        if (editingPostId === job.postId || oldPostId === job.postId) {
+          finishPosting(job.postId, { successful: [], failed: [THREADS] });
+        }
 
         Toast.show({
           type: 'error',

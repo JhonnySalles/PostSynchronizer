@@ -157,8 +157,10 @@ export const usePostStore = create<PostState>((set, get) => ({
             status = ERROR;
             break;
           case 'success':
-          case 'scheduled':
             status = SUCCESS;
+            break;
+          case 'scheduled':
+            status = PENDING;
             break;
           default:
             status = PENDING;

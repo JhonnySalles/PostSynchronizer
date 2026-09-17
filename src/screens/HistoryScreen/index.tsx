@@ -30,6 +30,7 @@ import Logger from 'src/services/LoggerService';
 import { requestReadPermission } from 'src/utils/permissions';
 import { getMimeType } from 'src/utils/util';
 import { SOCIAL_PLATFORMS } from 'src/constants/platforms';
+import { DRAFT, PENDING, POSTED } from 'src/constants/app';
 
 type HistoryScreenNavigationProp = BottomTabNavigationProp<RootTabParamList, 'History'>;
 
@@ -93,7 +94,7 @@ const HistoryScreen = () => {
             return item.tags?.toLowerCase().includes(filter.value);
 
           if (filter.key === 'status') {
-            const itemStatus = item.status === 'posted' ? 'postado' : 'rascunho';
+            const itemStatus = item.status === POSTED ? 'postado' : item.status === PENDING ? 'pendente' : 'rascunho';
             return itemStatus.includes(filter.value) || item.status.includes(filter.value);
           }
 
@@ -144,7 +145,7 @@ const HistoryScreen = () => {
           .filter(t => t.includes(value))
           .map(t => `tag:"${t}"`);
       } else if (prefix === 'status')
-        newSuggestions = ['status:"postado"', 'status:"rascunho"'].filter(s => s.includes(value) || s.includes(`"${value}`),);
+        newSuggestions = ['status:"postado"', 'status:"pendente"', 'status:"rascunho"'].filter(s => s.includes(value) || s.includes(`"${value}`),);
       else if (prefix === 'data') {
         const allDates = new Set<string>();
         history.forEach(h => {
@@ -311,8 +312,17 @@ const HistoryScreen = () => {
         testID={`history-item-${item.id}`}
       >
         <View style={styles.header}>
-          <View style={[styles.statusBadge, item.status === 'posted' ? styles.postedBadge : styles.draftBadge]}>
-            <Text style={styles.statusText}>{item.status === 'posted' ? 'Postado' : 'Rascunho'}</Text>
+          <View
+            style={[
+              styles.statusBadge,
+              item.status === POSTED
+                ? styles.postedBadge
+                : styles.draftBadge,
+            ]}
+          >
+            <Text style={styles.statusText}>
+              {item.status === POSTED ? 'Postado' : item.status === PENDING ? 'Pendente' : 'Rascunho'}
+            </Text>
           </View>
           <View style={styles.headerRight}>
             <Text style={styles.dateText}>{new Date(item.created_at).toLocaleString('pt-BR')}</Text>
@@ -355,12 +365,19 @@ const HistoryScreen = () => {
                     return null;
 
                   const wasSuccessful = platformsWithSuccess.includes(platformName);
+                  const isPending = item.status === PENDING || item.pending;
+                  const iconColor = wasSuccessful
+                    ? colors.success
+                    : isPending
+                    ? colors.tertiary
+                    : colors.error;
+
                   return (
                     <Icon
                       key={platformName}
                       name={platformInfo.icon}
                       size={22}
-                      color={wasSuccessful ? colors.success : colors.error}
+                      color={iconColor}
                       style={styles.footerIcon}
                     />
                   );

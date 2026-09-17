@@ -4,6 +4,7 @@ import { getDatabase, ref, onChildAdded, onChildChanged, off, remove } from 'fir
 import { AppState, AppStateStatus } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Logger from './LoggerService';
+import Toast from 'react-native-toast-message';
 import PostDao from 'src/dao/PostDao';
 import { PlatformType } from 'src/constants/platforms';
 import { usePostStore } from 'src/store/usePostStore';
@@ -121,12 +122,16 @@ class FirebaseService {
     this.lastProcessedState.set(postId, currentDataString);
     this.processingFinish.add(postId);
 
-    const { finishPosting, resetPostStatus, removePendingPost, editingPostId } = usePostStore.getState();
-    const isCurrentPost = editingPostId === postId;
+    const { finishPosting, resetPostStatus, removePendingPost, editingPostId, oldPostId } = usePostStore.getState();
+    const isCurrentPost = editingPostId === postId || oldPostId === postId;
 
     const summary = data._summary;
-    const successfulPlatforms: PlatformType[] = summary.successful || [];
-    const failedPlatforms: PlatformType[] = summary.failed ? summary.failed.map((f: any) => f.platform) : [];
+    const extractPlatformName = (item: any): PlatformType => {
+      if (typeof item === 'string') return item as PlatformType;
+      return (item?.platform || item?.name || '') as PlatformType;
+    };
+    const successfulPlatforms: PlatformType[] = (summary.successful || []).map(extractPlatformName).filter(Boolean);
+    const failedPlatforms: PlatformType[] = (summary.failed || []).map(extractPlatformName).filter(Boolean);
 
     await this.finalizePostSync(postId, successfulPlatforms);
 
@@ -139,6 +144,16 @@ class FirebaseService {
     removePendingPost(postId);
     this.lastProcessedState.delete(postId);
     setTimeout(() => this.processingFinish.delete(postId), 5000);
+
+    if (failedPlatforms.length > 0) {
+      Toast.show({
+        type: 'error',
+        text1: 'Falha na publicação',
+        text2: `Falha ao publicar em: ${failedPlatforms.join(', ')}`,
+        position: 'top',
+        visibilityTime: 5000,
+      });
+    }
 
     if (isCurrentPost) {
       finishPosting(postId, { successful: successfulPlatforms, failed: failedPlatforms });

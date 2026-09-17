@@ -744,7 +744,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-          PostDao.update(postId!, { platformsSuccess: platform, status: PENDING as PostType });
+          PostDao.update(postId!, { status: PENDING as PostType });
           updatePostProgress(postId, { platform, status: PENDING });
         } else if (result.scheduled) {
           Toast.show({
@@ -754,7 +754,7 @@ const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
             position: 'top',
             visibilityTime: 4000,
           });
-          PostDao.update(postId!, { platformsSuccess: platform, status: PENDING as PostType });
+          PostDao.update(postId!, { status: PENDING as PostType });
           updatePostProgress(postId, { platform, status: PENDING });
         } else {
           Toast.show({

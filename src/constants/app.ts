@@ -2,7 +2,7 @@ export const IS_PRODUCTION = false;
 export const DRAFT = 'draft';
 export const POSTED = 'posted';
 
-export type PostType = typeof DRAFT | typeof POSTED;
+export type PostType = typeof DRAFT | typeof POSTED | typeof PENDING;
 
 export const IDLE = 'idle';
 export const PENDING = 'pending';
